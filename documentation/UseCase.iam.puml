@@ -1,0 +1,24 @@
+@startuml Use Case
+
+actor User
+actor Admin
+
+User <|-r- Admin
+
+User -l-> (CreateAccount)
+User -r-> (GetAccount)
+(GetAccount) <.r. (UpdateAccount) : extends
+(GetAccount) <.d. (ChangePassword) : extends
+User -d-> (Login)
+
+Admin --> (ManageProfile) 
+(ManageProfile) <.r. (AssignProfile) 
+(ManageProfile) <.r. (Create/Update/Delete Profile) 
+
+Admin -r-> (ManageUser) 
+Admin -r-> (ManageApplication) 
+Admin -r-> (ManagePermission) 
+Admin -r-> (ManageFunctionality) 
+Admin -r-> (ManageFunctionalityType) 
+
+@enduml
