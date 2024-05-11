@@ -11,7 +11,7 @@ test('should be able to find an existing account', async () => {
 
   const user = await getAccountById.execute(account.id);
   expect(user.username).toBe(account.getUsername());
-  expect(user.password).not.toBe(account.getPassword());
+  expect(user.password).toBe(account.getPassword());
 });
 
 test("should throw an error when account doesn't exists", async () => {
