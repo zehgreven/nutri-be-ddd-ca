@@ -4,7 +4,7 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers
 import { AccountRepository, AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
 import Account from '../src/domain/entity/Account';
 
-describe('Customer Repository', () => {
+describe('Account Repository', () => {
   jest.setTimeout(60000);
 
   let postgresContainer: StartedPostgreSqlContainer;
