@@ -1,4 +1,5 @@
 import { AccountRepository } from '../../infra/repository/AccountRepository';
+import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
 
 export class GetAccountById {
   constructor(readonly accountRepository: AccountRepository) {}
@@ -7,7 +8,7 @@ export class GetAccountById {
     const account = await this.accountRepository.getById(id);
 
     if (!account) {
-      throw new Error(`Unable to find account with id = ${id}`);
+      throw new AccountNotFoundError(`Unable to find account with id = ${id}`);
     }
 
     return {

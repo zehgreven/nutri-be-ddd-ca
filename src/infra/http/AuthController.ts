@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { SignIn } from '../../application/usecase/SignIn';
 import httpServer from './HttpServer';
+import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 
 export class AuthController {
   constructor(httpServer: httpServer, signIn: SignIn) {
@@ -13,7 +14,13 @@ export class AuthController {
         const account = await signIn.execute(req.body);
         res.json(account);
       } catch (error: any) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+
+        if (error instanceof IncorrectCredentialsError) {
+          statusCode = StatusCodes.UNAUTHORIZED;
+        }
+
+        res.status(statusCode).json({
           message: error.message,
         });
       }

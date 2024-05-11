@@ -1,4 +1,5 @@
 import { GetAccountById } from '../src/application/usecase/GetAccountById';
+import { AccountNotFoundError } from '../src/domain/error/AccountNotFoundError';
 import Account from '../src/domain/entity/Account';
 import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/AccountRepository';
 
@@ -16,8 +17,6 @@ describe('GetAccountById', () => {
   });
 
   test("should throw an error when account doesn't exists", async () => {
-    await expect(getAccountById.execute('invalid_id')).rejects.toThrow(
-      new Error(`Unable to find account with id = invalid_id`),
-    );
+    await expect(getAccountById.execute('invalid_id')).rejects.toThrow(AccountNotFoundError);
   });
 });

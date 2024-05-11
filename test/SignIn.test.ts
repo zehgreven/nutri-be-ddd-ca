@@ -1,4 +1,6 @@
+import { AccountNotFoundError } from '../src/domain/error/AccountNotFoundError';
 import { SignIn } from '../src/application/usecase/SignIn';
+import { IncorrectCredentialsError } from '../src/domain/error/IncorrectCredentialsError';
 import { SignUp } from '../src/application/usecase/SignUp';
 import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/AccountRepository';
 
@@ -22,9 +24,7 @@ describe('SignIn', () => {
   });
 
   it("should throw an error when account doesn't exists", async () => {
-    await expect(signIn.execute(signUpInput)).rejects.toThrow(
-      new Error(`Unable to find account for username=${signUpInput.username}`),
-    );
+    await expect(signIn.execute(signUpInput)).rejects.toThrow(AccountNotFoundError);
   });
 
   it('should throw an error when password is incorrect', async () => {
@@ -33,6 +33,6 @@ describe('SignIn', () => {
       username: 'johndoe@test.com',
       password: 'wrong_password',
     };
-    await expect(signIn.execute(signInInput)).rejects.toThrow(new Error('Invalid password'));
+    await expect(signIn.execute(signInInput)).rejects.toThrow(IncorrectCredentialsError);
   });
 });

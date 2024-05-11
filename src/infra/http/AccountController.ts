@@ -1,6 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import { GetAccountById } from '../../application/usecase/GetAccountById';
 import { SignUp } from '../../application/usecase/SignUp';
+import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
+import { InvalidEmailError } from '../../domain/error/InvalidEmailError';
+import { PasswordCreationError } from '../../domain/error/PasswordCreationError';
 import httpServer from './HttpServer';
 
 export class AccountController {
@@ -16,7 +19,13 @@ export class AccountController {
         const account = await getAccountById.execute(accountId);
         res.json(account);
       } catch (error: any) {
-        res.status(StatusCodes.NOT_FOUND).json({
+        let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+
+        if (error instanceof AccountNotFoundError) {
+          statusCode = StatusCodes.NOT_FOUND;
+        }
+
+        res.status(statusCode).json({
           message: error.message,
         });
       }
@@ -29,7 +38,13 @@ export class AccountController {
         const account = await signUp.execute(req.body);
         res.json(account);
       } catch (error: any) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+
+        if (error instanceof PasswordCreationError || error instanceof InvalidEmailError) {
+          statusCode = StatusCodes.BAD_REQUEST;
+        }
+
+        res.status(statusCode).json({
           message: error.message,
         });
       }
