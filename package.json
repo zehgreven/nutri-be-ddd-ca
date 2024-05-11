@@ -11,10 +11,11 @@
     "style:check": "prettier --check src/**/*.ts test/**/*.ts",
     "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
     "lint": "eslint src/**/*.ts test/**/*.ts",
-    "test": "jest --coverage"
+    "test": "clear & jest --coverage"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "@testcontainers/postgresql": "^10.9.0",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",

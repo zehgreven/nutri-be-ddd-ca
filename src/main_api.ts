@@ -6,7 +6,7 @@ import { AccountController } from './infra/http/AccountController';
 import { PgPromiseAdapter } from './infra/database/DatabaseConnection';
 
 const httpServer = new ExpressHttpServerAdapter();
-const databaseConnection = new PgPromiseAdapter();
+const databaseConnection = new PgPromiseAdapter('postgres://postgres:123456@localhost:5432/app');
 
 const accountRepository = new AccountRepositoryPostgres(databaseConnection);
 const getAccountById = new GetAccountById(accountRepository);

@@ -1,7 +1,7 @@
 import pgp from 'pg-promise';
 
 export default interface DatabaseConnection {
-  query(statement: string, params: any, transactional?: boolean): Promise<any>;
+  query(statement: string, params?: any, transactional?: boolean): Promise<any>;
   close(): Promise<void>;
   commit(): Promise<void>;
 }
@@ -9,12 +9,16 @@ export default interface DatabaseConnection {
 export class PgPromiseAdapter implements DatabaseConnection {
   connection: any;
 
-  constructor() {
-    this.connection = pgp()('postgres://postgres:123456@localhost:5432/app');
+  constructor(readonly connectionString: string) {
+    this.connection = pgp()(connectionString);
   }
 
-  query(statement: string, params: any): Promise<any> {
-    return this.connection.query(statement, params);
+  private toPgParam(statement: string): string {
+    return statement.replace(/:[a-zA-Z0-9_]+/g, match => `$/${match.substring(1)}/`);
+  }
+
+  query(statement: string, params?: any): Promise<any> {
+    return this.connection.query(this.toPgParam(statement), params);
   }
 
   close(): Promise<void> {
@@ -24,6 +28,7 @@ export class PgPromiseAdapter implements DatabaseConnection {
   async commit(): Promise<void> {}
 }
 
+/*
 export class WowPgPromiseAdapter implements DatabaseConnection {
   connection: any;
   statements: { statement: string; params: any }[];
@@ -62,3 +67,4 @@ export class WowPgPromiseAdapter implements DatabaseConnection {
       });
   }
 }
+*/

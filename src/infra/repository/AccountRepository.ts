@@ -10,19 +10,19 @@ export class AccountRepositoryPostgres implements AccountRepository {
   constructor(private connection: DatabaseConnection) {}
 
   async save(account: Account): Promise<void> {
-    const query = `INSERT INTO iam.account (id, username, password) VALUES ($/id/, $/username/, $/password/)`;
-
+    const query = `INSERT INTO iam.account (id, username, password) VALUES (:id, :username, :password)`;
     await this.connection.query(query, {
       id: account.id,
       username: account.getUsername(),
       password: account.getPassword(),
     });
+    this.connection.commit();
   }
   async getById(id: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE id = $/id/';
+    const query = 'SELECT * FROM iam.account WHERE id = :id';
     const [account] = await this.connection.query(query, { id: id });
     if (!account) {
-      return undefined;
+      return;
     }
     return Account.restore(account.id, account.username, account.password);
   }
