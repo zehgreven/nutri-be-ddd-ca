@@ -32,8 +32,7 @@ export class ExpressHttpServerAdapter implements httpServer {
         const result = await callback(req.params, req.body);
         res.json(result);
       } catch (error: any) {
-        let statusCode = this.mapErrorToStatusCode(error);
-
+        const statusCode = this.mapErrorToStatusCode(error);
         res.status(statusCode).json({
           message: error.message,
         });
