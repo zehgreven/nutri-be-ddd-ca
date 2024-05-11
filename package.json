@@ -2,8 +2,21 @@
   "name": "nutri-be-ddd-ca",
   "version": "1.0.0",
   "description": "",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "node",
+    "typescript",
+    "express",
+    "jest",
+    "postgresql",
+    "ddd",
+    "clean architecture",
+    "iam"
+  ],
+  "author": "José Lazaretti <eduardo1793@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zehgreven/nutri-be-ddd-ca"
+  },
   "license": "ISC",
   "main": "index.js",
   "scripts": {
