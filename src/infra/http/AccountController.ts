@@ -10,7 +10,7 @@ export class AccountController {
   }
 
   private registerGetAccountById(httpServer: httpServer, getAccountById: GetAccountById) {
-    httpServer.get('/accounts/:accountId', async (req: any, res: any) => {
+    httpServer.get('/accounts/v1/:accountId', async (req: any, res: any) => {
       try {
         const accountId = req.params.accountId;
         const account = await getAccountById.execute(accountId);
@@ -24,7 +24,7 @@ export class AccountController {
   }
 
   private registerSignUp(httpServer: httpServer, signUp: SignUp) {
-    httpServer.post('/accounts', async (req: any, res: any) => {
+    httpServer.post('/accounts/v1', async (req: any, res: any) => {
       try {
         const account = await signUp.execute(req.body);
         res.json(account);

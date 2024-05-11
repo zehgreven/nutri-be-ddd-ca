@@ -4,6 +4,7 @@ import DatabaseConnection from '../database/DatabaseConnection';
 export interface AccountRepository {
   save(account: Account): Promise<void>;
   getById(id: string): Promise<Account | undefined>;
+  getByUsername(id: string): Promise<Account | undefined>;
 }
 
 export class AccountRepositoryPostgres implements AccountRepository {
@@ -18,9 +19,19 @@ export class AccountRepositoryPostgres implements AccountRepository {
     });
     this.connection.commit();
   }
+
   async getById(id: string): Promise<Account | undefined> {
     const query = 'SELECT * FROM iam.account WHERE id = :id';
     const [account] = await this.connection.query(query, { id: id });
+    if (!account) {
+      return;
+    }
+    return Account.restore(account.id, account.username, account.password);
+  }
+
+  async getByUsername(username: string): Promise<Account | undefined> {
+    const query = 'SELECT * FROM iam.account WHERE username = :username';
+    const [account] = await this.connection.query(query, { username });
     if (!account) {
       return;
     }
@@ -31,11 +42,19 @@ export class AccountRepositoryPostgres implements AccountRepository {
 export class AccountRepositoryMemoryDatabase implements AccountRepository {
   accounts: Account[] = [];
 
+  clear(): void {
+    this.accounts = [];
+  }
+
   async save(account: Account): Promise<void> {
     this.accounts.push(account);
   }
 
   async getById(id: string): Promise<Account | undefined> {
     return this.accounts.find(account => account.id === id);
+  }
+
+  async getByUsername(username: string): Promise<Account | undefined> {
+    return this.accounts.find(account => account.getUsername() === username);
   }
 }
