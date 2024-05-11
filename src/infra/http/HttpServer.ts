@@ -1,4 +1,9 @@
 import express from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
+import { InvalidEmailError } from '../../domain/error/InvalidEmailError';
+import { PasswordCreationError } from '../../domain/error/PasswordCreationError';
+import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 
 export default interface httpServer {
   listen(port: number, callback: Function): void;
@@ -22,7 +27,29 @@ export class ExpressHttpServerAdapter implements httpServer {
   }
 
   private register(method: string, path: string, callback: Function): void {
-    this.app[method](path, callback);
+    this.app[method](path, async (req: any, res: any) => {
+      try {
+        const result = await callback(req.params, req.body);
+        res.json(result);
+      } catch (error: any) {
+        let statusCode = this.mapErrorToStatusCode(error);
+
+        res.status(statusCode).json({
+          message: error.message,
+        });
+      }
+    });
+  }
+
+  private mapErrorToStatusCode(error: Error): number {
+    const statusCodeMap = {
+      [AccountNotFoundError.name]: StatusCodes.NOT_FOUND,
+      [PasswordCreationError.name]: StatusCodes.BAD_REQUEST,
+      [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
+      [IncorrectCredentialsError.name]: StatusCodes.UNAUTHORIZED,
+    };
+
+    return statusCodeMap[error.name] || StatusCodes.INTERNAL_SERVER_ERROR;
   }
 
   public get(path: string, callback: Function): void {
