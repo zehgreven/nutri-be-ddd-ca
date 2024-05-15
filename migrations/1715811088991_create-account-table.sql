@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS iam.account (
     created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(3),
     deleted_at TIMESTAMP(3),
-    username TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
 
     CONSTRAINT "account_pkey" PRIMARY KEY ("id")
