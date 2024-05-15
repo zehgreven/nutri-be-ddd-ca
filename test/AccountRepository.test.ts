@@ -1,42 +1,32 @@
 import DatabaseConnection, { PgPromiseAdapter } from '../src/infra/database/DatabaseConnection';
 
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { AccountRepository, AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
 import Account from '../src/domain/entity/Account';
+import { AccountRepository, AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
+import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
 
 describe('Account Repository', () => {
   jest.setTimeout(60000);
 
-  let postgresContainer: StartedPostgreSqlContainer;
+  const dbContainer = DatabaseTestContainer.getInstance();
   let postgresClient: DatabaseConnection;
   let accountRepository: AccountRepository;
 
   beforeAll(async () => {
-    postgresContainer = await new PostgreSqlContainer().start();
-
-    postgresClient = new PgPromiseAdapter(postgresContainer.getConnectionUri());
-    await postgresClient.query(`
-      create schema iam;
-      create table iam.account (
-        id uuid primary key,
-        username text not null,
-        password text not null
-      );
-    `);
-
+    await dbContainer.start();
+    postgresClient = new PgPromiseAdapter(dbContainer.getConnectionUri());
     accountRepository = new AccountRepositoryPostgres(postgresClient);
   });
 
   afterAll(async () => {
     await postgresClient.close();
-    await postgresContainer.stop();
+    await dbContainer.stop();
   });
 
   beforeEach(async () => {
     await postgresClient.query('truncate iam.account cascade;');
   });
 
-  test('should be abel to create account and get it by id', async () => {
+  test('should be able to create account and get it by id', async () => {
     const account = Account.create('johndoe@test.com', 'secret');
     await accountRepository.save(account);
 
@@ -46,7 +36,7 @@ describe('Account Repository', () => {
     expect(user?.getPassword()).toBe(account.getPassword());
   });
 
-  test('should be abel to get by username', async () => {
+  test('should be able to get by username', async () => {
     const account = Account.create('johndoe@test.com', 'secret');
     await accountRepository.save(account);
 

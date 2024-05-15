@@ -1,0 +1,5 @@
+-- Up Migration
+CREATE SCHEMA IF NOT EXISTS iam;
+
+-- Down Migration
+DROP SCHEMA IF EXISTS iam CASCADE;
