@@ -25,7 +25,7 @@ describe('Account Controller', () => {
 
   it('should be able to get current user', async () => {
     const { body: auth } = await global.testRequest
-      .post('/auth/v1')
+      .post('/auth/v1/authenticate')
       .set({ 'Content-Type': 'application/json' })
       .send(account);
 

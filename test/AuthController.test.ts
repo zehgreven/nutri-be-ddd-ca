@@ -25,7 +25,7 @@ describe('Auth Controller', () => {
 
   it('should be able to sign in', async () => {
     const { status, body } = await global.testRequest
-      .post('/auth/v1')
+      .post('/auth/v1/authenticate')
       .set({ 'Content-Type': 'application/json' })
       .send(account);
 
@@ -35,7 +35,7 @@ describe('Auth Controller', () => {
 
   it('should throw an error when password is incorrect', async () => {
     const { status, body } = await global.testRequest
-      .post('/auth/v1')
+      .post('/auth/v1/authenticate')
       .set({ 'Content-Type': 'application/json' })
       .send({
         username: 'johndoe@test.com',

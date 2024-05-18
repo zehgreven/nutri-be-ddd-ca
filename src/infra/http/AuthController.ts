@@ -6,7 +6,7 @@ export class AuthController {
     readonly httpServer: HttpServer,
     readonly signIn: SignIn,
   ) {
-    httpServer.post('/auth/v1', [], this.executeSignIn);
+    httpServer.post('/auth/v1/authenticate', [], this.executeSignIn);
   }
 
   private executeSignIn: CallbackFunction = (_: any, body: any) => {
