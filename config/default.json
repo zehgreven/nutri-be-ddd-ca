@@ -6,5 +6,9 @@
     "port": 5432,
     "database": "app",
     "migration-file-language": "sql"
+  },
+  "auth": {
+    "key": "secret",
+    "expiration": "1h"
   }
 }

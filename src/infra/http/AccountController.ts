@@ -1,23 +1,33 @@
 import { GetAccountById } from '../../application/usecase/GetAccountById';
 import { SignUp } from '../../application/usecase/SignUp';
-import httpServer from './HttpServer';
+import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
+import AuthorizationMiddleware from './AuthorizationMiddleware';
+import httpServer, { CallbackFunction } from './HttpServer';
 
 export class AccountController {
-  constructor(httpServer: httpServer, getAccountById: GetAccountById, signUp: SignUp) {
-    this.registerGetAccountById(httpServer, getAccountById);
-    this.registerSignUp(httpServer, signUp);
+  constructor(
+    readonly httpServer: httpServer,
+    readonly getAccountById: GetAccountById,
+    readonly signUp: SignUp,
+  ) {
+    httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
+    httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
+    httpServer.post('/accounts/v1', [], this.executeSignUp);
   }
 
-  private registerGetAccountById(httpServer: httpServer, getAccountById: GetAccountById) {
-    httpServer.get('/accounts/v1/:accountId', async (params: any) => {
-      const accountId = params.accountId;
-      return await getAccountById.execute(accountId);
-    });
-  }
+  private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
+    if (!accountId) {
+      throw new UnauthorizedError('Invalid account id');
+    }
+    return this.getAccountById.execute(accountId);
+  };
 
-  private registerSignUp(httpServer: httpServer, signUp: SignUp) {
-    httpServer.post('/accounts/v1', async (params: any, body: any) => {
-      return await signUp.execute(body);
-    });
-  }
+  private executeGetAccountById: CallbackFunction = (params: any) => {
+    const accountId = params.accountId;
+    return this.getAccountById.execute(accountId);
+  };
+
+  private executeSignUp: CallbackFunction = (_: any, body: any) => {
+    return this.signUp.execute(body);
+  };
 }

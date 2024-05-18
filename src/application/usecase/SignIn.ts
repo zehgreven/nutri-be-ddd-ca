@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
+import config from 'config';
 import jwt from 'jsonwebtoken';
-import { AccountRepository } from '../../infra/repository/AccountRepository';
 import Account from '../../domain/entity/Account';
 import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
-import { IncorrectCredentialsError as IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
+import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
+import { AccountRepository } from '../../infra/repository/AccountRepository';
 
 export class SignIn {
   constructor(readonly accountRepository: AccountRepository) {}
@@ -19,7 +20,7 @@ export class SignIn {
       throw new IncorrectCredentialsError('Your credentials are incorrect');
     }
 
-    const token = jwt.sign({ id: account.id }, 'secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: account.id }, config.get<string>('auth.key'), { expiresIn: '1h' });
 
     return {
       token,
