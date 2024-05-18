@@ -21,6 +21,7 @@ describe('SignIn', () => {
     await signUp.execute(signUpInput);
     const output = await signIn.execute(signUpInput);
     expect(output.token).toBeDefined();
+    expect(output.refreshToken).toBeDefined();
   });
 
   it("should throw an error when account doesn't exists", async () => {

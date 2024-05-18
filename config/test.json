@@ -4,6 +4,7 @@
   },
   "auth": {
     "key": "secret",
-    "expiration": "1h"
+    "expiration": "1h",
+    "refreshTokenExpiration": "24h"
   }
 }

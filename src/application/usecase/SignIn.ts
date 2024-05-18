@@ -10,15 +10,21 @@ export class SignIn {
 
   async execute(input: Input): Promise<Output> {
     const account = await this.accountRepository.getByUsername(input.username);
-
     if (!account || !this.isPasswordCorrect(input, account)) {
       throw new IncorrectCredentialsError('Your credentials are incorrect');
     }
 
-    const token = jwt.sign({ id: account.id }, config.get<string>('auth.key'), { expiresIn: '1h' });
+    const tokenKey = config.get<string>('auth.key');
+
+    const tokenExpiration = config.get<string>('auth.expiration');
+    const token = jwt.sign({ id: account.id }, tokenKey, { expiresIn: tokenExpiration });
+
+    const refreshTokenExpiration = config.get<string>('auth.refreshTokenExpiration');
+    const refreshToken = jwt.sign({ id: account.id }, tokenKey, { expiresIn: refreshTokenExpiration });
 
     return {
       token,
+      refreshToken,
     };
   }
 
@@ -34,4 +40,5 @@ type Input = {
 
 type Output = {
   token: string;
+  refreshToken: string;
 };

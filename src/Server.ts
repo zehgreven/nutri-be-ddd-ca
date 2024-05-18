@@ -8,6 +8,7 @@ import { AuthController } from './infra/http/AuthController';
 import HttpServer, { ExpressHttpServerAdapter } from './infra/http/HttpServer';
 import { AccountRepositoryPostgres } from './infra/repository/AccountRepository';
 import { Application } from 'express';
+import { RefreshToken } from './application/usecase/RefreshToken';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -83,8 +84,9 @@ export class Server {
     const getAccountById = new GetAccountById(accountRepository);
     const signUp = new SignUp(accountRepository);
     const signIn = new SignIn(accountRepository);
+    const refreshToken = new RefreshToken(accountRepository);
 
     new AccountController(this.httpServer, getAccountById, signUp);
-    new AuthController(this.httpServer, signIn);
+    new AuthController(this.httpServer, signIn, refreshToken);
   }
 }
