@@ -1,15 +1,15 @@
 @startuml
 
 package iam {
-  class User {
+  class Account {
     String username
     String password
     login()
     createAccount()
   }
-  User -> Profile
-  User -- Application
-  User -> Permission
+  Account -> Profile
+  Account -- Application
+  Account -> Permission
 
   class Profile {
     String name
@@ -56,7 +56,7 @@ package commom {
   Person -> BodyInfo
   Person -> Phone
   Person -> Image
-  User -> Person
+  Account -> Person
 
   class Phone {
     String ddi
@@ -110,8 +110,8 @@ package communication {
     String text
     Timestamp datetime
   }
-  Message *-- User : from
-  Message *-- User : to
+  Message *-- Account : from
+  Message *-- Account : to
 }
 
 package nutri {
@@ -124,7 +124,7 @@ package nutri {
     print()
     send()
   }
-  Diet -up- User
+  Diet -up- Account
 }
 
 
