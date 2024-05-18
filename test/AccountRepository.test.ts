@@ -5,13 +5,11 @@ import { AccountRepository, AccountRepositoryPostgres } from '../src/infra/repos
 import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
 
 describe('Account Repository', () => {
-  jest.setTimeout(60000);
-
-  const dbContainer = DatabaseTestContainer.getInstance();
   let postgresClient: DatabaseConnection;
   let accountRepository: AccountRepository;
 
   beforeAll(async () => {
+    const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
     postgresClient = new PgPromiseAdapter(dbContainer.getConnectionUri());
     accountRepository = new AccountRepositoryPostgres(postgresClient);
@@ -19,7 +17,6 @@ describe('Account Repository', () => {
 
   afterAll(async () => {
     await postgresClient.close();
-    await dbContainer.stop();
   });
 
   beforeEach(async () => {

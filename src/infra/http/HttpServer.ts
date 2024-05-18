@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
 import { InvalidEmailError } from '../../domain/error/InvalidEmailError';
@@ -9,8 +9,9 @@ import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
 
-export default interface httpServer {
+export default interface HttpServer {
   listen(port: number, callback: Function): void;
+  getApp(): Application;
   get(path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void;
   post(path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void;
   put(path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void;
@@ -18,12 +19,16 @@ export default interface httpServer {
   patch(path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void;
 }
 
-export class ExpressHttpServerAdapter implements httpServer {
+export class ExpressHttpServerAdapter implements HttpServer {
   private app: any;
 
   constructor() {
     this.app = express();
     this.app.use(express.json());
+  }
+
+  public getApp(): Application {
+    return this.app;
   }
 
   public listen(port: number, callback: () => void): void {

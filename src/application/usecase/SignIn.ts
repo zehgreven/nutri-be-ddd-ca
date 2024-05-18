@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 import Account from '../../domain/entity/Account';
-import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
 import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 import { AccountRepository } from '../../infra/repository/AccountRepository';
 
@@ -12,11 +11,7 @@ export class SignIn {
   async execute(input: Input): Promise<Output> {
     const account = await this.accountRepository.getByUsername(input.username);
 
-    if (!account) {
-      throw new AccountNotFoundError(`Unable to find account for username=${input.username}`);
-    }
-
-    if (!this.isPasswordCorrect(input, account)) {
+    if (!account || !this.isPasswordCorrect(input, account)) {
       throw new IncorrectCredentialsError('Your credentials are incorrect');
     }
 

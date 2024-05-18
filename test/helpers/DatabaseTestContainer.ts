@@ -23,7 +23,6 @@ export class DatabaseTestContainer {
         .withUsername('postgres')
         .withPassword('123456')
         .withExposedPorts(5432)
-        .withName('database')
         .start();
 
       await dbMigration({

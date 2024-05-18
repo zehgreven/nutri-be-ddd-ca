@@ -24,7 +24,7 @@ describe('SignIn', () => {
   });
 
   it("should throw an error when account doesn't exists", async () => {
-    await expect(signIn.execute(signUpInput)).rejects.toThrow(AccountNotFoundError);
+    await expect(signIn.execute(signUpInput)).rejects.toThrow(IncorrectCredentialsError);
   });
 
   it('should throw an error when password is incorrect', async () => {

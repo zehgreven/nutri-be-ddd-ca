@@ -1,9 +1,9 @@
 import { SignIn } from '../../application/usecase/SignIn';
-import httpServer, { CallbackFunction } from './HttpServer';
+import HttpServer, { CallbackFunction } from './HttpServer';
 
 export class AuthController {
   constructor(
-    readonly httpServer: httpServer,
+    readonly httpServer: HttpServer,
     readonly signIn: SignIn,
   ) {
     httpServer.post('/auth/v1', [], this.executeSignIn);

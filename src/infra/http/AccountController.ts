@@ -2,11 +2,11 @@ import { GetAccountById } from '../../application/usecase/GetAccountById';
 import { SignUp } from '../../application/usecase/SignUp';
 import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
 import AuthorizationMiddleware from './AuthorizationMiddleware';
-import httpServer, { CallbackFunction } from './HttpServer';
+import HttpServer, { CallbackFunction } from './HttpServer';
 
 export class AccountController {
   constructor(
-    readonly httpServer: httpServer,
+    readonly httpServer: HttpServer,
     readonly getAccountById: GetAccountById,
     readonly signUp: SignUp,
   ) {

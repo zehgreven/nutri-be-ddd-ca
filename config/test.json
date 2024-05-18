@@ -1,4 +1,7 @@
 {
+  "server": {
+    "port": 3000
+  },
   "auth": {
     "key": "secret",
     "expiration": "1h"
