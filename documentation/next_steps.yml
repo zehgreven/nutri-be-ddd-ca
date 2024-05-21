@@ -1,0 +1,36 @@
+dependency-analysis:
+  - production:
+      - bcrypt:
+        ok: true
+        reason: 'Used to encrypt passwords'
+      - config:
+        ok: false
+        change-complexity: Large
+        coupled: High
+        reason: 'Allow different profiles such as dev, test, and prod'
+        changes: 'Might want to change to another config handler like dotenv'
+      - express:
+        ok: true
+        reason: 'REST API'
+      - http-status-codes:
+        ok: true
+        reason: 'It makes the REST API return status codes nore readable'
+      - jsonwebtoken:
+        ok: true
+        reason: 'Used to sign and verify tokens'
+      - pg-promise:
+        ok: false
+        change-complexity: Middium
+        coupled: Low
+        changes: 'Might want to change to another database handler, or maybe even an ORM'
+        reason: 'Postgres database connection'
+  - development:
+      - node-pg-migrate:
+        ok: false
+        change-complexity: Small
+        coupled: Low
+        changes: 'Might want to change to another migrations handler, or maybe even an ORM'
+        reason: 'Database migrations'
+
+next-steps:
+  1: Reduce config coupling
