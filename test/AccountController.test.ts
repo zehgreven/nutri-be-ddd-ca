@@ -1,7 +1,6 @@
 import config from 'config';
 import supertest from 'supertest';
 import { SignUp } from '../src/application/usecase/SignUp';
-import DatabaseConnection, { PgPromiseAdapter } from '../src/infra/database/DatabaseConnection';
 import { AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
 import { Server } from '../src/Server';
 import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
