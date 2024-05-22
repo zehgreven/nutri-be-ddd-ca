@@ -1,9 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
+import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 import { InvalidEmailError } from '../../domain/error/InvalidEmailError';
 import { PasswordCreationError } from '../../domain/error/PasswordCreationError';
-import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
@@ -64,7 +64,8 @@ export class ExpressHttpServerAdapter implements HttpServer {
       async (req: any, res: any) => {
         try {
           const result = await callback(req.params, req.body, req.accountId);
-          res.json(result);
+          const statusCode = this.mapSuccessToStatusCode(method);
+          res.status(statusCode).json(result);
         } catch (error: any) {
           const statusCode = this.mapErrorToStatusCode(error);
           res.status(statusCode).json({
@@ -73,6 +74,23 @@ export class ExpressHttpServerAdapter implements HttpServer {
         }
       },
     );
+  }
+
+  mapSuccessToStatusCode(method: string) {
+    switch (method) {
+      case 'get':
+        return StatusCodes.OK;
+      case 'post':
+        return StatusCodes.CREATED;
+      case 'put':
+        return StatusCodes.OK;
+      case 'delete':
+        return StatusCodes.NO_CONTENT;
+      case 'patch':
+        return StatusCodes.OK;
+      default:
+        return StatusCodes.OK;
+    }
   }
 
   public get(path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void {

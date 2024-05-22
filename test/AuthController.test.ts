@@ -4,6 +4,7 @@ import { SignUp } from '../src/application/usecase/SignUp';
 import { AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
 import { Server } from '../src/Server';
 import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
+import { StatusCodes } from 'http-status-codes';
 
 describe('Auth Controller', () => {
   const account = { username: 'johndoe@test.com', password: 'secret' };
@@ -28,11 +29,11 @@ describe('Auth Controller', () => {
       .set({ 'Content-Type': 'application/json' })
       .send(account);
 
-    expect(status).toBe(200);
+    expect(status).toBe(StatusCodes.CREATED);
     expect(body.token).toBeDefined();
   });
 
-  it('should throw an error when password is incorrect', async () => {
+  it('should return unauthorized when credentials are wrong', async () => {
     const { status, body } = await global.testRequest
       .post('/auth/v1/authenticate')
       .set({ 'Content-Type': 'application/json' })
@@ -41,7 +42,21 @@ describe('Auth Controller', () => {
         password: 'wrong-password',
       });
 
-    expect(status).toBe(401);
+    expect(status).toBe(StatusCodes.UNAUTHORIZED);
     expect(body.message).toBe('Your credentials are incorrect');
   });
+
+  it('should return unauthorized when username does not exist', async () => {
+    const { status, body } = await global.testRequest
+      .post('/auth/v1/authenticate')
+      .set({ 'Content-Type': 'application/json' })
+      .send({
+        username: 'wrog-account@test.com',
+        password: 'secret',
+      });
+
+      expect(status).toBe(StatusCodes.UNAUTHORIZED);
+      expect(body.message).toBe('Your credentials are incorrect');
+  });
+
 });
