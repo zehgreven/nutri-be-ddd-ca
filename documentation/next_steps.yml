@@ -8,7 +8,7 @@ dependency-analysis:
         change-complexity: Large
         coupled: High
         reason: 'Allow different profiles such as dev, test, and prod'
-        changes: 'Might want to change to another config handler like dotenv'
+        changes: 'Might want to change to another config handler'
       - express:
         ok: true
         reason: 'REST API'
@@ -33,4 +33,10 @@ dependency-analysis:
         reason: 'Database migrations'
 
 next-steps:
-  1: Reduce config coupling
+  - code:
+  - dependecies:
+      - development:
+          - Add something to auto-fix imports via eslint
+      - production:
+          - Add dotenv
+          - Add logger
