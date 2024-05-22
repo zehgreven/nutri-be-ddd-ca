@@ -1,5 +1,6 @@
-import config from 'config';
+import { Application } from 'express';
 import { GetAccountById } from './application/usecase/GetAccountById';
+import { RefreshToken } from './application/usecase/RefreshToken';
 import { SignIn } from './application/usecase/SignIn';
 import { SignUp } from './application/usecase/SignUp';
 import DatabaseConnection, { PgPromiseAdapter } from './infra/database/DatabaseConnection';
@@ -7,25 +8,15 @@ import { AccountController } from './infra/http/AccountController';
 import { AuthController } from './infra/http/AuthController';
 import HttpServer, { ExpressHttpServerAdapter } from './infra/http/HttpServer';
 import { AccountRepositoryPostgres } from './infra/repository/AccountRepository';
-import { Application } from 'express';
-import { RefreshToken } from './application/usecase/RefreshToken';
 
 export class Server {
   private httpServer?: HttpServer;
   private databaseConnection?: DatabaseConnection;
 
   constructor(
-    private port?: number,
-    private dbConnectionUri?: string,
-  ) {
-    if (!port) {
-      this.port = 3000;
-    }
-
-    if (!dbConnectionUri) {
-      this.dbConnectionUri = `postgresql://${config.get('db.user')}:${config.get('db.password')}@${config.get('db.host')}:${config.get('db.port')}/${config.get('db.database')}`;
-    }
-  }
+    readonly port: number,
+    readonly dbConnectionUri: string,
+  ) {}
 
   public init(): void {
     this.setupDatabase();
@@ -88,5 +79,12 @@ export class Server {
 
     new AccountController(this.httpServer, getAccountById, signUp);
     new AuthController(this.httpServer, signIn, refreshToken);
+  }
+
+  public close(): Promise<void> {
+    if (this.databaseConnection) {
+      return this.databaseConnection.close();
+    }
+    return Promise.resolve();
   }
 }
