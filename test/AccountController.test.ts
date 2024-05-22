@@ -1,4 +1,5 @@
 import config from 'config';
+import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
 import { SignUp } from '../src/application/usecase/SignUp';
 import { AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
@@ -33,7 +34,7 @@ describe('Account Controller', () => {
       .set({ Authorization: `Bearer ${auth.token}` })
       .send();
 
-    expect(status).toBe(200);
+    expect(status).toBe(StatusCodes.OK);
     expect(body.username).toBe(account.username);
   });
 
@@ -43,11 +44,11 @@ describe('Account Controller', () => {
       .set({ Authorization: `Bearer invalid-token` })
       .send();
 
-    expect(status).toBe(401);
+    expect(status).toBe(StatusCodes.UNAUTHORIZED);
   });
 
   it('should be unautorized when token is missing', async () => {
     const { status } = await global.testRequest.get('/accounts/v1/me').send();
-    expect(status).toBe(401);
+    expect(status).toBe(StatusCodes.UNAUTHORIZED);
   });
 });
