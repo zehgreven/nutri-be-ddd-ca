@@ -34,6 +34,11 @@ dependency-analysis:
 
 next-steps:
   - code:
+      - Implement Functionality Type API
+      - Implement Functionality API
+      - Implement Permission API
+      - Implement Profile API
+      - Create README.md
   - dependecies:
       - development:
           - Add something to auto-fix imports via eslint
