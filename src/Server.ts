@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { GetAccountById } from './application/usecase/GetAccountById';
+import { GetAccountByIdQuery } from './application/query/GetAccountByIdQuery';
 import { RefreshToken } from './application/usecase/RefreshToken';
 import { SignIn } from './application/usecase/SignIn';
 import { SignUp } from './application/usecase/SignUp';
@@ -72,10 +72,10 @@ export class Server {
     }
 
     const accountRepository = new AccountRepositoryPostgres(this.databaseConnection);
-    const getAccountById = new GetAccountById(accountRepository);
+    const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const signUp = new SignUp(accountRepository);
     const signIn = new SignIn(accountRepository);
-    const refreshToken = new RefreshToken(accountRepository);
+    const refreshToken = new RefreshToken();
 
     new AccountController(this.httpServer, getAccountById, signUp);
     new AuthController(this.httpServer, signIn, refreshToken);

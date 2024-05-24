@@ -3,7 +3,6 @@ import DatabaseConnection from '../database/DatabaseConnection';
 
 export interface AccountRepository {
   save(account: Account): Promise<void>;
-  getById(id: string): Promise<Account | undefined>;
   getByUsername(id: string): Promise<Account | undefined>;
 }
 
@@ -18,15 +17,6 @@ export class AccountRepositoryPostgres implements AccountRepository {
       password: account.getPassword(),
     });
     this.connection.commit();
-  }
-
-  async getById(id: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE id = :id';
-    const [account] = await this.connection.query(query, { id: id });
-    if (!account) {
-      return;
-    }
-    return Account.restore(account.id, account.username, account.password);
   }
 
   async getByUsername(username: string): Promise<Account | undefined> {
@@ -48,10 +38,6 @@ export class AccountRepositoryMemoryDatabase implements AccountRepository {
 
   async save(account: Account): Promise<void> {
     this.accounts.push(account);
-  }
-
-  async getById(id: string): Promise<Account | undefined> {
-    return this.accounts.find(account => account.id === id);
   }
 
   async getByUsername(username: string): Promise<Account | undefined> {

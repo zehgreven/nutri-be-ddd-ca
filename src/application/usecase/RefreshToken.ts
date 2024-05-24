@@ -2,10 +2,9 @@ import config from 'config';
 import jwt from 'jsonwebtoken';
 import { InvalidTokenError } from '../../domain/error/InvalidTokenError';
 import { JwtToken } from '../../infra/http/AuthorizationMiddleware';
-import { AccountRepository } from '../../infra/repository/AccountRepository';
 
 export class RefreshToken {
-  constructor(readonly accountRepository: AccountRepository) {}
+  constructor() {}
 
   async execute(input?: Input): Promise<Output> {
     if (!input?.token) {

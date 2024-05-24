@@ -1,4 +1,4 @@
-import { GetAccountById } from '../../application/usecase/GetAccountById';
+import { GetAccountByIdQuery } from '../../application/query/GetAccountByIdQuery';
 import { SignUp } from '../../application/usecase/SignUp';
 import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
 import AuthorizationMiddleware from './AuthorizationMiddleware';
@@ -7,7 +7,7 @@ import HttpServer, { CallbackFunction } from './HttpServer';
 export class AccountController {
   constructor(
     readonly httpServer: HttpServer,
-    readonly getAccountById: GetAccountById,
+    readonly getAccountById: GetAccountByIdQuery,
     readonly signUp: SignUp,
   ) {
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);

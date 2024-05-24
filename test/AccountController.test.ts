@@ -3,13 +3,17 @@ import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
 import { Server } from '../src/Server';
 import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
+import DatabaseConnection from '../src/infra/database/DatabaseConnection';
+import { GetAccountByIdQuery } from '../src/application/query/GetAccountByIdQuery';
 
 describe('Account Controller', () => {
+  let server: Server;
+
   beforeAll(async () => {
     const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
 
-    const server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
+    server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
     server.init();
 
     global.testRequest = supertest(server.getApp());
@@ -26,6 +30,11 @@ describe('Account Controller', () => {
 
       expect(status).toBe(StatusCodes.CREATED);
       expect(body.id).toBeDefined();
+
+      const getAccountByIdQuery = new GetAccountByIdQuery(server.getDatabaseConnection());
+      const accountById = await getAccountByIdQuery.execute(body.id);
+      expect(accountById.username).toBe(account.username);
+      expect(accountById.password).not.toBe(account.password);
     });
   });
 

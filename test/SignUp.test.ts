@@ -1,4 +1,3 @@
-import { GetAccountById } from '../src/application/usecase/GetAccountById';
 import { SignUp } from '../src/application/usecase/SignUp';
 import { InvalidEmailError } from '../src/domain/error/InvalidEmailError';
 import { PasswordCreationError } from '../src/domain/error/PasswordCreationError';
@@ -6,23 +5,8 @@ import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/Account
 
 const accountRepository = new AccountRepositoryMemoryDatabase();
 const signUp = new SignUp(accountRepository);
-const getAccountById = new GetAccountById(accountRepository);
 
 describe('SignUp', () => {
-  test('should be able to sign up', async () => {
-    const input = {
-      username: 'johndoe@test.com',
-      password: 'secret',
-    };
-
-    const output = await signUp.execute(input);
-    expect(output.id).toBeDefined();
-
-    const user = await getAccountById.execute(output.id);
-    expect(user.username).toBe(input.username);
-    expect(user.password).not.toBe(input.password);
-  });
-
   test('username should be an email', async () => {
     const input = {
       username: 'johndoe',
