@@ -42,6 +42,7 @@ next-steps:
   - dependecies:
       - development:
           - Add something to auto-fix imports via eslint
+          - tsconfig-paths
       - production:
           - Add dotenv
           - Add logger
