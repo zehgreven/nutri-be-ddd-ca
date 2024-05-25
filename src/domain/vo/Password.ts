@@ -27,4 +27,8 @@ export default class Password {
   getValue() {
     return this.value;
   }
+
+  isSamePassword(password: string) {
+    return bcrypt.compareSync(password, this.value);
+  }
 }

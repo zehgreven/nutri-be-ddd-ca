@@ -2,10 +2,8 @@ import config from 'config';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { RefreshToken } from '../src/application/usecase/RefreshToken';
 import { InvalidTokenError } from '../src/domain/error/InvalidTokenError';
-import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/AccountRepository';
 
-const accountRepository = new AccountRepositoryMemoryDatabase();
-const refreshTokenUseCase = new RefreshToken(accountRepository);
+const refreshTokenUseCase = new RefreshToken();
 
 describe('SignIn', () => {
   it('should be able to refresh token', async () => {

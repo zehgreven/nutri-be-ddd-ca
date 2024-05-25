@@ -3,11 +3,15 @@
 actor User
 actor Admin
 
+usecase CreateAccount #LightGreen
+usecase Login #LightGreen
+usecase GetAccount #LightGreen
+usecase ChangePassword #LightGreen
+
 User <|-r- Admin
 
-User -l-> (CreateAccount)
+User -l-> (CreateAccount) 
 User -r-> (GetAccount)
-(GetAccount) <.r. (UpdateAccount) : extends
 (GetAccount) <.d. (ChangePassword) : extends
 User -d-> (Login)
 

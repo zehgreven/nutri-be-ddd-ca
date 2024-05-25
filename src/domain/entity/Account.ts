@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { PasswordCreationError } from '../error/PasswordCreationError';
 import Email from '../vo/Email';
 import Password from '../vo/Password';
 
@@ -6,7 +7,7 @@ export default class Account {
   private constructor(
     readonly id: string,
     readonly username: Email,
-    readonly password: Password,
+    private password: Password,
   ) {}
 
   static create(username: string, password: string) {
@@ -24,5 +25,17 @@ export default class Account {
 
   getPassword() {
     return this.password.getValue();
+  }
+
+  isSamePassword(password: string) {
+    return this.password.isSamePassword(password);
+  }
+
+  changePassword(password: string) {
+    if (this.isSamePassword(password)) {
+      throw new PasswordCreationError('New password must be different from old password');
+    }
+
+    this.password = Password.create(password);
   }
 }

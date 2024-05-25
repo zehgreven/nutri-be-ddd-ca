@@ -1,3 +1,4 @@
+import { ChangePassword } from '@src/application/usecase/ChangePassword';
 import { GetAccountByIdQuery } from '../../application/query/GetAccountByIdQuery';
 import { SignUp } from '../../application/usecase/SignUp';
 import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
@@ -9,10 +10,12 @@ export class AccountController {
     readonly httpServer: HttpServer,
     readonly getAccountById: GetAccountByIdQuery,
     readonly signUp: SignUp,
+    readonly changePassword: ChangePassword,
   ) {
+    httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
     httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
-    httpServer.post('/accounts/v1', [], this.executeSignUp);
+    httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
@@ -29,5 +32,9 @@ export class AccountController {
 
   private executeSignUp: CallbackFunction = (_: any, body: any) => {
     return this.signUp.execute(body);
+  };
+
+  private executeChangePassword: CallbackFunction = (_: any, body: any, accountId?: string) => {
+    return this.changePassword.execute(body, accountId);
   };
 }

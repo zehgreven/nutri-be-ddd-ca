@@ -1,5 +1,6 @@
 import { Application } from 'express';
 import { GetAccountByIdQuery } from './application/query/GetAccountByIdQuery';
+import { ChangePassword } from './application/usecase/ChangePassword';
 import { RefreshToken } from './application/usecase/RefreshToken';
 import { SignIn } from './application/usecase/SignIn';
 import { SignUp } from './application/usecase/SignUp';
@@ -76,8 +77,9 @@ export class Server {
     const signUp = new SignUp(accountRepository);
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken();
+    const changePassword = new ChangePassword(accountRepository);
 
-    new AccountController(this.httpServer, getAccountById, signUp);
+    new AccountController(this.httpServer, getAccountById, signUp, changePassword);
     new AuthController(this.httpServer, signIn, refreshToken);
   }
 

@@ -1,10 +1,9 @@
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
+import { GetAccountByIdQuery } from '../src/application/query/GetAccountByIdQuery';
 import { Server } from '../src/Server';
 import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
-import DatabaseConnection from '../src/infra/database/DatabaseConnection';
-import { GetAccountByIdQuery } from '../src/application/query/GetAccountByIdQuery';
 
 describe('Account Controller', () => {
   let server: Server;
@@ -86,6 +85,21 @@ describe('Account Controller', () => {
       expect(status).toBe(StatusCodes.OK);
       expect(body.username).toBe(account.username);
     });
+
+    it('ChangePassword: should be able to change password', async () => {
+      const { status, body } = await global.testRequest
+        .patch('/accounts/v1/password')
+        .set({ Authorization: `Bearer ${token}` })
+        .send({
+          oldPassword: 'secret',
+          newPassword: 'new-secret',
+        });
+
+      expect(status).toBe(StatusCodes.OK);
+      expect(body.username).toBe(account.username);
+    });
+
+
   });
 
   describe('Not Authorized', () => {

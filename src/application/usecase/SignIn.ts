@@ -1,7 +1,5 @@
-import bcrypt from 'bcrypt';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import Account from '../../domain/entity/Account';
 import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
 import { AccountRepository } from '../../infra/repository/AccountRepository';
 
@@ -10,7 +8,7 @@ export class SignIn {
 
   async execute(input: Input): Promise<Output> {
     const account = await this.accountRepository.getByUsername(input.username);
-    if (!account || !this.isPasswordCorrect(input, account)) {
+    if (!account || !account.isSamePassword(input.password)) {
       throw new IncorrectCredentialsError('Your credentials are incorrect');
     }
 
@@ -26,10 +24,6 @@ export class SignIn {
       token,
       refreshToken,
     };
-  }
-
-  private isPasswordCorrect(input: Input, account: Account) {
-    return bcrypt.compareSync(input.password, account.getPassword());
   }
 }
 
