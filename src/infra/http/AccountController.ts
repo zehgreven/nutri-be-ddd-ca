@@ -1,6 +1,6 @@
 import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
-import { ChangePassword } from '@src/application/usecase/ChangePassword';
-import { SignUp } from '@src/application/usecase/SignUp';
+import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';

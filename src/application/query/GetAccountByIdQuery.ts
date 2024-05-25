@@ -18,7 +18,7 @@ export class GetAccountByIdQuery {
     const [account] = await this.connection.query(query, { id });
 
     if (!account) {
-      throw new AccountNotFoundError(`Unable to find account with id = ${id}`);
+      throw new AccountNotFoundError(`Unable to find account with id=${id}`);
     }
 
     return account;

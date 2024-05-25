@@ -1,5 +1,5 @@
-import { RefreshToken } from '@src/application/usecase/RefreshToken';
-import { SignIn } from '@src/application/usecase/SignIn';
+import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
+import { SignIn } from '@src/application/usecase/auth/SignIn';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 
 export class AuthController {

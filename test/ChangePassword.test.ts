@@ -1,4 +1,4 @@
-import { ChangePassword } from '@src/application/usecase/ChangePassword';
+import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';

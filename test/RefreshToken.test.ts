@@ -1,4 +1,4 @@
-import { RefreshToken } from '@src/application/usecase/RefreshToken';
+import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
 import config from 'config';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';

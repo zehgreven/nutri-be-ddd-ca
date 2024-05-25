@@ -37,12 +37,10 @@ next-steps:
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API
-      - Implement Profile API
+      - Implement Profile API (progress=30%)
       - Create README.md
   - dependecies:
       - development:
-          - Add something to auto-fix imports via eslint
-          - tsconfig-paths
       - production:
           - Add dotenv
           - Add logger

@@ -1,14 +1,18 @@
-import { Application } from 'express';
 import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
-import { ChangePassword } from '@src/application/usecase/ChangePassword';
-import { RefreshToken } from '@src/application/usecase/RefreshToken';
-import { SignIn } from '@src/application/usecase/SignIn';
-import { SignUp } from '@src/application/usecase/SignUp';
+import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { SignUp } from '@src/application/usecase/account/SignUp';
+import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
+import { SignIn } from '@src/application/usecase/auth/SignIn';
+import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
+import { ProfileController } from '@src/infra/http/ProfileController';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
+import { Application } from 'express';
+import { GetProfileByIdQuery } from './application/query/GetProfileByIdQuery';
+import { ProfileRepositoryPostgres } from './infra/repository/ProfileRepository';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -73,14 +77,20 @@ export class Server {
     }
 
     const accountRepository = new AccountRepositoryPostgres(this.databaseConnection);
+    const profileRepository = new ProfileRepositoryPostgres(this.databaseConnection);
+
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
+    const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
+
     const signUp = new SignUp(accountRepository);
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken();
     const changePassword = new ChangePassword(accountRepository);
+    const createProfile = new CreateProfile(profileRepository);
 
     new AccountController(this.httpServer, getAccountById, signUp, changePassword);
     new AuthController(this.httpServer, signIn, refreshToken);
+    new ProfileController(this.httpServer, createProfile, getProfileById);
   }
 
   public close(): Promise<void> {

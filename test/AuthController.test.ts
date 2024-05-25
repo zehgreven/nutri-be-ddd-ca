@@ -1,4 +1,4 @@
-import { SignUp } from '@src/application/usecase/SignUp';
+import { SignUp } from '@src/application/usecase/account/SignUp';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { Server } from '@src/Server';
 import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';

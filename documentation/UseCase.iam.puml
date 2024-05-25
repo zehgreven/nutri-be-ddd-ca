@@ -7,6 +7,9 @@ usecase CreateAccount #LightGreen
 usecase Login #LightGreen
 usecase GetAccount #LightGreen
 usecase ChangePassword #LightGreen
+usecase CreateProfile #LightGreen
+usecase GetProfile #LightGreen
+usecase ManageProfile #LightYellow
 
 User <|-r- Admin
 
@@ -17,7 +20,11 @@ User -d-> (Login)
 
 Admin --> (ManageProfile) 
 (ManageProfile) <.r. (AssignProfile) 
-(ManageProfile) <.r. (Create/Update/Delete Profile) 
+(ManageProfile) <.r. (CreateProfile) 
+(ManageProfile) <.r. (UpdateProfile) 
+(ManageProfile) <.r. (DeleteProfile) 
+(ManageProfile) <.r. (ListProfile) 
+(ManageProfile) <.r. (GetProfile) 
 
 Admin -r-> (ManageUser) 
 Admin -r-> (ManageApplication) 

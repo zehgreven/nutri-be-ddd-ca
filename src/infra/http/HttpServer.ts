@@ -2,6 +2,7 @@ import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -116,6 +117,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
   private mapErrorToStatusCode(error: Error): number {
     const statusCodeMap = {
       [AccountNotFoundError.name]: StatusCodes.NOT_FOUND,
+      [ProfileNotFoundError.name]: StatusCodes.NOT_FOUND,
       [PasswordCreationError.name]: StatusCodes.BAD_REQUEST,
       [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
       [IncorrectCredentialsError.name]: StatusCodes.UNAUTHORIZED,

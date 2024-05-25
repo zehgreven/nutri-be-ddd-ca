@@ -1,5 +1,5 @@
-import { SignIn } from '@src/application/usecase/SignIn';
-import { SignUp } from '@src/application/usecase/SignUp';
+import { SignUp } from '@src/application/usecase/account/SignUp';
+import { SignIn } from '@src/application/usecase/auth/SignIn';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
