@@ -1,5 +1,5 @@
-import Account from '../../domain/entity/Account';
-import { AccountRepository } from '../../infra/repository/AccountRepository';
+import Account from '@src/domain/entity/Account';
+import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class SignUp {
   constructor(readonly accountRepository: AccountRepository) {}

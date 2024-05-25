@@ -1,6 +1,6 @@
-import { RefreshToken } from '../../application/usecase/RefreshToken';
-import { SignIn } from '../../application/usecase/SignIn';
-import HttpServer, { CallbackFunction } from './HttpServer';
+import { RefreshToken } from '@src/application/usecase/RefreshToken';
+import { SignIn } from '@src/application/usecase/SignIn';
+import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 
 export class AuthController {
   constructor(

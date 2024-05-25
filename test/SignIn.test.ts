@@ -1,8 +1,7 @@
-import { AccountNotFoundError } from '../src/domain/error/AccountNotFoundError';
-import { SignIn } from '../src/application/usecase/SignIn';
-import { IncorrectCredentialsError } from '../src/domain/error/IncorrectCredentialsError';
-import { SignUp } from '../src/application/usecase/SignUp';
-import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/AccountRepository';
+import { SignIn } from '@src/application/usecase/SignIn';
+import { SignUp } from '@src/application/usecase/SignUp';
+import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
 const accountRepository = new AccountRepositoryMemoryDatabase();
 const signUp = new SignUp(accountRepository);

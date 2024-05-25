@@ -1,7 +1,7 @@
-import { SignUp } from '../src/application/usecase/SignUp';
-import { InvalidEmailError } from '../src/domain/error/InvalidEmailError';
-import { PasswordCreationError } from '../src/domain/error/PasswordCreationError';
-import { AccountRepositoryMemoryDatabase } from '../src/infra/repository/AccountRepository';
+import { SignUp } from '@src/application/usecase/SignUp';
+import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
+import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
 const accountRepository = new AccountRepositoryMemoryDatabase();
 const signUp = new SignUp(accountRepository);

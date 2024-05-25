@@ -1,7 +1,7 @@
+import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
+import { MiddlewareFunction } from '@src/infra/http/HttpServer';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
-import { MiddlewareFunction } from './HttpServer';
 
 export interface JwtToken {
   id: string;

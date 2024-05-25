@@ -1,7 +1,7 @@
+import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
+import { JwtToken } from '@src/infra/http/AuthorizationMiddleware';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { InvalidTokenError } from '../../domain/error/InvalidTokenError';
-import { JwtToken } from '../../infra/http/AuthorizationMiddleware';
 
 export class RefreshToken {
   constructor() {}

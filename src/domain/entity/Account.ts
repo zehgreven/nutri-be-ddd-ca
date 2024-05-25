@@ -1,7 +1,7 @@
+import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import Email from '@src/domain/vo/Email';
+import Password from '@src/domain/vo/Password';
 import crypto from 'crypto';
-import { PasswordCreationError } from '../error/PasswordCreationError';
-import Email from '../vo/Email';
-import Password from '../vo/Password';
 
 export default class Account {
   private constructor(

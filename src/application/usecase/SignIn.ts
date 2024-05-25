@@ -1,7 +1,7 @@
+import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
-import { AccountRepository } from '../../infra/repository/AccountRepository';
 
 export class SignIn {
   constructor(readonly accountRepository: AccountRepository) {}

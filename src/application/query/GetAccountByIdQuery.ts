@@ -1,5 +1,5 @@
-import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
-import DatabaseConnection from '../../infra/database/DatabaseConnection';
+import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import DatabaseConnection from '@src/infra/database/DatabaseConnection';
 
 export class GetAccountByIdQuery {
   constructor(readonly connection: DatabaseConnection) {}

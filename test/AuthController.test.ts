@@ -1,10 +1,10 @@
+import { SignUp } from '@src/application/usecase/SignUp';
+import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
+import { Server } from '@src/Server';
+import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';
 import config from 'config';
-import supertest from 'supertest';
-import { SignUp } from '../src/application/usecase/SignUp';
-import { AccountRepositoryPostgres } from '../src/infra/repository/AccountRepository';
-import { Server } from '../src/Server';
-import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
 import { StatusCodes } from 'http-status-codes';
+import supertest from 'supertest';
 
 describe('Auth Controller', () => {
   const account = { username: 'johndoe@test.com', password: 'secret' };
@@ -55,8 +55,7 @@ describe('Auth Controller', () => {
         password: 'secret',
       });
 
-      expect(status).toBe(StatusCodes.UNAUTHORIZED);
-      expect(body.message).toBe('Your credentials are incorrect');
+    expect(status).toBe(StatusCodes.UNAUTHORIZED);
+    expect(body.message).toBe('Your credentials are incorrect');
   });
-
 });

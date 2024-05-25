@@ -1,6 +1,6 @@
-import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
-import { PasswordCreationError } from '../../domain/error/PasswordCreationError';
-import { AccountRepository } from '../../infra/repository/AccountRepository';
+import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class ChangePassword {
   constructor(readonly accountRepository: AccountRepository) {}

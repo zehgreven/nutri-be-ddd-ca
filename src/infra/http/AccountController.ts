@@ -1,9 +1,9 @@
+import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
 import { ChangePassword } from '@src/application/usecase/ChangePassword';
-import { GetAccountByIdQuery } from '../../application/query/GetAccountByIdQuery';
-import { SignUp } from '../../application/usecase/SignUp';
-import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
-import AuthorizationMiddleware from './AuthorizationMiddleware';
-import HttpServer, { CallbackFunction } from './HttpServer';
+import { SignUp } from '@src/application/usecase/SignUp';
+import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
+import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
+import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 
 export class AccountController {
   constructor(

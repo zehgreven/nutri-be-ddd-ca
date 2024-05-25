@@ -1,5 +1,5 @@
+import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
 import bcrypt from 'bcrypt';
-import { PasswordCreationError } from '../error/PasswordCreationError';
 
 export default class Password {
   static readonly PASSWORD_MIN_LENGTH = 4;

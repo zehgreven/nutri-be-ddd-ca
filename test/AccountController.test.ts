@@ -1,9 +1,9 @@
+import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { Server } from '@src/Server';
+import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
-import { GetAccountByIdQuery } from '../src/application/query/GetAccountByIdQuery';
-import { Server } from '../src/Server';
-import { DatabaseTestContainer } from './helpers/DatabaseTestContainer';
 
 describe('Account Controller', () => {
   let server: Server;
@@ -98,8 +98,6 @@ describe('Account Controller', () => {
       expect(status).toBe(StatusCodes.OK);
       expect(body.username).toBe(account.username);
     });
-
-
   });
 
   describe('Not Authorized', () => {

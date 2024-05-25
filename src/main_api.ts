@@ -1,5 +1,5 @@
+import { Server } from '@src/Server';
 import config from 'config';
-import { Server } from './Server';
 
 enum ExitStatus {
   FAILURE = 1,

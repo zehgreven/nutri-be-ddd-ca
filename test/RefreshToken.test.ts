@@ -1,7 +1,7 @@
+import { RefreshToken } from '@src/application/usecase/RefreshToken';
+import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
 import config from 'config';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import { RefreshToken } from '../src/application/usecase/RefreshToken';
-import { InvalidTokenError } from '../src/domain/error/InvalidTokenError';
 
 const refreshTokenUseCase = new RefreshToken();
 

@@ -1,14 +1,14 @@
 import { Application } from 'express';
-import { GetAccountByIdQuery } from './application/query/GetAccountByIdQuery';
-import { ChangePassword } from './application/usecase/ChangePassword';
-import { RefreshToken } from './application/usecase/RefreshToken';
-import { SignIn } from './application/usecase/SignIn';
-import { SignUp } from './application/usecase/SignUp';
-import DatabaseConnection, { PgPromiseAdapter } from './infra/database/DatabaseConnection';
-import { AccountController } from './infra/http/AccountController';
-import { AuthController } from './infra/http/AuthController';
-import HttpServer, { ExpressHttpServerAdapter } from './infra/http/HttpServer';
-import { AccountRepositoryPostgres } from './infra/repository/AccountRepository';
+import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { ChangePassword } from '@src/application/usecase/ChangePassword';
+import { RefreshToken } from '@src/application/usecase/RefreshToken';
+import { SignIn } from '@src/application/usecase/SignIn';
+import { SignUp } from '@src/application/usecase/SignUp';
+import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
+import { AccountController } from '@src/infra/http/AccountController';
+import { AuthController } from '@src/infra/http/AuthController';
+import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
+import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 
 export class Server {
   private httpServer?: HttpServer;

@@ -1,10 +1,10 @@
+import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
+import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AccountNotFoundError } from '../../domain/error/AccountNotFoundError';
-import { IncorrectCredentialsError } from '../../domain/error/IncorrectCredentialsError';
-import { InvalidEmailError } from '../../domain/error/InvalidEmailError';
-import { PasswordCreationError } from '../../domain/error/PasswordCreationError';
-import { UnauthorizedError } from '../../domain/error/UnauthorizedError';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
