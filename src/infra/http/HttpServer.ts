@@ -1,8 +1,10 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
+import { InvalidInputError } from '@src/domain/error/InvalidInputError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
+import { TextLengthError } from '@src/domain/error/TextLengthError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -122,6 +124,8 @@ export class ExpressHttpServerAdapter implements HttpServer {
       [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
       [IncorrectCredentialsError.name]: StatusCodes.UNAUTHORIZED,
       [UnauthorizedError.name]: StatusCodes.UNAUTHORIZED,
+      [InvalidInputError.name]: StatusCodes.BAD_REQUEST,
+      [TextLengthError.name]: StatusCodes.BAD_REQUEST,
     };
 
     return statusCodeMap[error.name] || StatusCodes.INTERNAL_SERVER_ERROR;

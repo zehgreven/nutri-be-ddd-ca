@@ -34,10 +34,10 @@ dependency-analysis:
 
 next-steps:
   - code:
+      - Implement Profile API (in_progress=50%)
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API
-      - Implement Profile API (progress=30%)
       - Create README.md
   - dependecies:
       - development:

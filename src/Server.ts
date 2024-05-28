@@ -1,18 +1,19 @@
 import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { GetProfileByIdQuery } from '@src/application/query/GetProfileByIdQuery';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
 import { SignIn } from '@src/application/usecase/auth/SignIn';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
+import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
+import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
-import { GetProfileByIdQuery } from './application/query/GetProfileByIdQuery';
-import { ProfileRepositoryPostgres } from './infra/repository/ProfileRepository';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -87,10 +88,11 @@ export class Server {
     const refreshToken = new RefreshToken();
     const changePassword = new ChangePassword(accountRepository);
     const createProfile = new CreateProfile(profileRepository);
+    const patchProfile = new PatchProfile(profileRepository);
 
     new AccountController(this.httpServer, getAccountById, signUp, changePassword);
     new AuthController(this.httpServer, signIn, refreshToken);
-    new ProfileController(this.httpServer, createProfile, getProfileById);
+    new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById);
   }
 
   public close(): Promise<void> {

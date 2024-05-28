@@ -86,4 +86,27 @@ describe('Profile Controller', () => {
       expect(status).toBe(StatusCodes.NOT_FOUND);
     });
   });
+
+  describe('PatchProfile', () => {
+    it('PatchProfile: should be able to patch profile', async () => {
+      const profile = {
+        name: 'PatchProfile Test',
+        description: 'PatchProfile Description Test',
+      };
+      const { body: createdProfile } = await global.testRequest
+        .post('/profiles/v1')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(profile);
+
+      const { status, body } = await global.testRequest
+        .patch(`/profiles/v1/${createdProfile.id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send({
+          name: 'PatchProfile Test 2',
+          description: 'PatchProfile Description Test 2',
+        });
+
+      expect(status).toBe(StatusCodes.OK);
+    });
+  });
 });

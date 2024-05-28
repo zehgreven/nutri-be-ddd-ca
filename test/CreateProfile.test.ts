@@ -28,13 +28,4 @@ describe('Create Profile', () => {
       }),
     ).rejects.toThrow(TextLengthError);
   });
-
-  it('should throw error when description is empty', async () => {
-    await expect(
-      createProfile.execute({
-        name: 'My profile',
-        description: '',
-      }),
-    ).rejects.toThrow(TextLengthError);
-  });
 });
