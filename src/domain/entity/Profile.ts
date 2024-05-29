@@ -21,7 +21,6 @@ export default class Profile {
   }
 
   patch(input: ProfilePatchInput) {
-    console.log('Patch input', input);
     if (!input || (input.name === undefined && input.active === undefined && input.description === undefined)) {
       throw new InvalidInputError('Patch should have an input with name, description and/or active');
     }
