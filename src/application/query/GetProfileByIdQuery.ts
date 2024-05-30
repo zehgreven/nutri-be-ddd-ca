@@ -14,7 +14,7 @@ export class GetProfileByIdQuery {
       from
         iam.profile
       where
-        id = :id
+        id = $(id)
     `;
     const [profile] = await this.connection.query(query, { id });
 

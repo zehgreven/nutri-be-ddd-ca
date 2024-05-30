@@ -13,7 +13,7 @@ export class GetAccountByIdQuery {
       from
         iam.account
       where
-        id = :id
+        id = $(id)
     `;
     const [account] = await this.connection.query(query, { id });
 

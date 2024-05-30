@@ -12,7 +12,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   constructor(private connection: DatabaseConnection) {}
 
   async save(account: Account): Promise<void> {
-    const query = `INSERT INTO iam.account (id, username, password) VALUES (:id, :username, :password)`;
+    const query = `INSERT INTO iam.account (id, username, password) VALUES ($(id), $(username), $(password))`;
     await this.connection.query(query, {
       id: account.id,
       username: account.getUsername(),
@@ -22,7 +22,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   }
 
   async updatePassword(account: Account): Promise<void> {
-    const query = `UPDATE iam.account SET password = :password WHERE id = :id`;
+    const query = `UPDATE iam.account SET password = $(password) WHERE id = $(id)`;
     await this.connection.query(query, {
       id: account.id,
       password: account.getPassword(),
@@ -31,7 +31,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   }
 
   async getById(id: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE id = :id';
+    const query = 'SELECT * FROM iam.account WHERE id = $(id)';
     const [account] = await this.connection.query(query, { id: id });
     if (!account) {
       return;
@@ -40,7 +40,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   }
 
   async getByUsername(username: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE username = :username';
+    const query = 'SELECT * FROM iam.account WHERE username = $(username)';
     const [account] = await this.connection.query(query, { username });
     if (!account) {
       return;

@@ -10,6 +10,7 @@ usecase ChangePassword #LightGreen
 usecase CreateProfile #LightGreen
 usecase GetProfile #LightGreen
 usecase PatchProfile #LightGreen
+usecase ListProfile #LightGreen
 usecase ManageProfile #LightYellow
 
 User <|-r- Admin

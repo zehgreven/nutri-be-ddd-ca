@@ -66,7 +66,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
       },
       async (req: any, res: any) => {
         try {
-          const result = await callback(req.params, req.body, req.accountId);
+          const result = await callback({ ...req.params, ...req.query }, req.body, req.accountId);
           const statusCode = this.mapSuccessToStatusCode(method);
           res.status(statusCode).json(result);
         } catch (error: any) {

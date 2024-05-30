@@ -1,4 +1,4 @@
-import pgp from 'pg-promise';
+import pgp, { IDatabase } from 'pg-promise';
 
 export default interface DatabaseConnection {
   query(statement: string, params?: any, transactional?: boolean): Promise<any>;
@@ -7,18 +7,14 @@ export default interface DatabaseConnection {
 }
 
 export class PgPromiseAdapter implements DatabaseConnection {
-  connection: any;
+  connection: IDatabase<any>;
 
   constructor(readonly connectionString: string) {
     this.connection = pgp()(connectionString);
   }
 
-  private toPgParam(statement: string): string {
-    return statement.replace(/:[a-zA-Z0-9_]+/g, match => `$/${match.substring(1)}/`);
-  }
-
   query(statement: string, params?: any): Promise<any> {
-    return this.connection.query(this.toPgParam(statement), params);
+    return this.connection.query(statement, params);
   }
 
   close(): Promise<void> {

@@ -14,6 +14,7 @@ import { ProfileController } from '@src/infra/http/ProfileController';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
+import { ListProfileQuery } from './application/query/ListProfileQuery';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -82,6 +83,7 @@ export class Server {
 
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
+    const listProfile = new ListProfileQuery(this.databaseConnection);
 
     const signUp = new SignUp(accountRepository);
     const signIn = new SignIn(accountRepository);
@@ -92,7 +94,7 @@ export class Server {
 
     new AccountController(this.httpServer, getAccountById, signUp, changePassword);
     new AuthController(this.httpServer, signIn, refreshToken);
-    new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById);
+    new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById, listProfile);
   }
 
   public close(): Promise<void> {

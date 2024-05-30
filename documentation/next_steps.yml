@@ -34,7 +34,7 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement Profile API (in_progress=50%)
+      - Implement Profile API (in_progress=70%)
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API

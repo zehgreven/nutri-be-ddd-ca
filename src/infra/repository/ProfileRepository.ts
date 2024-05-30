@@ -11,7 +11,8 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
   constructor(private connection: DatabaseConnection) {}
 
   async save(profile: Profile): Promise<void> {
-    const query = 'insert into iam.profile (id, name, description, active) values (:id, :name, :description, :active)';
+    const query =
+      'insert into iam.profile (id, name, description, active) values ($(id), $(name), $(description), $(active))';
     await this.connection.query(query, {
       id: profile.id,
       name: profile.getName(),
@@ -22,7 +23,8 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
   }
 
   async update(profile: Profile): Promise<void> {
-    const query = 'update iam.profile set name = :name, description = :description, active = :active where id = :id';
+    const query =
+      'update iam.profile set name = $(name), description = $(description), active = $(active) where id = $(id)';
     await this.connection.query(query, {
       id: profile.id,
       name: profile.getName(),
@@ -33,7 +35,7 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
   }
 
   async getById(id: string): Promise<Profile | undefined> {
-    const query = 'select id, name, description, active from iam.profile where id = :id';
+    const query = 'select id, name, description, active from iam.profile where id = $(id)';
     const [profile] = await this.connection.query(query, { id });
     if (!profile) {
       return;

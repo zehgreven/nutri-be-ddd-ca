@@ -1,4 +1,5 @@
 import { GetProfileByIdQuery } from '@src/application/query/GetProfileByIdQuery';
+import { ListProfileQuery } from '@src/application/query/ListProfileQuery';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
@@ -10,8 +11,10 @@ export class ProfileController {
     readonly createProfile: CreateProfile,
     readonly patchProfile: PatchProfile,
     readonly getProfileById: GetProfileByIdQuery,
+    readonly listProfile: ListProfileQuery,
   ) {
     httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
+    httpServer.get('/profiles/v1', [AuthorizationMiddleware], this.executeListProfile);
     httpServer.get('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeGetProfileById);
     httpServer.patch('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executePatchProfile);
   }
@@ -26,5 +29,15 @@ export class ProfileController {
 
   private executeGetProfileById: CallbackFunction = (params: any) => {
     return this.getProfileById.execute(params.profileId);
+  };
+
+  private executeListProfile: CallbackFunction = (params: any) => {
+    if (!params.limit || params.limit < 1) {
+      params.limit = 10;
+    }
+    if (!params.page || params.page < 1) {
+      params.page = 1;
+    }
+    return this.listProfile.execute(params);
   };
 }
