@@ -34,7 +34,8 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement Profile API (in_progress=70%)
+      - Implement Profile API (in_progress=85%)
+        - POST account/v1/{ACCOUNT_ID}/profile/{PROFILE_ID}/assign
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API

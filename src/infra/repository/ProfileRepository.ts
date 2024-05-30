@@ -5,6 +5,7 @@ export interface ProfileRepository {
   save(profile: Profile): Promise<void>;
   update(profile: Profile): Promise<void>;
   getById(id: string): Promise<Profile | undefined>;
+  deleteById(id: string): Promise<void>;
 }
 
 export class ProfileRepositoryPostgres implements ProfileRepository {
@@ -35,12 +36,18 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
   }
 
   async getById(id: string): Promise<Profile | undefined> {
-    const query = 'select id, name, description, active from iam.profile where id = $(id)';
+    const query = 'select id, name, description, active from iam.profile where deleted is null and id = $(id)';
     const [profile] = await this.connection.query(query, { id });
     if (!profile) {
       return;
     }
     return Profile.restore(profile.id, profile.name, profile.description, profile.active);
+  }
+
+  async deleteById(id: string): Promise<void> {
+    const query = 'update iam.profile set deleted = now() where id = $(id)';
+    await this.connection.query(query, { id });
+    this.connection.commit();
   }
 }
 
@@ -58,6 +65,10 @@ export class ProfileRepositoryMemoryDatabase implements ProfileRepository {
 
   async getById(id: string): Promise<Profile | undefined> {
     return this.profiles.find(profile => profile.id === id);
+  }
+
+  async deleteById(id: string): Promise<void> {
+    this.profiles = this.profiles.filter(profile => profile.id !== id);
   }
 
   async clear(): Promise<void> {

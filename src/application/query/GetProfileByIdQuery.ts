@@ -13,8 +13,9 @@ export class GetProfileByIdQuery {
         active
       from
         iam.profile
-      where
-        id = $(id)
+      where 1=1
+        and deleted is null
+        and id = $(id)
     `;
     const [profile] = await this.connection.query(query, { id });
 

@@ -31,7 +31,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   }
 
   async getById(id: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE id = $(id)';
+    const query = 'SELECT * FROM iam.account WHERE deleted is null and id = $(id)';
     const [account] = await this.connection.query(query, { id: id });
     if (!account) {
       return;
@@ -40,7 +40,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
   }
 
   async getByUsername(username: string): Promise<Account | undefined> {
-    const query = 'SELECT * FROM iam.account WHERE username = $(username)';
+    const query = 'SELECT * FROM iam.account WHERE deleted is null and username = $(username)';
     const [account] = await this.connection.query(query, { username });
     if (!account) {
       return;

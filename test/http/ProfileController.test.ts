@@ -171,4 +171,28 @@ describe('Profile Controller', () => {
       expect(body.rows.length).toBeGreaterThan(0);
     });
   });
+
+  describe('DeleteProfile', () => {
+    it('DeleteProfile: should be able to delete profile', async () => {
+      const { body: createdProfile } = await global.testRequest
+        .post('/profiles/v1')
+        .set({ Authorization: `Bearer ${token}` })
+        .send({
+          name: 'DeleteProfile Test',
+          description: 'DeleteProfile Description Test',
+        });
+
+      const { status } = await global.testRequest
+        .delete(`/profiles/v1/${createdProfile.id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NO_CONTENT);
+
+      const { body: getByIdBody, status: getByIdStatus } = await global.testRequest
+        .get(`/profiles/v1/${createdProfile.id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(getByIdStatus).toBe(StatusCodes.NOT_FOUND);
+    });
+  });
 });

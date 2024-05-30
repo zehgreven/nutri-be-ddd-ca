@@ -1,6 +1,7 @@
 import { GetProfileByIdQuery } from '@src/application/query/GetProfileByIdQuery';
 import { ListProfileQuery } from '@src/application/query/ListProfileQuery';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
+import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 import AuthorizationMiddleware from './AuthorizationMiddleware';
@@ -12,11 +13,13 @@ export class ProfileController {
     readonly patchProfile: PatchProfile,
     readonly getProfileById: GetProfileByIdQuery,
     readonly listProfile: ListProfileQuery,
+    readonly deleteProfile: DeleteProfile,
   ) {
     httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
     httpServer.get('/profiles/v1', [AuthorizationMiddleware], this.executeListProfile);
     httpServer.get('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeGetProfileById);
     httpServer.patch('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executePatchProfile);
+    httpServer.delete('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeDeleteProfile);
   }
 
   private executeCreateProfile: CallbackFunction = (_: any, body: any) => {
@@ -29,6 +32,10 @@ export class ProfileController {
 
   private executeGetProfileById: CallbackFunction = (params: any) => {
     return this.getProfileById.execute(params.profileId);
+  };
+
+  private executeDeleteProfile: CallbackFunction = (params: any) => {
+    return this.deleteProfile.execute(params.profileId);
   };
 
   private executeListProfile: CallbackFunction = (params: any) => {
