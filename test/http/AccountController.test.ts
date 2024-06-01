@@ -98,6 +98,44 @@ describe('Account Controller', () => {
       expect(status).toBe(StatusCodes.OK);
       expect(body.username).toBe(account.username);
     });
+
+    it('AssignProfile: should be able to assign profile', async () => {
+      const { body: account } = await global.testRequest
+        .post('/accounts/v1')
+        .set({ 'Content-Type': 'application/json' })
+        .send({
+          username: `john.doe+${Math.random()}@test.com`,
+          password: 'secret',
+        });
+
+      const createProfilePayload = {
+        name: Math.random().toString(),
+        description: Math.random().toString(),
+      };
+      const { body: profile } = await global.testRequest
+        .post('/profiles/v1')
+        .set({ 'Content-Type': 'application/json' })
+        .set({ Authorization: `Bearer ${token}` })
+        .send(createProfilePayload);
+
+      const { status } = await global.testRequest
+        .post(`/accounts/v1/${account.id}/profile/${profile.id}`)
+        .set({ 'Content-Type': 'application/json' })
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      expect(status).toBe(StatusCodes.CREATED);
+
+      const { body: getAccount } = await global.testRequest
+        .get(`/accounts/v1/${account.id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(getAccount.profiles.length).toBe(1);
+      expect(getAccount.profiles[0].id).toBeDefined();
+      expect(getAccount.profiles[0].name).toBe(createProfilePayload.name);
+      expect(getAccount.profiles[0].description).toBe(createProfilePayload.description);
+      expect(getAccount.profiles[0].active).toBeTruthy();
+    });
   });
 
   describe('Not Authorized', () => {

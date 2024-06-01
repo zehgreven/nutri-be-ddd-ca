@@ -12,7 +12,8 @@ usecase GetProfile #LightGreen
 usecase PatchProfile #LightGreen
 usecase ListProfile #LightGreen
 usecase DeleteProfile #LightGreen
-usecase ManageProfile #LightYellow
+usecase AssignProfile #LightGreen
+usecase ManageProfile #LightGreen
 
 User <|-r- Admin
 
@@ -23,6 +24,7 @@ User -d-> (Login)
 
 Admin --> (ManageProfile) 
 (ManageProfile) <.r. (AssignProfile) 
+(ManageProfile) <.r. (UnassignProfile) 
 (ManageProfile) <.r. (CreateProfile) 
 (ManageProfile) <.r. (PatchProfile) 
 (ManageProfile) <.r. (DeleteProfile) 

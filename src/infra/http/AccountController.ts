@@ -1,4 +1,5 @@
 import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
@@ -11,11 +12,13 @@ export class AccountController {
     readonly getAccountById: GetAccountByIdQuery,
     readonly signUp: SignUp,
     readonly changePassword: ChangePassword,
+    readonly assignProfile: AssignProfile,
   ) {
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
     httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
     httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
+    httpServer.post('/accounts/v1/:accountId/profile/:profileId', [AuthorizationMiddleware], this.executeAssignProfile);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
@@ -36,5 +39,11 @@ export class AccountController {
 
   private executeChangePassword: CallbackFunction = (_: any, body: any, accountId?: string) => {
     return this.changePassword.execute(body, accountId);
+  };
+
+  private executeAssignProfile: CallbackFunction = (params: any) => {
+    const accountId = params.accountId;
+    const profileId = params.profileId;
+    return this.assignProfile.execute(accountId, profileId);
   };
 }
