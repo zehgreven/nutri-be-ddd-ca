@@ -15,8 +15,9 @@ import { AccountRepositoryPostgres } from '@src/infra/repository/AccountReposito
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
 import { ListProfileQuery } from './application/query/ListProfileQuery';
-import { DeleteProfile } from './application/usecase/profile/DeleteProfile';
 import { AssignProfile } from './application/usecase/account/AssignProfile';
+import { UnassignProfile } from './application/usecase/account/UnassignProfile';
+import { DeleteProfile } from './application/usecase/profile/DeleteProfile';
 import { AccountProfileRepositoryPostgres } from './infra/repository/AccountProfileRepository';
 
 export class Server {
@@ -97,8 +98,9 @@ export class Server {
     const patchProfile = new PatchProfile(profileRepository);
     const deleteProfile = new DeleteProfile(profileRepository);
     const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
+    const unassignProfile = new UnassignProfile(accountProfileRepository);
 
-    new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile);
+    new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById, listProfile, deleteProfile);
   }

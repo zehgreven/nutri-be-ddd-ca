@@ -3,6 +3,7 @@ import DatabaseConnection from '../database/DatabaseConnection';
 
 export interface AccountProfileRepository {
   save(accountProfile: AccountProfile): Promise<void>;
+  deleteByAccountIdAndProfileId(accountId: string, profileId: string): Promise<void>;
 }
 
 export class AccountProfileRepositoryPostgres implements AccountProfileRepository {
@@ -18,6 +19,18 @@ export class AccountProfileRepositoryPostgres implements AccountProfileRepositor
     });
     this.connection.commit();
   }
+
+  async deleteByAccountIdAndProfileId(accountId: string, profileId: string): Promise<void> {
+    const query = `
+      update iam.account_profile 
+      set deleted = now()
+      where account_id = $(accountId) 
+      and profile_id = $(profileId) 
+      and deleted is null
+    `;
+    await this.connection.query(query, { accountId, profileId });
+    this.connection.commit();
+  }
 }
 
 export class AccountProfileRepositoryMemoryDatabase implements AccountProfileRepository {
@@ -25,5 +38,11 @@ export class AccountProfileRepositoryMemoryDatabase implements AccountProfileRep
 
   async save(accountProfile: AccountProfile): Promise<void> {
     this.accountProfiles.push(accountProfile);
+  }
+
+  async deleteByAccountIdAndProfileId(accountId: string, profileId: string): Promise<void> {
+    this.accountProfiles = this.accountProfiles.filter(
+      accountProfile => accountProfile.accountId !== accountId || accountProfile.profileId !== profileId,
+    );
   }
 }

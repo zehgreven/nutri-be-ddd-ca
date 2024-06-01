@@ -3,7 +3,7 @@
 actor User
 actor Admin
 
-usecase CreateAccount #LightGreen
+usecase CreateAccount #LightYellow
 usecase Login #LightGreen
 usecase GetAccount #LightGreen
 usecase ChangePassword #LightGreen
@@ -13,6 +13,7 @@ usecase PatchProfile #LightGreen
 usecase ListProfile #LightGreen
 usecase DeleteProfile #LightGreen
 usecase AssignProfile #LightGreen
+usecase UnassignProfile #LightGreen
 usecase ManageProfile #LightGreen
 
 User <|-r- Admin

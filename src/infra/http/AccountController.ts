@@ -2,6 +2,7 @@ import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery'
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
+import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
@@ -13,12 +14,18 @@ export class AccountController {
     readonly signUp: SignUp,
     readonly changePassword: ChangePassword,
     readonly assignProfile: AssignProfile,
+    readonly unassignProfile: UnassignProfile,
   ) {
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
     httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
     httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
     httpServer.post('/accounts/v1/:accountId/profile/:profileId', [AuthorizationMiddleware], this.executeAssignProfile);
+    httpServer.delete(
+      '/accounts/v1/:accountId/profile/:profileId',
+      [AuthorizationMiddleware],
+      this.executeUnassignProfile,
+    );
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
@@ -45,5 +52,11 @@ export class AccountController {
     const accountId = params.accountId;
     const profileId = params.profileId;
     return this.assignProfile.execute(accountId, profileId);
+  };
+
+  private executeUnassignProfile: CallbackFunction = (params: any) => {
+    const accountId = params.accountId;
+    const profileId = params.profileId;
+    return this.unassignProfile.execute(accountId, profileId);
   };
 }

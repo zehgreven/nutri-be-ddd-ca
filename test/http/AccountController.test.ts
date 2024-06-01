@@ -99,7 +99,7 @@ describe('Account Controller', () => {
       expect(body.username).toBe(account.username);
     });
 
-    it('AssignProfile: should be able to assign profile', async () => {
+    it('AssignProfile + UnassignProfile: should be able to assign and unassign profile', async () => {
       const { body: account } = await global.testRequest
         .post('/accounts/v1')
         .set({ 'Content-Type': 'application/json' })
@@ -118,23 +118,35 @@ describe('Account Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(createProfilePayload);
 
-      const { status } = await global.testRequest
+      const { status: assignProfileStatus } = await global.testRequest
         .post(`/accounts/v1/${account.id}/profile/${profile.id}`)
         .set({ 'Content-Type': 'application/json' })
         .set({ Authorization: `Bearer ${token}` })
         .send();
+      expect(assignProfileStatus).toBe(StatusCodes.CREATED);
 
-      expect(status).toBe(StatusCodes.CREATED);
-
-      const { body: getAccount } = await global.testRequest
+      const { body: accountWithAssignedProfile } = await global.testRequest
         .get(`/accounts/v1/${account.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
-      expect(getAccount.profiles.length).toBe(1);
-      expect(getAccount.profiles[0].id).toBeDefined();
-      expect(getAccount.profiles[0].name).toBe(createProfilePayload.name);
-      expect(getAccount.profiles[0].description).toBe(createProfilePayload.description);
-      expect(getAccount.profiles[0].active).toBeTruthy();
+      expect(accountWithAssignedProfile.profiles.length).toBe(1);
+      expect(accountWithAssignedProfile.profiles[0].id).toBeDefined();
+      expect(accountWithAssignedProfile.profiles[0].name).toBe(createProfilePayload.name);
+      expect(accountWithAssignedProfile.profiles[0].description).toBe(createProfilePayload.description);
+      expect(accountWithAssignedProfile.profiles[0].active).toBeTruthy();
+
+      const { status } = await global.testRequest
+        .delete(`/accounts/v1/${account.id}/profile/${profile.id}`)
+        .set({ 'Content-Type': 'application/json' })
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NO_CONTENT);
+
+      const { body: accountWithoutAssignedProfile } = await global.testRequest
+        .get(`/accounts/v1/${account.id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(accountWithoutAssignedProfile.profiles.length).toBe(0);
     });
   });
 
