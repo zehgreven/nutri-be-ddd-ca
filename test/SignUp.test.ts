@@ -1,10 +1,12 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { AccountProfileRepositoryMemoryDatabase } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
 const accountRepository = new AccountRepositoryMemoryDatabase();
-const signUp = new SignUp(accountRepository);
+const accountProfileRepository = new AccountProfileRepositoryMemoryDatabase();
+const signUp = new SignUp(accountRepository, accountProfileRepository);
 
 describe('SignUp', () => {
   test('username should be an email', async () => {

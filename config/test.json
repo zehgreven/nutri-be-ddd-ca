@@ -6,5 +6,8 @@
     "key": "secret",
     "expiration": "1h",
     "refreshTokenExpiration": "24h"
+  },
+  "default": {
+    "profileId": "dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131"
   }
 }

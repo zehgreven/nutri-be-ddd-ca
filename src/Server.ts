@@ -90,7 +90,7 @@ export class Server {
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
     const listProfile = new ListProfileQuery(this.databaseConnection);
 
-    const signUp = new SignUp(accountRepository);
+    const signUp = new SignUp(accountRepository, accountProfileRepository);
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken();
     const changePassword = new ChangePassword(accountRepository);

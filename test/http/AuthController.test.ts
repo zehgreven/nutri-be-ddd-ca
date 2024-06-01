@@ -1,4 +1,5 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
+import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { Server } from '@src/Server';
 import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';
@@ -17,7 +18,8 @@ describe('Auth Controller', () => {
     server.init();
 
     const accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
-    const signUp = new SignUp(accountRepository);
+    const accountProfileRepository = new AccountProfileRepositoryPostgres(server.getDatabaseConnection());
+    const signUp = new SignUp(accountRepository, accountProfileRepository);
     await signUp.execute(account);
 
     global.testRequest = supertest(server.getApp());

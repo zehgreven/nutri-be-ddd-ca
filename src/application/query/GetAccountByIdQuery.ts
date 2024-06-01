@@ -48,4 +48,12 @@ type Output = {
   id: string;
   username: string;
   password: string;
+  profiles: Profile[];
+};
+
+type Profile = {
+  id: string;
+  name: string;
+  description: string;
+  active: boolean;
 };

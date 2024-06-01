@@ -34,10 +34,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Modify Create Account logic to assign a default profile
-        - Should assign a default profile to a new account
-        - The default profile is "Cliente"
-        - Observable Pattern
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API

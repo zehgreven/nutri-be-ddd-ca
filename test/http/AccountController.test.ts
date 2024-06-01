@@ -19,7 +19,7 @@ describe('Account Controller', () => {
   });
 
   describe('Sign Up', () => {
-    it('should be able to create an account', async () => {
+    it('should be able to create a client account', async () => {
       const account = { username: `john.doe+${Math.random()}@test.com`, password: 'secret' };
 
       const { status, body } = await global.testRequest
@@ -32,8 +32,11 @@ describe('Account Controller', () => {
 
       const getAccountByIdQuery = new GetAccountByIdQuery(server.getDatabaseConnection());
       const accountById = await getAccountByIdQuery.execute(body.id);
+
       expect(accountById.username).toBe(account.username);
       expect(accountById.password).not.toBe(account.password);
+      expect(accountById.profiles.length).toBe(1);
+      expect(accountById.profiles[0].name).toBe('Cliente');
     });
   });
 
@@ -129,11 +132,13 @@ describe('Account Controller', () => {
         .get(`/accounts/v1/${account.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
-      expect(accountWithAssignedProfile.profiles.length).toBe(1);
-      expect(accountWithAssignedProfile.profiles[0].id).toBeDefined();
-      expect(accountWithAssignedProfile.profiles[0].name).toBe(createProfilePayload.name);
-      expect(accountWithAssignedProfile.profiles[0].description).toBe(createProfilePayload.description);
-      expect(accountWithAssignedProfile.profiles[0].active).toBeTruthy();
+      expect(accountWithAssignedProfile.profiles.length).toBe(2);
+      const [assignedProfile] = accountWithAssignedProfile.profiles.filter(
+        (profile: any) => profile.name === createProfilePayload.name,
+      );
+      expect(assignedProfile.id).toBeDefined();
+      expect(assignedProfile.description).toBe(createProfilePayload.description);
+      expect(assignedProfile.active).toBeTruthy();
 
       const { status } = await global.testRequest
         .delete(`/accounts/v1/${account.id}/profile/${profile.id}`)
@@ -146,7 +151,7 @@ describe('Account Controller', () => {
         .get(`/accounts/v1/${account.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
-      expect(accountWithoutAssignedProfile.profiles.length).toBe(0);
+      expect(accountWithoutAssignedProfile.profiles.length).toBe(1);
     });
   });
 

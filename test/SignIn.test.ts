@@ -1,10 +1,12 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { SignIn } from '@src/application/usecase/auth/SignIn';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import { AccountProfileRepositoryMemoryDatabase } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
 const accountRepository = new AccountRepositoryMemoryDatabase();
-const signUp = new SignUp(accountRepository);
+const accountProfileRepository = new AccountProfileRepositoryMemoryDatabase();
+const signUp = new SignUp(accountRepository, accountProfileRepository);
 const signIn = new SignIn(accountRepository);
 const signUpInput = {
   username: 'johndoe@test.com',
