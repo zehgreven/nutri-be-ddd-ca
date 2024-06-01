@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS iam.account (
     username TEXT NOT NULL,
     password TEXT NOT NULL,
 
-    CONSTRAINT "account_pkey" PRIMARY KEY ("id")
+    CONSTRAINT account_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX account_username_unique ON iam.account (username) WHERE (deleted is null);
 
