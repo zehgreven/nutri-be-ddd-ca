@@ -24,6 +24,10 @@ dependency-analysis:
         coupled: Low
         changes: 'Might want to change to another database handler, or maybe even an ORM'
         reason: 'Postgres database connection'
+      - pino:
+        ok: true
+        coupled: high
+        reason: 'System logs'
   - development:
       - node-pg-migrate:
         ok: false
@@ -38,8 +42,8 @@ next-steps:
       - Implement Functionality API
       - Implement Permission API
       - Create README.md
+      - check logging correlation id
   - dependecies:
       - development:
       - production:
           - Add dotenv
-          - Add logger

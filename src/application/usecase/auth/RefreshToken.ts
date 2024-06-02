@@ -1,5 +1,6 @@
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
 import { JwtToken } from '@src/infra/http/AuthorizationMiddleware';
+import logger from '@src/infra/logging/logger';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
@@ -18,6 +19,7 @@ export class RefreshToken {
       throw new InvalidTokenError('Invalid refresh token');
     }
 
+    logger.info(`RefreshToken: refreshing token for accountId=${id}`);
     const tokenExpiration = config.get<string>('auth.expiration');
     const token = jwt.sign({ id }, tokenKey, { expiresIn: tokenExpiration });
 

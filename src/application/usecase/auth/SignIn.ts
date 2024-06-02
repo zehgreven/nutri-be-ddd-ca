@@ -1,4 +1,5 @@
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import logger from '@src/infra/logging/logger';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import config from 'config';
 import jwt from 'jsonwebtoken';
@@ -7,6 +8,7 @@ export class SignIn {
   constructor(readonly accountRepository: AccountRepository) {}
 
   async execute(input: Input): Promise<Output> {
+    logger.info('SignIn: signing in');
     const account = await this.accountRepository.getByUsername(input.username);
     if (!account || !account.isSamePassword(input.password)) {
       throw new IncorrectCredentialsError('Your credentials are incorrect');

@@ -8,6 +8,7 @@ import { TextLengthError } from '@src/domain/error/TextLengthError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import loggerHttp from '../logging/loggerHttp';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
@@ -28,6 +29,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
   constructor() {
     this.app = express();
     this.app.use(express.json());
+    this.app.use(loggerHttp);
   }
 
   public getApp(): Application {
@@ -62,6 +64,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
     this.app[method](
       path,
       async (req: any, res: any, next: Function) => {
+        req.log.info(`[${method.toUpperCase()}] ${path}`);
         await this.executeMiddlewares(middlewares, req, res, next);
       },
       async (req: any, res: any) => {

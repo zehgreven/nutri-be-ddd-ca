@@ -18,6 +18,7 @@ import { ListProfileQuery } from './application/query/ListProfileQuery';
 import { AssignProfile } from './application/usecase/account/AssignProfile';
 import { UnassignProfile } from './application/usecase/account/UnassignProfile';
 import { DeleteProfile } from './application/usecase/profile/DeleteProfile';
+import logger from './infra/logging/logger';
 import { AccountProfileRepositoryPostgres } from './infra/repository/AccountProfileRepository';
 
 export class Server {
@@ -30,6 +31,7 @@ export class Server {
   ) {}
 
   public init(): void {
+    logger.info('Setup: starting setup');
     this.setupDatabase();
     this.setupHttpServer();
     this.setupControllers();
@@ -52,12 +54,14 @@ export class Server {
       throw new Error('Missing database connection');
     }
 
-    this.httpServer.listen(this.port as number, () => console.log('Server started on port 3000'));
+    logger.info(`Trying to start server on port ${this.port}`);
+    this.httpServer.listen(this.port as number, () => logger.info(`Server started on port ${this.port}`));
   }
 
   public stop(): void {}
 
   private setupDatabase(): void {
+    logger.info('Setup: Database');
     this.databaseConnection = new PgPromiseAdapter(this.dbConnectionUri as string);
   }
 
@@ -70,6 +74,7 @@ export class Server {
   }
 
   private setupHttpServer(): void {
+    logger.info('Setup: Http Server');
     this.httpServer = new ExpressHttpServerAdapter();
   }
 
@@ -82,14 +87,17 @@ export class Server {
       throw new Error('Missing http server');
     }
 
+    logger.info('Setup: Repositories');
     const accountRepository = new AccountRepositoryPostgres(this.databaseConnection);
     const profileRepository = new ProfileRepositoryPostgres(this.databaseConnection);
     const accountProfileRepository = new AccountProfileRepositoryPostgres(this.databaseConnection);
 
+    logger.info('Setup: Queries');
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
     const listProfile = new ListProfileQuery(this.databaseConnection);
 
+    logger.info('Setup: Use Cases');
     const signUp = new SignUp(accountRepository, accountProfileRepository);
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken();
@@ -100,6 +108,7 @@ export class Server {
     const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
     const unassignProfile = new UnassignProfile(accountProfileRepository);
 
+    logger.info('Setup: Controllers');
     new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById, listProfile, deleteProfile);

@@ -1,10 +1,12 @@
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import logger from '@src/infra/logging/logger';
 
 export class GetProfileByIdQuery {
   constructor(readonly connection: DatabaseConnection) {}
 
   async execute(id: string): Promise<Output> {
+    logger.info(`GetProfileByIdQuery: getting profile by id=${id}`);
     const query = `
       select
         id,

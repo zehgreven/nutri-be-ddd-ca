@@ -56,10 +56,10 @@ export class WowPgPromiseAdapter implements DatabaseConnection {
         return t.batch(transactions);
       })
       .then((data: any) => {
-        console.log('commit');
+        logger.log('commit');
       })
       .catch((data: any) => {
-        console.log('rollback');
+        logger.log('rollback');
       });
   }
 }

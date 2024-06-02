@@ -1,10 +1,12 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import logger from '@src/infra/logging/logger';
 
 export class GetAccountByIdQuery {
   constructor(readonly connection: DatabaseConnection) {}
 
   async execute(id: string): Promise<Output> {
+    logger.info(`GetAccountByIdQuery: getting account by id=${id}`);
     const accountQuery = `
       select
         id,

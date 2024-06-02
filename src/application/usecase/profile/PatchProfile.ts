@@ -1,9 +1,11 @@
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
+import logger from '@src/infra/logging/logger';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
 
 export class PatchProfile {
   constructor(readonly profileRepository: ProfileRepository) {}
   async execute(id: string, input: Input): Promise<void> {
+    logger.info(`PatchProfile: patching profile with id=${id} with input=${JSON.stringify(input)}`);
     const profile = await this.profileRepository.getById(id);
     if (!profile) {
       throw new ProfileNotFoundError(`Unable to find profile with id=${id}`);

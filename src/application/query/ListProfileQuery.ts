@@ -1,10 +1,12 @@
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import logger from '@src/infra/logging/logger';
 import { Paginated, Paging } from '../model/Page';
 
 export class ListProfileQuery {
   constructor(readonly connection: DatabaseConnection) {}
 
   async execute(input: Partial<Profile> & Paging<Profile>): Promise<Paginated<Profile>> {
+    logger.info(`ListProfileQuery: listing profile with input=${JSON.stringify(input)}`);
     let countQuery = `
       select
         count(1) as count
