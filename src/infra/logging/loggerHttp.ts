@@ -49,12 +49,6 @@ export default pinoHttp<LoggerOptions>({
     responseTime: 'timeTaken',
   },
 
-  redact: (req: any, res: any) => {
-    return {
-      'req.headers.authorization': true,
-    };
-  },
-
   customProps: (req: any, res: any) => {
     return {
       accountId: req.accountId,
