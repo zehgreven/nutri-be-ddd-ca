@@ -41,9 +41,8 @@ next-steps:
       - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API
-      - Create README.md
       - check logging correlation id
+      - Create README.md
   - dependecies:
       - development:
       - production:
-          - Add dotenv

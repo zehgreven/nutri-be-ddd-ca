@@ -20,16 +20,16 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node-dev --transpile-only ./src/main_api.ts | pino-pretty -C",
+    "start:dev": "dotenv -e env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts | pino-pretty -C",
     "style:check": "prettier --check src/**/*.ts test/**/*.ts",
     "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
     "lint:check": "eslint src/**/*.ts test/**/*.ts",
     "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
     "migrate:create": "node-pg-migrate create",
-    "migrate:up": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down 0",
+    "migrate:up": "dotenv -e env/default.env -- node-pg-migrate up",
+    "migrate:down": "dotenv -e env/default.env -- node-pg-migrate down 0",
     "docker": "docker-compose up -d",
-    "test": "clear & jest --coverage"
+    "test": "clear & dotenv -e env/default.env -- jest --coverage"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
@@ -64,6 +64,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "config": "^3.3.11",
+    "dotenv-cli": "^7.4.2",
     "express": "^4.19.2",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
