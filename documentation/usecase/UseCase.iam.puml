@@ -1,0 +1,27 @@
+@startuml Use Case
+
+actor User
+actor Admin
+
+usecase CreateAccount #LightGreen
+usecase Login #LightGreen
+usecase GetAccount #LightGreen
+usecase ChangePassword #LightGreen
+usecase ManageProfile #LightGreen
+usecase ManageFunctionalityType #LightGreen
+
+User <|-r- Admin
+
+User -l-> (CreateAccount) 
+User -r-> (GetAccount)
+(GetAccount) <.d. (ChangePassword) : extends
+User -d-> (Login)
+
+Admin -u-> (ManageProfile) 
+Admin -u-> (ManageUser) 
+Admin -d-> (ManageApplication) 
+Admin -d-> (ManagePermission) 
+Admin -r-> (ManageFunctionality) 
+Admin -r-> (ManageFunctionalityType) 
+
+@enduml

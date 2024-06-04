@@ -1,6 +1,6 @@
-import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';
+import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';

@@ -38,7 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement Functionality Type API
       - Implement Functionality API
       - Implement Permission API
       - check logging correlation id

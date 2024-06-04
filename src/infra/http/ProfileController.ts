@@ -1,5 +1,5 @@
-import { GetProfileByIdQuery } from '@src/application/query/GetProfileByIdQuery';
-import { ListProfileQuery } from '@src/application/query/ListProfileQuery';
+import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
+import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';

@@ -49,7 +49,7 @@ export default pinoHttp<LoggerOptions>({
     responseTime: 'timeTaken',
   },
 
-  customProps: (req: any, res: any) => {
+  customProps: (req: any) => {
     return {
       accountId: req.accountId,
       correlationId: req.id || '',

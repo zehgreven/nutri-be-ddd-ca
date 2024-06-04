@@ -1,5 +1,5 @@
 -- Up Migration
-CREATE TABLE iam.profile (
+CREATE TABLE IF NOT EXISTS iam.profile (
     id UUID NOT NULL,
     active BOOLEAN NOT NULL DEFAULT true,
     created TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

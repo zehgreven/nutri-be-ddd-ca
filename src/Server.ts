@@ -1,25 +1,32 @@
-import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
-import { GetProfileByIdQuery } from '@src/application/query/GetProfileByIdQuery';
+import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
+import { GetFunctionalityTypeByIdQuery } from '@src/application/query/functionality-type/GetFunctionalityTypeByIdQuery';
+import { ListFunctionalityTypeQuery } from '@src/application/query/functionality-type/ListFunctionalityTypeQuery';
+import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
+import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
+import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
+import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
 import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
 import { SignIn } from '@src/application/usecase/auth/SignIn';
+import { CreateFunctionalityType } from '@src/application/usecase/functionality-type/CreateFunctionalityType';
+import { DeleteFunctionalityType } from '@src/application/usecase/functionality-type/DeleteFunctionalityType';
+import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
+import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
+import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeController';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
+import logger from '@src/infra/logging/logger';
+import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
+import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/FunctionalityTypeRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
-import { ListProfileQuery } from './application/query/ListProfileQuery';
-import { AssignProfile } from './application/usecase/account/AssignProfile';
-import { UnassignProfile } from './application/usecase/account/UnassignProfile';
-import { DeleteProfile } from './application/usecase/profile/DeleteProfile';
-import logger from './infra/logging/logger';
-import { AccountProfileRepositoryPostgres } from './infra/repository/AccountProfileRepository';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -91,11 +98,14 @@ export class Server {
     const accountRepository = new AccountRepositoryPostgres(this.databaseConnection);
     const profileRepository = new ProfileRepositoryPostgres(this.databaseConnection);
     const accountProfileRepository = new AccountProfileRepositoryPostgres(this.databaseConnection);
+    const functionalityTypeRepository = new FunctionalityTypeRepositoryPostgres(this.databaseConnection);
 
     logger.info('Setup: Queries');
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
     const listProfile = new ListProfileQuery(this.databaseConnection);
+    const getFunctionalityTypeById = new GetFunctionalityTypeByIdQuery(this.databaseConnection);
+    const listFunctionalityType = new ListFunctionalityTypeQuery(this.databaseConnection);
 
     logger.info('Setup: Use Cases');
     const signUp = new SignUp(accountRepository, accountProfileRepository);
@@ -107,11 +117,22 @@ export class Server {
     const deleteProfile = new DeleteProfile(profileRepository);
     const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
     const unassignProfile = new UnassignProfile(accountProfileRepository);
+    const createFunctionalityType = new CreateFunctionalityType(functionalityTypeRepository);
+    const patchFunctionalityType = new PatchFunctionalityType(functionalityTypeRepository);
+    const deleteFunctionalityType = new DeleteFunctionalityType(functionalityTypeRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById, listProfile, deleteProfile);
+    new FunctionalityTypeController(
+      this.httpServer,
+      createFunctionalityType,
+      patchFunctionalityType,
+      getFunctionalityTypeById,
+      listFunctionalityType,
+      deleteFunctionalityType,
+    );
   }
 
   public close(): Promise<void> {

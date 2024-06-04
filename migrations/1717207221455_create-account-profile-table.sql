@@ -1,5 +1,5 @@
 -- Up Migration
-CREATE TABLE iam.account_profile (
+CREATE TABLE IF NOT EXISTS iam.account_profile (
     id UUID NOT NULL,
     account_id UUID NOT NULL,
     profile_id UUID NOT NULL,

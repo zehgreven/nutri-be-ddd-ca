@@ -4,7 +4,7 @@ import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
 
-describe('Profile Controller', () => {
+describe('FunctionalityType Controller', () => {
   let server: Server;
   let token: string;
 
@@ -29,91 +29,93 @@ describe('Profile Controller', () => {
     token = auth.token;
   });
 
-  describe('CreateProfile', () => {
-    it('CreateProfile: should be able to create a profile', async () => {
-      const profile = {
-        name: 'Profile Test',
+  describe('CreateFunctionalityType', () => {
+    it('CreateFunctionalityType: should be able to create a functionality type', async () => {
+      const functionalityType = {
+        name: 'FunctionalityType Test',
         description: 'Description Test',
       };
       const { status, body } = await global.testRequest
-        .post('/profiles/v1')
+        .post('/functionality-types/v1')
         .set({ Authorization: `Bearer ${token}` })
-        .send(profile);
+        .send(functionalityType);
 
       expect(status).toBe(StatusCodes.CREATED);
       expect(body.id).toBeDefined();
     });
 
-    it('CreateProfile: should be authorized to create a profile', async () => {
-      const profile = {
-        name: 'Profile Test',
+    it('CreateFunctionalityType: should be authorized to create a functionality type', async () => {
+      const functionalityType = {
+        name: 'FunctionalityType Test',
         description: 'Description Test',
       };
-      const { status } = await global.testRequest.post('/profiles/v1').send(profile);
+      const { status } = await global.testRequest.post('/functionality-types/v1').send(functionalityType);
       expect(status).toBe(StatusCodes.UNAUTHORIZED);
     });
   });
 
-  describe('GetProfileById', () => {
-    it('GetProfileById: should be able to get profile by id', async () => {
-      const profile = {
-        name: 'GetProfileById Test',
-        description: 'GetProfileById Description Test',
+  describe('GetFunctionalityTypeById', () => {
+    it('GetFunctionalityTypeById: should be able to get functionalityType by id', async () => {
+      const functionalityType = {
+        name: 'GetFunctionalityTypeById Test',
+        description: 'GetFunctionalityTypeById Description Test',
       };
-      const { body: createdProfile } = await global.testRequest
-        .post('/profiles/v1')
+      const { body: createdFunctionalityType } = await global.testRequest
+        .post('/functionality-types/v1')
         .set({ Authorization: `Bearer ${token}` })
-        .send(profile);
+        .send(functionalityType);
 
       const { status, body } = await global.testRequest
-        .get(`/profiles/v1/${createdProfile.id}`)
+        .get(`/functionality-types/v1/${createdFunctionalityType.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(status).toBe(StatusCodes.OK);
       expect(body.id).toBeDefined();
     });
 
-    it('GetProfileById: should be authorized to get profile by id', async () => {
-      const { status } = await global.testRequest.get(`/profiles/v1/27b45d06-ff53-4755-b799-2468e2987961`).send();
+    it('GetFunctionalityTypeById: should be authorized to get functionalityType by id', async () => {
+      const { status } = await global.testRequest
+        .get(`/functionality-types/v1/27b45d06-ff53-4755-b799-2468e2987961`)
+        .send();
       expect(status).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('GetProfileById: should return error when profile not found', async () => {
+    it('GetFunctionalityTypeById: should return error when functionalityType not found', async () => {
       const { status } = await global.testRequest
-        .get(`/profiles/v1/faaa7ee4-f5c7-4dca-b65b-27331b1dcd4e`)
+        .get(`/functionality-types/v1/faaa7ee4-f5c7-4dca-b65b-27331b1dcd4e`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(status).toBe(StatusCodes.NOT_FOUND);
     });
   });
 
-  describe('PatchProfile', () => {
-    it('PatchProfile: should be able to patch profile', async () => {
-      const profile = {
-        name: 'PatchProfile Test',
-        description: 'PatchProfile Description Test',
+  describe('PatchFunctionalityType', () => {
+    it('PatchFunctionalityType: should be able to patch functionality type', async () => {
+      const functionalityType = {
+        name: 'PatchFunctionalityType Test',
+        description: 'PatchFunctionalityType Description Test',
       };
-      const { body: createdProfile } = await global.testRequest
-        .post('/profiles/v1')
+      const { body: createdFunctionalityType } = await global.testRequest
+        .post('/functionality-types/v1')
         .set({ Authorization: `Bearer ${token}` })
-        .send(profile);
+        .send(functionalityType);
 
       const { status } = await global.testRequest
-        .patch(`/profiles/v1/${createdProfile.id}`)
+        .patch(`/functionality-types/v1/${createdFunctionalityType.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send({
-          name: 'PatchProfile Test 2',
-          description: 'PatchProfile Description Test 2',
+          name: 'PatchFunctionalityType Test 2',
+          description: 'PatchFunctionalityType Description Test 2',
         });
 
       expect(status).toBe(StatusCodes.OK);
     });
   });
 
-  describe('ListProfiles', () => {
-    it('ListProfiles: should be able to list profiles', async () => {
+  describe('ListFunctionalityTypes', () => {
+    it('ListFunctionalityTypes: should be able to list functionalityTypes', async () => {
       const { status, body } = await global.testRequest
-        .get('/profiles/v1')
+        .get('/functionality-types/v1')
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(status).toBe(StatusCodes.OK);
@@ -122,9 +124,10 @@ describe('Profile Controller', () => {
       expect(body.count).toBeGreaterThan(0);
       expect(body.rows.length).toBeGreaterThan(0);
     });
-    it('ListProfiles: should be able to list profiles and filter by name', async () => {
+
+    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by name', async () => {
       const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&name=Admin')
+        .get('/functionality-types/v1?page=1&limit=10&name=Tela%20do%20Menu%20Lateral')
         .set({ Authorization: `Bearer ${token}` })
         .send();
 
@@ -134,21 +137,23 @@ describe('Profile Controller', () => {
       expect(body.count).toBe(1);
       expect(body.rows.length).toBe(1);
     });
-    it('ListProfiles: should be able to list profiles and filter by description', async () => {
+
+    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by description', async () => {
       const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&description=de')
+        .get('/functionality-types/v1?page=1&limit=10&description=Telas')
         .set({ Authorization: `Bearer ${token}` })
         .send();
 
       expect(status).toBe(StatusCodes.OK);
       expect(body.page).toBe(1);
       expect(body.limit).toBe(10);
-      expect(body.count).toBe(3);
-      expect(body.rows.length).toBe(3);
+      expect(body.count).toBe(2);
+      expect(body.rows.length).toBe(2);
     });
-    it('ListProfiles: should be able to list profiles and filter by id', async () => {
+
+    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by id', async () => {
       const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&id=a81b2f88-fe8f-492c-aca5-7b09983c007d')
+        .get('/functionality-types/v1?page=1&limit=10&id=52a19d20-9904-4a2d-b7c5-ff3d25b80e41')
         .set({ Authorization: `Bearer ${token}` })
         .send();
 
@@ -158,9 +163,10 @@ describe('Profile Controller', () => {
       expect(body.count).toBe(1);
       expect(body.rows.length).toBe(1);
     });
-    it('ListProfiles: should be able to list profiles and filter by active', async () => {
+
+    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by active', async () => {
       const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&active=true')
+        .get('/functionality-types/v1?page=1&active=true')
         .set({ Authorization: `Bearer ${token}` })
         .send();
 
@@ -172,24 +178,24 @@ describe('Profile Controller', () => {
     });
   });
 
-  describe('DeleteProfile', () => {
-    it('DeleteProfile: should be able to delete profile', async () => {
-      const { body: createdProfile } = await global.testRequest
-        .post('/profiles/v1')
+  describe('DeleteFunctionalityType', () => {
+    it('DeleteFunctionalityType: should be able to delete functionality type', async () => {
+      const { body: createdFunctionalityType } = await global.testRequest
+        .post('/functionality-types/v1')
         .set({ Authorization: `Bearer ${token}` })
         .send({
-          name: 'DeleteProfile Test',
-          description: 'DeleteProfile Description Test',
+          name: 'DeleteFunctionalityType Test',
+          description: 'DeleteFunctionalityType Description Test',
         });
 
       const { status } = await global.testRequest
-        .delete(`/profiles/v1/${createdProfile.id}`)
+        .delete(`/functionality-types/v1/${createdFunctionalityType.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(status).toBe(StatusCodes.NO_CONTENT);
 
       const { status: getByIdStatus } = await global.testRequest
-        .get(`/profiles/v1/${createdProfile.id}`)
+        .get(`/functionality-types/v1/${createdFunctionalityType.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(getByIdStatus).toBe(StatusCodes.NOT_FOUND);

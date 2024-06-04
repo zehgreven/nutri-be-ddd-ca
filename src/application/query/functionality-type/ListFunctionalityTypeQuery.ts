@@ -1,17 +1,17 @@
+import { Paginated, Paging } from '@src/application/model/Page';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
 import logger from '@src/infra/logging/logger';
-import { Paginated, Paging } from '../model/Page';
 
-export class ListProfileQuery {
+export class ListFunctionalityTypeQuery {
   constructor(readonly connection: DatabaseConnection) {}
 
-  async execute(input: Partial<Profile> & Paging<Profile>): Promise<Paginated<Profile>> {
-    logger.info(`ListProfileQuery: listing profile with input=${JSON.stringify(input)}`);
-    let countQuery = `
+  async execute(input: Partial<FunctionalityType> & Paging<FunctionalityType>): Promise<Paginated<FunctionalityType>> {
+    logger.info(`ListFunctionalityTypeQuery: listing functionality type with input=${JSON.stringify(input)}`);
+    const countQuery = `
       select
         count(1) as count
       from
-        iam.profile
+        iam.functionality_type
       where 1=1
         and deleted is null
       ${input.name ? 'and name like $(name)' : ''}
@@ -27,7 +27,7 @@ export class ListProfileQuery {
         description,
         active
       from
-        iam.profile
+        iam.functionality_type
       where 1=1
         and deleted is null
       ${input.name ? 'and name like $(name)' : ''}
@@ -62,7 +62,7 @@ export class ListProfileQuery {
   }
 }
 
-type Profile = {
+type FunctionalityType = {
   id?: string;
   name?: string;
   description?: string;

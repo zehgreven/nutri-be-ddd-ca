@@ -2,7 +2,7 @@ import { SignUp } from '@src/application/usecase/account/SignUp';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/helpers/DatabaseTestContainer';
+import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';

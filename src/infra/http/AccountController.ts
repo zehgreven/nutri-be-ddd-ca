@@ -1,4 +1,4 @@
-import { GetAccountByIdQuery } from '@src/application/query/GetAccountByIdQuery';
+import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
