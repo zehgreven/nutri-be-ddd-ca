@@ -5,7 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test/jest.setup.ts'],
   testTimeout: 60000,
   collectCoverage: true,
-  coveragePathIgnorePatterns: ['/node_modules/', 'main_api.ts', 'Server.ts', '/src/infra/http', '/test/helpers'],
+  coveragePathIgnorePatterns: ['/node_modules/', 'main_api.ts', 'Server.ts', '/test'],
   moduleNameMapper: {
     '@src/(.*)': '<rootDir>/src/$1',
     '@test/(.*)': '<rootDir>/test/$1',
