@@ -30,6 +30,7 @@ export class DatabaseTestContainer {
         migrationsTable: 'pgmigrations',
         direction: 'up',
         databaseUrl: this.postgresContainer.getConnectionUri(),
+        log: () => {},
       });
     }
   }
