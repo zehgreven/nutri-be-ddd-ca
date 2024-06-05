@@ -52,7 +52,6 @@ export default pinoHttp<LoggerOptions>({
   customProps: (req: any) => {
     return {
       accountId: req.accountId,
-      correlationId: req.id || '',
     };
   },
 });

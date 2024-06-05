@@ -1,0 +1,21 @@
+@startuml Use Case
+
+actor Admin
+
+usecase ManageAccount #LightYellow
+usecase PatchAccount #LightGray
+usecase DeleteAccount #LightGray
+usecase AssignProfile #LightGreen
+usecase UnassignProfile #LightGreen
+usecase GetAccount #LightGreen
+usecase ResetPassword #LightGray
+
+Admin --> (ManageAccount) 
+(ManageAccount) <.d. (AssignProfile) 
+(ManageAccount) <.d. (UnassignProfile) 
+(ManageAccount) <.d. (GetAccount) 
+(ManageAccount) <.d. (PatchAccount) 
+(ManageAccount) <.l. (DeleteAccount) 
+(ManageAccount) <.r. (ResetPassword) 
+
+@enduml

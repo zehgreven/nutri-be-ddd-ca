@@ -1,4 +1,5 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
@@ -125,6 +126,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
       [AccountNotFoundError.name]: StatusCodes.NOT_FOUND,
       [ProfileNotFoundError.name]: StatusCodes.NOT_FOUND,
       [FunctionalityTypeNotFoundError.name]: StatusCodes.NOT_FOUND,
+      [FunctionalityNotFoundError.name]: StatusCodes.NOT_FOUND,
       [PasswordCreationError.name]: StatusCodes.BAD_REQUEST,
       [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
       [IncorrectCredentialsError.name]: StatusCodes.UNAUTHORIZED,

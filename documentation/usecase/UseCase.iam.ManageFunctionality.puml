@@ -1,0 +1,19 @@
+@startuml Use Case
+
+actor Admin
+
+usecase ManageFunctionality #LightGreen
+usecase CreateFunctionality #LightGreen
+usecase PatchFunctionality #LightGreen
+usecase DeleteFunctionality #LightGreen
+usecase ListFunctionality #LightGreen
+usecase GetFunctionality #LightGreen
+
+Admin -r-> (ManageFunctionality) 
+(ManageFunctionality) <.u. (CreateFunctionality) 
+(ManageFunctionality) <.u. (PatchFunctionality) 
+(ManageFunctionality) <.u. (DeleteFunctionality) 
+(ManageFunctionality) <.u. (ListFunctionality) 
+(ManageFunctionality) <.u. (GetFunctionality) 
+
+@enduml

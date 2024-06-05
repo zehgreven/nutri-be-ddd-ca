@@ -9,6 +9,8 @@ usecase GetAccount #LightGreen
 usecase ChangePassword #LightGreen
 usecase ManageProfile #LightGreen
 usecase ManageFunctionalityType #LightGreen
+usecase ManageFunctionality #LightGreen
+usecase ManageAccount #LightYellow
 
 User <|-r- Admin
 
@@ -18,7 +20,7 @@ User -r-> (GetAccount)
 User -d-> (Login)
 
 Admin -u-> (ManageProfile) 
-Admin -u-> (ManageUser) 
+Admin -u-> (ManageAccount) 
 Admin -d-> (ManageApplication) 
 Admin -d-> (ManagePermission) 
 Admin -r-> (ManageFunctionality) 

@@ -10,7 +10,7 @@ export class PatchFunctionalityType {
     );
     const functionalityType = await this.functionalityTypeRepository.getById(id);
     if (!functionalityType) {
-      throw new FunctionalityTypeNotFoundError(`Unable to find functionalityType with id=${id}`);
+      throw new FunctionalityTypeNotFoundError(`Unable to find functionality type with id=${id}`);
     }
     const patchInput = {
       name: input.name,

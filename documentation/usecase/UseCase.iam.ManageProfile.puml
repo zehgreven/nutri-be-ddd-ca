@@ -8,12 +8,8 @@ usecase GetProfile #LightGreen
 usecase PatchProfile #LightGreen
 usecase ListProfile #LightGreen
 usecase DeleteProfile #LightGreen
-usecase AssignProfile #LightGreen
-usecase UnassignProfile #LightGreen
 
 Admin --> (ManageProfile) 
-(ManageProfile) <.d. (AssignProfile) 
-(ManageProfile) <.d. (UnassignProfile) 
 (ManageProfile) <.d. (CreateProfile) 
 (ManageProfile) <.d. (PatchProfile) 
 (ManageProfile) <.d. (DeleteProfile) 

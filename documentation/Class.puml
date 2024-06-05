@@ -8,7 +8,6 @@ package iam {
     createAccount()
   }
   Account -> Profile
-  Account -- Application
   Account -> Permission
 
   class Profile {
@@ -22,13 +21,6 @@ package iam {
   }
   Permission -> Functionality
 
-  class Application {
-    String name
-    String description
-  }
-  Application -> Profile
-  Application -> Functionality
-
   class Functionality {
     String name
     String description
@@ -41,7 +33,6 @@ package iam {
     String name
     String description
   }
-
 }
 
 package commom {

@@ -10,7 +10,7 @@ export default class FunctionalityType {
     private active: boolean,
   ) {}
 
-  static create(name: string, description: string) {
+  static create(name: string, description?: string) {
     const id = crypto.randomUUID();
     const active = true;
     return new FunctionalityType(id, new String('Name', name), description, active);
