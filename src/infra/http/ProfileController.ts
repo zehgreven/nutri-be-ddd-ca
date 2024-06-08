@@ -1,10 +1,12 @@
 import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
+import { ListProfilePermissionQuery } from '@src/application/query/profile/ListProfilePermissionQuery';
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
-import { AssignPermission } from '@src/application/usecase/profile/AssignPermission';
+import { AssignProfilePermission } from '@src/application/usecase/profile/AssignProfilePermission';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
+import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profile/GrantAndRevokeProfilePermission';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
-import { UnassignPermission } from '@src/application/usecase/profile/UnassignPermission';
+import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 
@@ -16,9 +18,12 @@ export class ProfileController {
     readonly getProfileById: GetProfileByIdQuery,
     readonly listProfile: ListProfileQuery,
     readonly deleteProfile: DeleteProfile,
-    readonly assignPermission: AssignPermission,
-    readonly unassignPermission: UnassignPermission,
+    readonly assignPermission: AssignProfilePermission,
+    readonly unassignPermission: UnassignProfilePermission,
+    readonly grantAndRevokePermission: GrantAndRevokeProfilePermission,
+    readonly listProfilePermission: ListProfilePermissionQuery,
   ) {
+    httpServer.get('/profiles/v1/permissions', [AuthorizationMiddleware], this.executeListProfilePermission);
     httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
     httpServer.get('/profiles/v1', [AuthorizationMiddleware], this.executeListProfile);
     httpServer.get('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeGetProfileById);
@@ -33,6 +38,11 @@ export class ProfileController {
       '/profiles/v1/:profileId/functionality/:functionalityId',
       [AuthorizationMiddleware],
       this.executeUnassignPermission,
+    );
+    httpServer.patch(
+      '/profiles/v1/:profileId/functionality/:functionalityId',
+      [AuthorizationMiddleware],
+      this.executeGrantAndRevokePermission,
     );
   }
 
@@ -68,5 +78,13 @@ export class ProfileController {
 
   private executeUnassignPermission: CallbackFunction = (params: any) => {
     return this.unassignPermission.execute(params.profileId, params.functionalityId);
+  };
+
+  private executeGrantAndRevokePermission: CallbackFunction = (params: any) => {
+    return this.grantAndRevokePermission.execute(params.profileId, params.functionalityId);
+  };
+
+  private executeListProfilePermission: CallbackFunction = (params: any) => {
+    return this.listProfilePermission.execute(params);
   };
 }

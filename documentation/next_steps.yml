@@ -38,9 +38,9 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement Profile Permission API
       - Implement Account Permission API
-      - check logging correlation id
+      - Check logging correlation id
+      - Replace a few integ tests by mocked unit tests
       - Create README.md
   - dependecies:
       - development:

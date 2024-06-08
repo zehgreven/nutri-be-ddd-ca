@@ -4,6 +4,7 @@ import { ListFunctionalityTypeQuery } from '@src/application/query/functionality
 import { GetFunctionalityByIdQuery } from '@src/application/query/functionality/GetFunctionalityByIdQuery';
 import { ListFunctionalityQuery } from '@src/application/query/functionality/ListFunctionalityQuery';
 import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
+import { ListProfilePermissionQuery } from '@src/application/query/profile/ListProfilePermissionQuery';
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
@@ -17,11 +18,11 @@ import { PatchFunctionalityType } from '@src/application/usecase/functionality-t
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { DeleteFunctionality } from '@src/application/usecase/functionality/DeleteFunctionality';
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
-import { AssignPermission } from '@src/application/usecase/profile/AssignPermission';
+import { AssignProfilePermission } from '@src/application/usecase/profile/AssignProfilePermission';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
+import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profile/GrantAndRevokeProfilePermission';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
-import { UnassignPermission } from '@src/application/usecase/profile/UnassignPermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
@@ -37,6 +38,7 @@ import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/Funct
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
+import { UnassignProfilePermission } from './application/usecase/profile/UnassignProfilePermission';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -120,6 +122,7 @@ export class Server {
     const listFunctionalityType = new ListFunctionalityTypeQuery(this.databaseConnection);
     const getFunctionalityById = new GetFunctionalityByIdQuery(this.databaseConnection);
     const listFunctionality = new ListFunctionalityQuery(this.databaseConnection);
+    const listProfilePermission = new ListProfilePermissionQuery(this.databaseConnection);
 
     logger.info('Setup: Use Cases');
     const signUp = new SignUp(accountRepository, accountProfileRepository);
@@ -137,12 +140,13 @@ export class Server {
     const createFunctionality = new CreateFunctionality(functionalityRepository);
     const patchFunctionality = new PatchFunctionality(functionalityRepository);
     const deleteFunctionality = new DeleteFunctionality(functionalityRepository);
-    const assignPermission = new AssignPermission(
+    const assignPermission = new AssignProfilePermission(
       profileRepository,
       functionalityRepository,
       profilePermissionRepository,
     );
-    const unassignPermission = new UnassignPermission(profilePermissionRepository);
+    const unassignPermission = new UnassignProfilePermission(profilePermissionRepository);
+    const grantAndRevokePermission = new GrantAndRevokeProfilePermission(profilePermissionRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
@@ -156,6 +160,8 @@ export class Server {
       deleteProfile,
       assignPermission,
       unassignPermission,
+      grantAndRevokePermission,
+      listProfilePermission,
     );
     new FunctionalityTypeController(
       this.httpServer,

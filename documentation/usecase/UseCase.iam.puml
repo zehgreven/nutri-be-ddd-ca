@@ -10,6 +10,7 @@ usecase ChangePassword #LightGreen
 usecase ManageProfile #LightGreen
 usecase ManageFunctionalityType #LightGreen
 usecase ManageFunctionality #LightGreen
+usecase ManageAccountPermission #LightGreen
 usecase ManageAccount #LightYellow
 
 User <|-r- Admin
@@ -21,8 +22,8 @@ User -d-> (Login)
 
 Admin -u-> (ManageProfile) 
 Admin -u-> (ManageAccount) 
-Admin -d-> (ManageApplication) 
-Admin -d-> (ManagePermission) 
+Admin -d-> (ManageProfilePermission) 
+Admin -d-> (ManageAccountPermission) 
 Admin -r-> (ManageFunctionality) 
 Admin -r-> (ManageFunctionalityType) 
 

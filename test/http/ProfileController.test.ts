@@ -197,6 +197,14 @@ describe('Profile Controller', () => {
   });
 
   describe('AssignProfile', () => {
+    afterAll(async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+      await global.testRequest
+        .delete(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+    });
     it('AssignProfile: should be able to assign profile', async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
@@ -210,6 +218,12 @@ describe('Profile Controller', () => {
     it('AssignProfile: should return error when profile not found', async () => {
       const profileId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+      await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
       const { status } = await global.testRequest
         .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
         .set({ Authorization: `Bearer ${token}` })
@@ -253,6 +267,61 @@ describe('Profile Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send();
       expect(status).toBe(StatusCodes.NO_CONTENT);
+    });
+  });
+
+  describe('GrantAndRevokePermission', () => {
+    afterAll(async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+      await global.testRequest
+        .delete(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+    });
+    it('GrantAndRevokePermission: should be able to grant and revoke permission', async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+      await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      const { status, body } = await global.testRequest
+        .patch(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      expect(status).toBe(StatusCodes.OK);
+
+      const { body: allowedPermissions } = await global.testRequest
+        .get(`/profiles/v1/permissions?profileId=${profileId}&functionalityId=${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      const [allowedPermission] = allowedPermissions.rows;
+      expect(allowedPermission.profile.id).toBe(profileId);
+      expect(allowedPermission.functionality.id).toBe(functionalityId);
+      expect(allowedPermission.allow).toBe(false);
+      expect(allowedPermission.active).toBe(true);
+
+      const { status: revokeStatus } = await global.testRequest
+        .patch(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(revokeStatus).toBe(StatusCodes.OK);
+
+      const { body: notAllowedPermissions } = await global.testRequest
+        .get(`/profiles/v1/permissions?profileId=${profileId}&functionalityId=${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      const [notAllowedPermission] = notAllowedPermissions.rows;
+      expect(allowedPermission.profile.id).toBe(profileId);
+      expect(allowedPermission.functionality.id).toBe(functionalityId);
+      expect(notAllowedPermission.allow).toBe(true);
+      expect(notAllowedPermission.active).toBe(true);
     });
   });
 });

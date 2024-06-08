@@ -5,7 +5,7 @@ import { FunctionalityRepository } from '@src/infra/repository/FunctionalityRepo
 import { ProfilePermissionRepository } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
 
-export class AssignPermission {
+export class AssignProfilePermission {
   constructor(
     readonly profileRepository: ProfileRepository,
     readonly functionalityRepository: FunctionalityRepository,

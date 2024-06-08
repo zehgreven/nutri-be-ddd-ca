@@ -12,4 +12,8 @@ export default class Permission {
   static create(profileId: string, functionalityId: string): Permission {
     return new Permission(crypto.randomUUID(), profileId, functionalityId, true, true);
   }
+
+  static restore(id: string, profileId: string, functionalityId: string, allow: boolean, active: boolean) {
+    return new Permission(id, profileId, functionalityId, allow, active);
+  }
 }

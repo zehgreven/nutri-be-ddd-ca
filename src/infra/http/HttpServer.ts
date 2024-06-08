@@ -5,6 +5,7 @@ import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredential
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
 import { InvalidInputError } from '@src/domain/error/InvalidInputError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { PermissionNotFoundError } from '@src/domain/error/PermissionNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
@@ -124,15 +125,16 @@ export class ExpressHttpServerAdapter implements HttpServer {
   private mapErrorToStatusCode(error: Error): number {
     const statusCodeMap = {
       [AccountNotFoundError.name]: StatusCodes.NOT_FOUND,
-      [ProfileNotFoundError.name]: StatusCodes.NOT_FOUND,
-      [FunctionalityTypeNotFoundError.name]: StatusCodes.NOT_FOUND,
       [FunctionalityNotFoundError.name]: StatusCodes.NOT_FOUND,
-      [PasswordCreationError.name]: StatusCodes.BAD_REQUEST,
-      [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
+      [FunctionalityTypeNotFoundError.name]: StatusCodes.NOT_FOUND,
       [IncorrectCredentialsError.name]: StatusCodes.UNAUTHORIZED,
-      [UnauthorizedError.name]: StatusCodes.UNAUTHORIZED,
+      [InvalidEmailError.name]: StatusCodes.BAD_REQUEST,
       [InvalidInputError.name]: StatusCodes.BAD_REQUEST,
+      [PasswordCreationError.name]: StatusCodes.BAD_REQUEST,
+      [PermissionNotFoundError.name]: StatusCodes.NOT_FOUND,
+      [ProfileNotFoundError.name]: StatusCodes.NOT_FOUND,
       [TextLengthError.name]: StatusCodes.BAD_REQUEST,
+      [UnauthorizedError.name]: StatusCodes.UNAUTHORIZED,
     };
 
     return statusCodeMap[error.name] || StatusCodes.INTERNAL_SERVER_ERROR;
