@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export default class Permission {
+export default class ProfilePermission {
   private constructor(
     readonly id: string,
     readonly profileId: string,
@@ -9,11 +9,11 @@ export default class Permission {
     readonly active: boolean,
   ) {}
 
-  static create(profileId: string, functionalityId: string): Permission {
-    return new Permission(crypto.randomUUID(), profileId, functionalityId, true, true);
+  static create(profileId: string, functionalityId: string): ProfilePermission {
+    return new ProfilePermission(crypto.randomUUID(), profileId, functionalityId, true, true);
   }
 
   static restore(id: string, profileId: string, functionalityId: string, allow: boolean, active: boolean) {
-    return new Permission(id, profileId, functionalityId, allow, active);
+    return new ProfilePermission(id, profileId, functionalityId, allow, active);
   }
 }

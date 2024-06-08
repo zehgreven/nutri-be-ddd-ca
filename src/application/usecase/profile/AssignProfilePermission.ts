@@ -1,4 +1,4 @@
-import Permission from '@src/domain/entity/Permission';
+import ProfilePermission from '@src/domain/entity/ProfilePermission';
 import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { FunctionalityRepository } from '@src/infra/repository/FunctionalityRepository';
@@ -23,7 +23,7 @@ export class AssignProfilePermission {
       throw new FunctionalityNotFoundError(`Unable to find functionality with id=${functionalityId}`);
     }
 
-    const permission = Permission.create(profileId, functionalityId);
+    const permission = ProfilePermission.create(profileId, functionalityId);
     await this.profilePermissionRepository.save(permission);
   }
 }

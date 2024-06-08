@@ -1,17 +1,17 @@
-import Permission from '@src/domain/entity/Permission';
+import ProfilePermission from '@src/domain/entity/ProfilePermission';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
 
 export interface ProfilePermissionRepository {
-  save(permission: Permission): Promise<void>;
+  save(permission: ProfilePermission): Promise<void>;
   deleteByProfileIdAndFunctionalityId(profileId: string, functionalityId: string): Promise<void>;
-  getByProfileIdAndFunctionalityId(profileId: string, functionalityId: string): Promise<Permission | undefined>;
+  getByProfileIdAndFunctionalityId(profileId: string, functionalityId: string): Promise<ProfilePermission | undefined>;
   updateAllowById(id: string, allow: boolean): Promise<void>;
 }
 
 export class ProfilePermissionRepositoryPostgres implements ProfilePermissionRepository {
   constructor(private connection: DatabaseConnection) {}
 
-  async save(permission: Permission): Promise<void> {
+  async save(permission: ProfilePermission): Promise<void> {
     const query = `
       insert into iam.profile_permission (
         id,
@@ -42,7 +42,10 @@ export class ProfilePermissionRepositoryPostgres implements ProfilePermissionRep
     await this.connection.query(query, { profileId, functionalityId });
   }
 
-  async getByProfileIdAndFunctionalityId(profileId: string, functionalityId: string): Promise<Permission | undefined> {
+  async getByProfileIdAndFunctionalityId(
+    profileId: string,
+    functionalityId: string,
+  ): Promise<ProfilePermission | undefined> {
     const query = `
       select
         id,
@@ -61,7 +64,7 @@ export class ProfilePermissionRepositoryPostgres implements ProfilePermissionRep
     if (!permission) {
       return;
     }
-    return Permission.restore(
+    return ProfilePermission.restore(
       permission.id,
       permission.profileId,
       permission.functionalityId,
