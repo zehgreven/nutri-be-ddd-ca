@@ -38,11 +38,10 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement Account Permission API
+      - Finish Manage Account
       - Implement API security based on Account Profile (admin routes)
       - API Cache
       - Check logging correlation id
-      - Replace a few integ tests by mocked unit tests
       - Create README.md
   - dependecies:
       - development:

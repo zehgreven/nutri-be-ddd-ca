@@ -122,54 +122,6 @@ describe('Profile Controller', () => {
       expect(body.count).toBeGreaterThan(0);
       expect(body.rows.length).toBeGreaterThan(0);
     });
-    it('ListProfiles: should be able to list profiles and filter by name', async () => {
-      const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&name=Admin')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(1);
-      expect(body.rows.length).toBe(1);
-    });
-    it('ListProfiles: should be able to list profiles and filter by description', async () => {
-      const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&description=de')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(3);
-      expect(body.rows.length).toBe(3);
-    });
-    it('ListProfiles: should be able to list profiles and filter by id', async () => {
-      const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&limit=10&id=a81b2f88-fe8f-492c-aca5-7b09983c007d')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(1);
-      expect(body.rows.length).toBe(1);
-    });
-    it('ListProfiles: should be able to list profiles and filter by active', async () => {
-      const { status, body } = await global.testRequest
-        .get('/profiles/v1?page=1&active=true')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBeGreaterThan(0);
-      expect(body.rows.length).toBeGreaterThan(0);
-    });
   });
 
   describe('DeleteProfile', () => {

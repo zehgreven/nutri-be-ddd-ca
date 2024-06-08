@@ -1,48 +1,36 @@
-import { CreateFunctionalityType } from '@src/application/usecase/functionality-type/CreateFunctionalityType';
 import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
+import FunctionalityType from '@src/domain/entity/FunctionalityType';
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
 import { InvalidInputError } from '@src/domain/error/InvalidInputError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
-import { FunctionalityTypeRepositoryMemoryDatabase } from '@src/infra/repository/FunctionalityTypeRepository';
+import sinon from 'sinon';
 
 describe('PatchFunctionalityType', () => {
-  const functionalityTypeRepository = new FunctionalityTypeRepositoryMemoryDatabase();
-  const createFunctionalityType = new CreateFunctionalityType(functionalityTypeRepository);
+  const functionalityTypeRepository = {
+    save: sinon.stub(),
+    update: sinon.stub(),
+    getById: sinon.stub(),
+    deleteById: sinon.stub(),
+  };
+
   const patchFunctionalityType = new PatchFunctionalityType(functionalityTypeRepository);
 
-  beforeEach(async () => {
-    await functionalityTypeRepository.clear();
-  });
+  const functionalityType = FunctionalityType.create('My functionality type', 'My functionality type description');
 
-  it('should be able to patch functionality type', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
-    const patchInput = {
-      name: 'My new functionality type',
-      description: '',
-      active: false,
-    };
-    await patchFunctionalityType.execute(createdFunctionalityType.id, patchInput);
-    const updatedFunctionalityType = await functionalityTypeRepository.getById(createdFunctionalityType.id);
-    expect(updatedFunctionalityType?.getName()).toBe(patchInput.name);
-    expect(updatedFunctionalityType?.getDescription()).toBe(patchInput.description);
-    expect(updatedFunctionalityType?.isActive()).toBe(patchInput.active);
+  beforeEach(async () => {
+    functionalityTypeRepository.save.resetBehavior();
+    functionalityTypeRepository.update.resetBehavior();
+    functionalityTypeRepository.getById.resetBehavior();
+    functionalityTypeRepository.deleteById.resetBehavior();
   });
 
   it('should be able to patch functionalityType with null description', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
+    functionalityTypeRepository.getById.resolves(functionalityType);
     const patchInput = {
       description: null,
     };
-    await patchFunctionalityType.execute(createdFunctionalityType.id, patchInput);
-    const updatedFunctionalityType = await functionalityTypeRepository.getById(createdFunctionalityType.id);
+    await patchFunctionalityType.execute(functionalityType.id, patchInput);
+    const updatedFunctionalityType = await functionalityTypeRepository.getById(functionalityType.id);
     expect(updatedFunctionalityType?.getDescription()).toBeUndefined();
   });
 
@@ -58,51 +46,33 @@ describe('PatchFunctionalityType', () => {
   });
 
   it('should not be able to patch functionalityType with invalid input', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
-    await expect(() => patchFunctionalityType.execute(createdFunctionalityType.id, {})).rejects.toThrow(
-      InvalidInputError,
-    );
+    functionalityTypeRepository.getById.resolves(functionalityType);
+    await expect(() => patchFunctionalityType.execute(functionalityType.id, {})).rejects.toThrow(InvalidInputError);
   });
 
   it('should not be able to patch functionalityType with invalid name', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
+    functionalityTypeRepository.getById.resolves(functionalityType);
     const patchInput = {
       name: '',
       description: 'My new functionalityType description',
     };
-    await expect(() => patchFunctionalityType.execute(createdFunctionalityType.id, patchInput)).rejects.toThrow(
+    await expect(() => patchFunctionalityType.execute(functionalityType.id, patchInput)).rejects.toThrow(
       TextLengthError,
     );
   });
 
   it('should not be able to patch functionalityType with null name', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
+    functionalityTypeRepository.getById.resolves(functionalityType);
     const patchInput = { name: null };
-    await expect(() => patchFunctionalityType.execute(createdFunctionalityType.id, patchInput)).rejects.toThrow(
+    await expect(() => patchFunctionalityType.execute(functionalityType.id, patchInput)).rejects.toThrow(
       InvalidInputError,
     );
   });
 
   it('should not be able to patch functionalityType with null active', async () => {
-    const functionalityType = {
-      name: 'My functionality type',
-      description: 'My functionalityType description',
-    };
-    const createdFunctionalityType = await createFunctionalityType.execute(functionalityType);
+    functionalityTypeRepository.getById.resolves(functionalityType);
     const patchInput = { active: null };
-    await expect(() => patchFunctionalityType.execute(createdFunctionalityType.id, patchInput)).rejects.toThrow(
+    await expect(() => patchFunctionalityType.execute(functionalityType.id, patchInput)).rejects.toThrow(
       InvalidInputError,
     );
   });

@@ -57,32 +57,3 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
     return !!profile;
   }
 }
-
-export class ProfileRepositoryMemoryDatabase implements ProfileRepository {
-  profiles: Profile[] = [];
-
-  async save(profile: Profile): Promise<void> {
-    this.profiles.push(profile);
-  }
-
-  async update(profile: Profile): Promise<void> {
-    const index = this.profiles.findIndex(p => p.id === profile.id);
-    this.profiles[index] = profile;
-  }
-
-  async getById(id: string): Promise<Profile | undefined> {
-    return this.profiles.find(profile => profile.id === id);
-  }
-
-  async deleteById(id: string): Promise<void> {
-    this.profiles = this.profiles.filter(profile => profile.id !== id);
-  }
-
-  async existsById(id: string): Promise<boolean> {
-    return this.profiles.some(profile => profile.id === id);
-  }
-
-  async clear(): Promise<void> {
-    this.profiles = [];
-  }
-}

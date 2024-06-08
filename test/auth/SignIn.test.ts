@@ -1,25 +1,32 @@
-import { SignUp } from '@src/application/usecase/account/SignUp';
 import { SignIn } from '@src/application/usecase/auth/SignIn';
+import Account from '@src/domain/entity/Account';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
-import { AccountProfileRepositoryMemoryDatabase } from '@src/infra/repository/AccountProfileRepository';
-import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
+import sinon from 'sinon';
 
-const accountRepository = new AccountRepositoryMemoryDatabase();
-const accountProfileRepository = new AccountProfileRepositoryMemoryDatabase();
-const signUp = new SignUp(accountRepository, accountProfileRepository);
+const accountRepository = {
+  save: sinon.stub(),
+  updatePassword: sinon.stub(),
+  getById: sinon.stub(),
+  getByUsername: sinon.stub(),
+  existsById: sinon.stub(),
+  clear: sinon.stub(),
+};
+
 const signIn = new SignIn(accountRepository);
 const signUpInput = {
   username: 'johndoe@test.com',
   password: 'secret',
 };
 
+const account = Account.create(signUpInput.username, signUpInput.password);
+
 describe('SignIn', () => {
   beforeEach(() => {
-    accountRepository.clear();
+    accountRepository.getByUsername.resetBehavior();
   });
 
   it('should be able to sign in', async () => {
-    await signUp.execute(signUpInput);
+    accountRepository.getByUsername.resolves(account);
     const output = await signIn.execute(signUpInput);
     expect(output.token).toBeDefined();
     expect(output.refreshToken).toBeDefined();
@@ -30,7 +37,7 @@ describe('SignIn', () => {
   });
 
   it('should throw an error when password is incorrect', async () => {
-    await signUp.execute(signUpInput);
+    accountRepository.getByUsername.resolves(account);
     const signInInput = {
       username: 'johndoe@test.com',
       password: 'wrong_password',

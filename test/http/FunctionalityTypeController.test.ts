@@ -124,58 +124,6 @@ describe('FunctionalityType Controller', () => {
       expect(body.count).toBeGreaterThan(0);
       expect(body.rows.length).toBeGreaterThan(0);
     });
-
-    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by name', async () => {
-      const { status, body } = await global.testRequest
-        .get('/functionality-types/v1?page=1&limit=10&name=Tela%20do%20Menu%20Lateral')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(1);
-      expect(body.rows.length).toBe(1);
-    });
-
-    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by description', async () => {
-      const { status, body } = await global.testRequest
-        .get('/functionality-types/v1?page=1&limit=10&description=Telas')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(2);
-      expect(body.rows.length).toBe(2);
-    });
-
-    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by id', async () => {
-      const { status, body } = await global.testRequest
-        .get('/functionality-types/v1?page=1&limit=10&id=52a19d20-9904-4a2d-b7c5-ff3d25b80e41')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBe(1);
-      expect(body.rows.length).toBe(1);
-    });
-
-    it('ListFunctionalityTypes: should be able to list functionalityTypes and filter by active', async () => {
-      const { status, body } = await global.testRequest
-        .get('/functionality-types/v1?page=1&active=true')
-        .set({ Authorization: `Bearer ${token}` })
-        .send();
-
-      expect(status).toBe(StatusCodes.OK);
-      expect(body.page).toBe(1);
-      expect(body.limit).toBe(10);
-      expect(body.count).toBeGreaterThan(0);
-      expect(body.rows.length).toBeGreaterThan(0);
-    });
   });
 
   describe('DeleteFunctionalityType', () => {

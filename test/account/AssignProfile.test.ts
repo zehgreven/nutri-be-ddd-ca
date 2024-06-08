@@ -2,16 +2,35 @@ import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
-import { AccountProfileRepositoryMemoryDatabase } from '@src/infra/repository/AccountProfileRepository';
-import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
-import { ProfileRepositoryMemoryDatabase } from '@src/infra/repository/ProfileRepository';
+import sinon from 'sinon';
 
 describe('AssignProfile', () => {
-  const accountRepository = new AccountRepositoryMemoryDatabase();
-  const profileRepository = new ProfileRepositoryMemoryDatabase();
-  const accountProfileRepository = new AccountProfileRepositoryMemoryDatabase();
+  const accountRepository = {
+    save: sinon.stub(),
+    updatePassword: sinon.stub(),
+    getById: sinon.stub(),
+    getByUsername: sinon.stub(),
+    existsById: sinon.stub(),
+  };
+
+  const profileRepository = {
+    save: sinon.stub(),
+    update: sinon.stub(),
+    getById: sinon.stub(),
+    deleteById: sinon.stub(),
+    existsById: sinon.stub(),
+  };
+
+  const accountProfileRepository = {
+    save: sinon.stub(),
+    deleteByAccountIdAndProfileId: sinon.stub(),
+  };
 
   const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
+
+  afterEach(() => {
+    accountRepository.getById.resolves();
+  });
 
   it('should throw error when account does not exists', async () => {
     await expect(
@@ -21,7 +40,8 @@ describe('AssignProfile', () => {
 
   it('should throw error when profile does not exists', async () => {
     const account = Account.create('johndoe@test.com', 'secret');
-    await accountRepository.save(account);
+    accountRepository.getById.resolves(account);
+
     await expect(assignProfile.execute(account.id, 'faaa7ee4-f5c7-4dca-b65b-27331b1dcd4e')).rejects.toThrow(
       ProfileNotFoundError,
     );

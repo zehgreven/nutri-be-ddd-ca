@@ -87,32 +87,3 @@ export class FunctionalityRepositoryPostgres implements FunctionalityRepository 
     return !!functionality;
   }
 }
-
-export class FunctionalityRepositoryMemoryDatabase implements FunctionalityRepository {
-  functionalitys: Functionality[] = [];
-
-  async save(functionality: Functionality): Promise<void> {
-    this.functionalitys.push(functionality);
-  }
-
-  async update(functionality: Functionality): Promise<void> {
-    const index = this.functionalitys.findIndex(p => p.id === functionality.id);
-    this.functionalitys[index] = functionality;
-  }
-
-  async getById(id: string): Promise<Functionality | undefined> {
-    return this.functionalitys.find(functionality => functionality.id === id);
-  }
-
-  async deleteById(id: string): Promise<void> {
-    this.functionalitys = this.functionalitys.filter(functionality => functionality.id !== id);
-  }
-
-  async existsById(id: string): Promise<boolean> {
-    return this.functionalitys.some(functionality => functionality.id === id);
-  }
-
-  async clear(): Promise<void> {
-    this.functionalitys = [];
-  }
-}

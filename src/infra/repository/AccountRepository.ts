@@ -55,32 +55,3 @@ export class AccountRepositoryPostgres implements AccountRepository {
     return !!account;
   }
 }
-
-export class AccountRepositoryMemoryDatabase implements AccountRepository {
-  accounts: Account[] = [];
-
-  clear(): void {
-    this.accounts = [];
-  }
-
-  async save(account: Account): Promise<void> {
-    this.accounts.push(account);
-  }
-
-  async updatePassword(account: Account): Promise<void> {
-    const index = this.accounts.findIndex(a => a.id === account.id);
-    this.accounts[index] = account;
-  }
-
-  async getById(id: string): Promise<Account | undefined> {
-    return this.accounts.find(account => account.id === id);
-  }
-
-  async getByUsername(username: string): Promise<Account | undefined> {
-    return this.accounts.find(account => account.getUsername() === username);
-  }
-
-  async existsById(id: string): Promise<boolean> {
-    return this.accounts.some(account => account.id === id);
-  }
-}

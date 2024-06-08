@@ -32,17 +32,3 @@ export class AccountProfileRepositoryPostgres implements AccountProfileRepositor
     this.connection.commit();
   }
 }
-
-export class AccountProfileRepositoryMemoryDatabase implements AccountProfileRepository {
-  private accountProfiles: AccountProfile[] = [];
-
-  async save(accountProfile: AccountProfile): Promise<void> {
-    this.accountProfiles.push(accountProfile);
-  }
-
-  async deleteByAccountIdAndProfileId(accountId: string, profileId: string): Promise<void> {
-    this.accountProfiles = this.accountProfiles.filter(
-      accountProfile => accountProfile.accountId !== accountId || accountProfile.profileId !== profileId,
-    );
-  }
-}

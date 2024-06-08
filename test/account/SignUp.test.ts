@@ -1,11 +1,20 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
-import { AccountProfileRepositoryMemoryDatabase } from '@src/infra/repository/AccountProfileRepository';
-import { AccountRepositoryMemoryDatabase } from '@src/infra/repository/AccountRepository';
 
-const accountRepository = new AccountRepositoryMemoryDatabase();
-const accountProfileRepository = new AccountProfileRepositoryMemoryDatabase();
+const accountRepository = {
+  save: () => Promise.resolve(),
+  updatePassword: () => Promise.resolve(),
+  getById: () => Promise.resolve(undefined),
+  getByUsername: () => Promise.resolve(undefined),
+  existsById: () => Promise.resolve(false),
+};
+
+const accountProfileRepository = {
+  save: () => Promise.resolve(),
+  deleteByAccountIdAndProfileId: () => Promise.resolve(),
+};
+
 const signUp = new SignUp(accountRepository, accountProfileRepository);
 
 describe('SignUp', () => {
