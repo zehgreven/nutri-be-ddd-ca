@@ -60,4 +60,20 @@ describe('Auth Controller', () => {
     expect(status).toBe(StatusCodes.UNAUTHORIZED);
     expect(body.message).toBe('Your credentials are incorrect');
   });
+
+  it('should be able to refresh the token', async () => {
+    const { body: loginBody } = await global.testRequest
+      .post('/auth/v1/authenticate')
+      .set({ 'Content-Type': 'application/json' })
+      .send(account);
+
+    const { status, body } = await global.testRequest
+      .post('/auth/v1/refresh')
+      .set({ 'Content-Type': 'application/json' })
+      .send({ token: loginBody.refreshToken });
+
+    expect(status).toBe(StatusCodes.CREATED);
+    expect(body.token).toBeDefined();
+    expect(body.refreshToken).toBeDefined();
+  });
 });
