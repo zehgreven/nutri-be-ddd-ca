@@ -1,8 +1,8 @@
+import logger from '@src/infra/logging/logger';
 import crypto from 'crypto';
 import { Response } from 'express';
 import { LoggerOptions } from 'pino';
 import pinoHttp from 'pino-http';
-import logger from './logger';
 
 export default pinoHttp<LoggerOptions>({
   logger,

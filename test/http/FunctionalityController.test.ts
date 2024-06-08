@@ -105,7 +105,7 @@ describe('Functionality Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(functionalityType);
 
-      const { status, body } = await global.testRequest
+      const { status } = await global.testRequest
         .patch(`/functionalities/v1/${createdFunctionality.id}`)
         .set({ Authorization: `Bearer ${token}` })
         .send({

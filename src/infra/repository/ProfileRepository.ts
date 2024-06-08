@@ -6,6 +6,7 @@ export interface ProfileRepository {
   update(profile: Profile): Promise<void>;
   getById(id: string): Promise<Profile | undefined>;
   deleteById(id: string): Promise<void>;
+  existsById(id: string): Promise<boolean>;
 }
 
 export class ProfileRepositoryPostgres implements ProfileRepository {
@@ -49,6 +50,12 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
     await this.connection.query(query, { id });
     this.connection.commit();
   }
+
+  async existsById(id: string): Promise<boolean> {
+    const query = 'select 1 from iam.profile where deleted is null and id = $(id)';
+    const [profile] = await this.connection.query(query, { id });
+    return !!profile;
+  }
 }
 
 export class ProfileRepositoryMemoryDatabase implements ProfileRepository {
@@ -69,6 +76,10 @@ export class ProfileRepositoryMemoryDatabase implements ProfileRepository {
 
   async deleteById(id: string): Promise<void> {
     this.profiles = this.profiles.filter(profile => profile.id !== id);
+  }
+
+  async existsById(id: string): Promise<boolean> {
+    return this.profiles.some(profile => profile.id === id);
   }
 
   async clear(): Promise<void> {

@@ -3,8 +3,8 @@ import { ListFunctionalityTypeQuery } from '@src/application/query/functionality
 import { CreateFunctionalityType } from '@src/application/usecase/functionality-type/CreateFunctionalityType';
 import { DeleteFunctionalityType } from '@src/application/usecase/functionality-type/DeleteFunctionalityType';
 import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
+import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from './AuthorizationMiddleware';
 
 export class FunctionalityTypeController {
   constructor(

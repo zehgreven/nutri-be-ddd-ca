@@ -84,10 +84,10 @@ describe('PatchFunctionality', () => {
     const patchInput = {
       functionalityTypeId: null,
     };
-    await expect(() => patchFunctionality.execute(createdFunctionality.id, patchInput)).rejects.toThrow(InvalidInputError);
+    await expect(() => patchFunctionality.execute(createdFunctionality.id, patchInput)).rejects.toThrow(
+      InvalidInputError,
+    );
   });
-
-
 
   it('should not be able to patch functionality with invalid input', async () => {
     const functionality = {

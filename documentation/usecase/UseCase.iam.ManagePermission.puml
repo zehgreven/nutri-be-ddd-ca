@@ -2,16 +2,27 @@
 
 actor Admin
 
-usecase ManagePermission #LightGray
-usecase GrantPermission #LightGray
-usecase RevokePermission #LightGray
-usecase AssignPermission #LightGray
-usecase UnassignPermission #LightGray
+usecase ManageProfilePermission #LightYellow
+usecase GrantProfilePermission #LightGray
+usecase RevokeProfilePermission #LightGray
+usecase AssignProfilePermission #LightGreen
+usecase UnassignProfilePermission #LightGreen
+usecase ManageAccountPermission #LightGray
+usecase GrantAccountPermission #LightGray
+usecase RevokeAccountPermission #LightGray
+usecase AssignAccountPermission #LightGray
+usecase UnassignAccountPermission #LightGray
 
-Admin --> (ManagePermission) 
-(ManagePermission) <.d. (GrantPermission) 
-(ManagePermission) <.d. (RevokePermission) 
-(ManagePermission) <.d. (AssignPermission) 
-(ManagePermission) <.d. (UnassignPermission) 
+Admin -d-> (ManageProfilePermission) 
+(ManageProfilePermission) <.d. (GrantProfilePermission) 
+(ManageProfilePermission) <.d. (RevokeProfilePermission) 
+(ManageProfilePermission) <.d. (AssignProfilePermission) 
+(ManageProfilePermission) <.d. (UnassignProfilePermission) 
+
+Admin -u-> (ManageAccountPermission) 
+(ManageAccountPermission) <.u. (GrantAccountPermission) 
+(ManageAccountPermission) <.u. (RevokeAccountPermission) 
+(ManageAccountPermission) <.u. (AssignAccountPermission) 
+(ManageAccountPermission) <.u. (UnassignAccountPermission) 
 
 @enduml

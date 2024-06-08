@@ -6,6 +6,7 @@ export interface FunctionalityRepository {
   update(functionality: Functionality): Promise<void>;
   getById(id: string): Promise<Functionality | undefined>;
   deleteById(id: string): Promise<void>;
+  existsById(id: string): Promise<boolean>;
 }
 
 export class FunctionalityRepositoryPostgres implements FunctionalityRepository {
@@ -79,6 +80,12 @@ export class FunctionalityRepositoryPostgres implements FunctionalityRepository 
     await this.connection.query(query, { id });
     this.connection.commit();
   }
+
+  async existsById(id: string): Promise<boolean> {
+    const query = 'select 1 from iam.functionality where deleted is null and id = $(id)';
+    const [functionality] = await this.connection.query(query, { id });
+    return !!functionality;
+  }
 }
 
 export class FunctionalityRepositoryMemoryDatabase implements FunctionalityRepository {
@@ -99,6 +106,10 @@ export class FunctionalityRepositoryMemoryDatabase implements FunctionalityRepos
 
   async deleteById(id: string): Promise<void> {
     this.functionalitys = this.functionalitys.filter(functionality => functionality.id !== id);
+  }
+
+  async existsById(id: string): Promise<boolean> {
+    return this.functionalitys.some(functionality => functionality.id === id);
   }
 
   async clear(): Promise<void> {

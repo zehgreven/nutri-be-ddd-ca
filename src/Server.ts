@@ -17,9 +17,11 @@ import { PatchFunctionalityType } from '@src/application/usecase/functionality-t
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { DeleteFunctionality } from '@src/application/usecase/functionality/DeleteFunctionality';
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
+import { AssignPermission } from '@src/application/usecase/profile/AssignPermission';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
+import { UnassignPermission } from '@src/application/usecase/profile/UnassignPermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
@@ -32,6 +34,7 @@ import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountP
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { FunctionalityRepositoryPostgres } from '@src/infra/repository/FunctionalityRepository';
 import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/FunctionalityTypeRepository';
+import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
 
@@ -107,8 +110,9 @@ export class Server {
     const accountProfileRepository = new AccountProfileRepositoryPostgres(this.databaseConnection);
     const functionalityTypeRepository = new FunctionalityTypeRepositoryPostgres(this.databaseConnection);
     const functionalityRepository = new FunctionalityRepositoryPostgres(this.databaseConnection);
+    const profilePermissionRepository = new ProfilePermissionRepositoryPostgres(this.databaseConnection);
 
-    logger.info('Setup: Queries');
+    logger.info('Setup: QuerassignPermissionies');
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
     const listProfile = new ListProfileQuery(this.databaseConnection);
@@ -133,11 +137,26 @@ export class Server {
     const createFunctionality = new CreateFunctionality(functionalityRepository);
     const patchFunctionality = new PatchFunctionality(functionalityRepository);
     const deleteFunctionality = new DeleteFunctionality(functionalityRepository);
+    const assignPermission = new AssignPermission(
+      profileRepository,
+      functionalityRepository,
+      profilePermissionRepository,
+    );
+    const unassignPermission = new UnassignPermission(profilePermissionRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
     new AuthController(this.httpServer, signIn, refreshToken);
-    new ProfileController(this.httpServer, createProfile, patchProfile, getProfileById, listProfile, deleteProfile);
+    new ProfileController(
+      this.httpServer,
+      createProfile,
+      patchProfile,
+      getProfileById,
+      listProfile,
+      deleteProfile,
+      assignPermission,
+      unassignPermission,
+    );
     new FunctionalityTypeController(
       this.httpServer,
       createFunctionalityType,

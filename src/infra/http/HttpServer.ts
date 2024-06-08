@@ -8,9 +8,9 @@ import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
+import loggerHttp from '@src/infra/logging/loggerHttp';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import loggerHttp from '../logging/loggerHttp';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;

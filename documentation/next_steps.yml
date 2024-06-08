@@ -38,8 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Add missing controller tests
-      - Refactor Patch method in the Entitites
       - Implement Profile Permission API
       - Implement Account Permission API
       - check logging correlation id

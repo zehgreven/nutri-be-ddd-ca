@@ -195,4 +195,64 @@ describe('Profile Controller', () => {
       expect(getByIdStatus).toBe(StatusCodes.NOT_FOUND);
     });
   });
+
+  describe('AssignProfile', () => {
+    it('AssignProfile: should be able to assign profile', async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+      const { status } = await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.CREATED);
+    });
+
+    it('AssignProfile: should return error when profile not found', async () => {
+      const profileId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+      const { status } = await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('AssignProfile: should return error when functionality not found', async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
+      const { status } = await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NOT_FOUND);
+    });
+  });
+
+  describe('UnassignProfile', () => {
+    it('UnassignProfile: should be able to unassign profile', async () => {
+      const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
+      const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+      await global.testRequest
+        .post(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      const { status } = await global.testRequest
+        .delete(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NO_CONTENT);
+    });
+
+    it('UnassignProfile: should be able to unassign even when profile and/or functionality not found', async () => {
+      const profileId = '6df3ac1d-036c-4e3c-bb82-26a4e116bb23';
+      const functionalityId = '0f590bd7-ac21-49d5-8637-27754a6d852e';
+      const { status } = await global.testRequest
+        .delete(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+      expect(status).toBe(StatusCodes.NO_CONTENT);
+    });
+  });
 });

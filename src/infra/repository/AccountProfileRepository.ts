@@ -1,5 +1,5 @@
 import AccountProfile from '@src/domain/entity/AccountProfile';
-import DatabaseConnection from '../database/DatabaseConnection';
+import DatabaseConnection from '@src/infra/database/DatabaseConnection';
 
 export interface AccountProfileRepository {
   save(accountProfile: AccountProfile): Promise<void>;

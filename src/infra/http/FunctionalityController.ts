@@ -3,8 +3,8 @@ import { ListFunctionalityQuery } from '@src/application/query/functionality/Lis
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { DeleteFunctionality } from '@src/application/usecase/functionality/DeleteFunctionality';
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
+import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from './AuthorizationMiddleware';
 
 export class FunctionalityController {
   constructor(

@@ -1,10 +1,12 @@
 import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
+import { AssignPermission } from '@src/application/usecase/profile/AssignPermission';
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
+import { UnassignPermission } from '@src/application/usecase/profile/UnassignPermission';
+import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from './AuthorizationMiddleware';
 
 export class ProfileController {
   constructor(
@@ -14,12 +16,24 @@ export class ProfileController {
     readonly getProfileById: GetProfileByIdQuery,
     readonly listProfile: ListProfileQuery,
     readonly deleteProfile: DeleteProfile,
+    readonly assignPermission: AssignPermission,
+    readonly unassignPermission: UnassignPermission,
   ) {
     httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
     httpServer.get('/profiles/v1', [AuthorizationMiddleware], this.executeListProfile);
     httpServer.get('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeGetProfileById);
     httpServer.patch('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executePatchProfile);
     httpServer.delete('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeDeleteProfile);
+    httpServer.post(
+      '/profiles/v1/:profileId/functionality/:functionalityId',
+      [AuthorizationMiddleware],
+      this.executeAssignPermission,
+    );
+    httpServer.delete(
+      '/profiles/v1/:profileId/functionality/:functionalityId',
+      [AuthorizationMiddleware],
+      this.executeUnassignPermission,
+    );
   }
 
   private executeCreateProfile: CallbackFunction = (_: any, body: any) => {
@@ -46,5 +60,13 @@ export class ProfileController {
       params.page = 1;
     }
     return this.listProfile.execute(params);
+  };
+
+  private executeAssignPermission: CallbackFunction = (params: any) => {
+    return this.assignPermission.execute(params.profileId, params.functionalityId);
+  };
+
+  private executeUnassignPermission: CallbackFunction = (params: any) => {
+    return this.unassignPermission.execute(params.profileId, params.functionalityId);
   };
 }
