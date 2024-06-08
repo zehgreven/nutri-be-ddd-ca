@@ -23,9 +23,9 @@ export class ProfileController {
     readonly grantAndRevokePermission: GrantAndRevokeProfilePermission,
     readonly listProfilePermission: ListProfilePermissionQuery,
   ) {
-    httpServer.get('/profiles/v1/permissions', [AuthorizationMiddleware], this.executeListProfilePermission);
     httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
     httpServer.get('/profiles/v1', [AuthorizationMiddleware], this.executeListProfile);
+    httpServer.get('/profiles/v1/permissions', [AuthorizationMiddleware], this.executeListProfilePermission);
     httpServer.get('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeGetProfileById);
     httpServer.patch('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executePatchProfile);
     httpServer.delete('/profiles/v1/:profileId', [AuthorizationMiddleware], this.executeDeleteProfile);

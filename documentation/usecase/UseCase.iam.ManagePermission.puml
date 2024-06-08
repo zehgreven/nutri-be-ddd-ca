@@ -8,12 +8,12 @@ usecase RevokeProfilePermission #LightGreen
 usecase AssignProfilePermission #LightGreen
 usecase UnassignProfilePermission #LightGreen
 usecase ListPermissionsByProfile #LightGreen
-usecase ManageAccountPermission #LightYellow
-usecase GrantAccountPermission #LightGray
-usecase RevokeAccountPermission #LightGray
-usecase AssignAccountPermission #LightGray
-usecase UnassignAccountPermission #LightGray
-usecase ListPermissionsByAccount #LightGray
+usecase ManageAccountPermission #LightGreen
+usecase GrantAccountPermission #LightGreen
+usecase RevokeAccountPermission #LightGreen
+usecase AssignAccountPermission #LightGreen
+usecase UnassignAccountPermission #LightGreen
+usecase ListPermissionsByAccount #LightGreen
 
 Admin -d-> (ManageProfilePermission) 
 (ManageProfilePermission) <.d. (GrantProfilePermission) 

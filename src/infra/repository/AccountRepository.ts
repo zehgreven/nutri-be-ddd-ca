@@ -6,6 +6,7 @@ export interface AccountRepository {
   updatePassword(account: Account): Promise<void>;
   getById(id: string): Promise<Account | undefined>;
   getByUsername(id: string): Promise<Account | undefined>;
+  existsById(id: string): Promise<boolean>;
 }
 
 export class AccountRepositoryPostgres implements AccountRepository {
@@ -47,6 +48,12 @@ export class AccountRepositoryPostgres implements AccountRepository {
     }
     return Account.restore(account.id, account.username, account.password);
   }
+
+  async existsById(id: string): Promise<boolean> {
+    const query = 'SELECT 1 FROM iam.account WHERE deleted is null and id = $(id)';
+    const [account] = await this.connection.query(query, { id: id });
+    return !!account;
+  }
 }
 
 export class AccountRepositoryMemoryDatabase implements AccountRepository {
@@ -71,5 +78,9 @@ export class AccountRepositoryMemoryDatabase implements AccountRepository {
 
   async getByUsername(username: string): Promise<Account | undefined> {
     return this.accounts.find(account => account.getUsername() === username);
+  }
+
+  async existsById(id: string): Promise<boolean> {
+    return this.accounts.some(account => account.id === id);
   }
 }

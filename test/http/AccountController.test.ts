@@ -153,6 +153,134 @@ describe('Account Controller', () => {
         .send();
       expect(accountWithoutAssignedProfile.profiles.length).toBe(1);
     });
+
+    describe('AssignAccountPermission', () => {
+      afterAll(async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+        await global.testRequest
+          .delete(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+      });
+      it('AssignAccountPermission: should be able to assign permission to account', async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+        const { status } = await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.CREATED);
+      });
+
+      it('AssignAccountPermission: should return error when account not found', async () => {
+        const accountId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+        await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        const { status } = await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NOT_FOUND);
+      });
+
+      it('AssignAccountPermission: should return error when functionality not found', async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
+        const { status } = await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NOT_FOUND);
+      });
+    });
+
+    describe('UnassignAccountPermission', () => {
+      it('UnassignAccountPermission: should be able to unassign profile', async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+        await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        const { status } = await global.testRequest
+          .delete(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NO_CONTENT);
+      });
+
+      it('UnassignAccountPermission: should be able to unassign even when profile and/or functionality not found', async () => {
+        const accountId = '6df3ac1d-036c-4e3c-bb82-26a4e116bb23';
+        const functionalityId = '0f590bd7-ac21-49d5-8637-27754a6d852e';
+        const { status } = await global.testRequest
+          .delete(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NO_CONTENT);
+      });
+    });
+
+    describe('GrantAndRevokeAccountPermission', () => {
+      afterAll(async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+        await global.testRequest
+          .delete(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+      });
+      it('GrantAndRevokeAccountPermission: should be able to grant and revoke permission', async () => {
+        const accountId = '13782202-684d-4ba9-9cad-487b9e4a6a8a';
+        const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
+
+        await global.testRequest
+          .post(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        const { status } = await global.testRequest
+          .patch(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.OK);
+
+        const { body: allowedPermissions } = await global.testRequest
+          .get(`/accounts/v1/permissions?accountId=${accountId}&functionalityId=${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        const [allowedPermission] = allowedPermissions.rows;
+        expect(allowedPermission.account.id).toBe(accountId);
+        expect(allowedPermission.functionality.id).toBe(functionalityId);
+        expect(allowedPermission.allow).toBe(false);
+        expect(allowedPermission.active).toBe(true);
+
+        const { status: revokeStatus } = await global.testRequest
+          .patch(`/accounts/v1/${accountId}/functionality/${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(revokeStatus).toBe(StatusCodes.OK);
+
+        const { body: notAllowedPermissions } = await global.testRequest
+          .get(`/accounts/v1/permissions?accountId=${accountId}&functionalityId=${functionalityId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        const [notAllowedPermission] = notAllowedPermissions.rows;
+        expect(allowedPermission.account.id).toBe(accountId);
+        expect(allowedPermission.functionality.id).toBe(functionalityId);
+        expect(notAllowedPermission.allow).toBe(true);
+        expect(notAllowedPermission.active).toBe(true);
+      });
+    });
   });
 
   describe('Not Authorized', () => {

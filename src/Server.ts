@@ -38,7 +38,12 @@ import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/Funct
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
+import { ListAccountPermissionQuery } from './application/query/account/ListAccountPermissionQuery';
+import { AssignAccountPermission } from './application/usecase/account/AssignAccountPermission';
+import { GrantAndRevokeAccountPermission } from './application/usecase/account/GrantAndRevokeAccountPermission';
+import { UnassignAccountPermission } from './application/usecase/account/UnassignAccountPermission';
 import { UnassignProfilePermission } from './application/usecase/profile/UnassignProfilePermission';
+import { AccountPermissionRepositoryPostgres } from './infra/repository/AccountPermissionRepository';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -113,6 +118,7 @@ export class Server {
     const functionalityTypeRepository = new FunctionalityTypeRepositoryPostgres(this.databaseConnection);
     const functionalityRepository = new FunctionalityRepositoryPostgres(this.databaseConnection);
     const profilePermissionRepository = new ProfilePermissionRepositoryPostgres(this.databaseConnection);
+    const accountPermissionRepository = new AccountPermissionRepositoryPostgres(this.databaseConnection);
 
     logger.info('Setup: QuerassignPermissionies');
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
@@ -123,6 +129,7 @@ export class Server {
     const getFunctionalityById = new GetFunctionalityByIdQuery(this.databaseConnection);
     const listFunctionality = new ListFunctionalityQuery(this.databaseConnection);
     const listProfilePermission = new ListProfilePermissionQuery(this.databaseConnection);
+    const listAccountPermission = new ListAccountPermissionQuery(this.databaseConnection);
 
     logger.info('Setup: Use Cases');
     const signUp = new SignUp(accountRepository, accountProfileRepository);
@@ -140,16 +147,34 @@ export class Server {
     const createFunctionality = new CreateFunctionality(functionalityRepository);
     const patchFunctionality = new PatchFunctionality(functionalityRepository);
     const deleteFunctionality = new DeleteFunctionality(functionalityRepository);
-    const assignPermission = new AssignProfilePermission(
+    const assignProfilePermission = new AssignProfilePermission(
       profileRepository,
       functionalityRepository,
       profilePermissionRepository,
     );
-    const unassignPermission = new UnassignProfilePermission(profilePermissionRepository);
-    const grantAndRevokePermission = new GrantAndRevokeProfilePermission(profilePermissionRepository);
+    const unassignProfilePermission = new UnassignProfilePermission(profilePermissionRepository);
+    const grantAndRevokeProfilePermission = new GrantAndRevokeProfilePermission(profilePermissionRepository);
+    const assignAccountPermission = new AssignAccountPermission(
+      accountRepository,
+      functionalityRepository,
+      accountPermissionRepository,
+    );
+    const unassignAccountPermission = new UnassignAccountPermission(accountPermissionRepository);
+    const grantAndRevokeAccountPermission = new GrantAndRevokeAccountPermission(accountPermissionRepository);
 
     logger.info('Setup: Controllers');
-    new AccountController(this.httpServer, getAccountById, signUp, changePassword, assignProfile, unassignProfile);
+    new AccountController(
+      this.httpServer,
+      getAccountById,
+      signUp,
+      changePassword,
+      assignProfile,
+      unassignProfile,
+      assignAccountPermission,
+      unassignAccountPermission,
+      grantAndRevokeAccountPermission,
+      listAccountPermission,
+    );
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(
       this.httpServer,
@@ -158,9 +183,9 @@ export class Server {
       getProfileById,
       listProfile,
       deleteProfile,
-      assignPermission,
-      unassignPermission,
-      grantAndRevokePermission,
+      assignProfilePermission,
+      unassignProfilePermission,
+      grantAndRevokeProfilePermission,
       listProfilePermission,
     );
     new FunctionalityTypeController(

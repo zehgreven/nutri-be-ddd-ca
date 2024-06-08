@@ -10,6 +10,7 @@ usecase ChangePassword #LightGreen
 usecase ManageProfile #LightGreen
 usecase ManageFunctionalityType #LightGreen
 usecase ManageFunctionality #LightGreen
+usecase ManageProfilePermission #LightGreen
 usecase ManageAccountPermission #LightGreen
 usecase ManageAccount #LightYellow
 

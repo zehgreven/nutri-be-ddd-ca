@@ -196,7 +196,7 @@ describe('Profile Controller', () => {
     });
   });
 
-  describe('AssignProfile', () => {
+  describe('AssignProfilePermission', () => {
     afterAll(async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
@@ -205,7 +205,7 @@ describe('Profile Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send();
     });
-    it('AssignProfile: should be able to assign profile', async () => {
+    it('AssignProfilePermission: should be able to assign profile', async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
       const { status } = await global.testRequest
@@ -215,7 +215,7 @@ describe('Profile Controller', () => {
       expect(status).toBe(StatusCodes.CREATED);
     });
 
-    it('AssignProfile: should return error when profile not found', async () => {
+    it('AssignProfilePermission: should return error when profile not found', async () => {
       const profileId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
 
@@ -231,7 +231,7 @@ describe('Profile Controller', () => {
       expect(status).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('AssignProfile: should return error when functionality not found', async () => {
+    it('AssignProfilePermission: should return error when functionality not found', async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '87a5ce0d-3565-4d00-b474-c8dd0d1ccdf7';
       const { status } = await global.testRequest
@@ -242,8 +242,8 @@ describe('Profile Controller', () => {
     });
   });
 
-  describe('UnassignProfile', () => {
-    it('UnassignProfile: should be able to unassign profile', async () => {
+  describe('UnassignProfilePermission', () => {
+    it('UnassignProfilePermission: should be able to unassign profile', async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
 
@@ -259,7 +259,7 @@ describe('Profile Controller', () => {
       expect(status).toBe(StatusCodes.NO_CONTENT);
     });
 
-    it('UnassignProfile: should be able to unassign even when profile and/or functionality not found', async () => {
+    it('UnassignProfilePermission: should be able to unassign even when profile and/or functionality not found', async () => {
       const profileId = '6df3ac1d-036c-4e3c-bb82-26a4e116bb23';
       const functionalityId = '0f590bd7-ac21-49d5-8637-27754a6d852e';
       const { status } = await global.testRequest
@@ -270,7 +270,7 @@ describe('Profile Controller', () => {
     });
   });
 
-  describe('GrantAndRevokePermission', () => {
+  describe('GrantAndRevokeProfilePermission', () => {
     afterAll(async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
@@ -279,7 +279,7 @@ describe('Profile Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send();
     });
-    it('GrantAndRevokePermission: should be able to grant and revoke permission', async () => {
+    it('GrantAndRevokeProfilePermission: should be able to grant and revoke permission', async () => {
       const profileId = 'dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131';
       const functionalityId = '8c29a940-463c-4670-914a-ef57cfb8cb3e';
 
