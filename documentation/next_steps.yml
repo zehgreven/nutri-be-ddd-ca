@@ -38,11 +38,17 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement API security based on Account Profile (admin routes)
-      - API Cache
-      - Create README.md
+      - Add events with RabbitMQ
       - Send email confirmation when account is created
       - Send email when password is changed
+      - Implement API security based on Account Profile (admin routes)
+      - Dependency Injection
+      - Add CORS
+      - API Cache
+      - Add error handling (midleware?)
+      - Create README.md
+      - Add Swagger Docs
+      - Add Swagger UI
   - dependecies:
       - development:
       - production:
