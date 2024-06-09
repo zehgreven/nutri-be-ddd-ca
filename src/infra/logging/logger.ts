@@ -1,9 +1,29 @@
 import config from 'config';
-import pino from 'pino';
+import pino, { LoggerOptions } from 'pino';
 
-export default pino({
+const transport = pino.transport({
+  targets: [
+    {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+      },
+    },
+  ],
+});
+
+const loggerOptions: LoggerOptions = {
   enabled: config.get('logger.enabled'),
   level: config.get('logger.level'),
+  formatters: {
+    bindings: bindings => {
+      return {
+        host: bindings.host,
+        request: bindings.request,
+        accountId: bindings.accountId,
+      };
+    },
+  },
   timestamp: () => {
     return `,"time":"${new Date(Date.now()).toLocaleTimeString([], {
       year: 'numeric',
@@ -14,4 +34,6 @@ export default pino({
       second: '2-digit',
     })}"`;
   },
-});
+};
+
+export default pino(loggerOptions, transport);

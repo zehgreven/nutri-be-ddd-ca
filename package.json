@@ -20,7 +20,7 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "start:dev": "dotenv -e env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts | pino-pretty -C",
+    "start:dev": "dotenv -e env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts",
     "style:check": "prettier --check src/**/*.ts test/**/*.ts",
     "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
     "lint:check": "eslint src/**/*.ts test/**/*.ts",

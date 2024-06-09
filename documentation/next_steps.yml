@@ -41,7 +41,6 @@ next-steps:
       - Finish Manage Account
       - Implement API security based on Account Profile (admin routes)
       - API Cache
-      - Check logging correlation id
       - Create README.md
   - dependecies:
       - development:

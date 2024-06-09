@@ -31,6 +31,21 @@ export default pinoHttp<LoggerOptions>({
 
   wrapSerializers: true,
 
+  customReceivedMessage: (req: any): string => {
+    return `Received ${req.method} request to ${req.url}`;
+  },
+
+  customErrorObject: (req: any, res: any, err: any) => {
+    return {
+      accountId: req.accountId,
+      error: err,
+      status: {
+        code: res.statusCode,
+        message: res.statusMessage,
+      },
+    };
+  },
+
   customLogLevel: (req: any, res: any, err: any) => {
     if (res.statusCode >= 400 && res.statusCode < 500) {
       return 'warn';

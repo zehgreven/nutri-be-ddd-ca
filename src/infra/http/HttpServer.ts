@@ -12,6 +12,7 @@ import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import loggerHttp from '@src/infra/logging/loggerHttp';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import LoggerCorrelationIdMiddleware from './LoggerCorrelationIdMiddleware';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
@@ -54,6 +55,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
         await middleware(req, res);
       } catch (error: any) {
         const statusCode = this.mapErrorToStatusCode(error);
+        res.err = error;
         res.status(statusCode).json({
           message: error.message,
         });
@@ -66,17 +68,18 @@ export class ExpressHttpServerAdapter implements HttpServer {
   private register(method: string, path: string, middlewares: MiddlewareFunction[], callback: CallbackFunction): void {
     this.app[method](
       path,
-      async (req: any, res: any, next: Function) => {
-        req.log.info(`[${method.toUpperCase()}] ${path}`);
+      async (req: Request, res: Response, next: Function) => {
         await this.executeMiddlewares(middlewares, req, res, next);
       },
-      async (req: any, res: any) => {
+      LoggerCorrelationIdMiddleware,
+      async (req: Request & { accountId?: string }, res: Response) => {
         try {
           const result = await callback({ ...req.params, ...req.query }, req.body, req.accountId);
           const statusCode = this.mapSuccessToStatusCode(method);
           res.status(statusCode).json(result);
         } catch (error: any) {
           const statusCode = this.mapErrorToStatusCode(error);
+          res.err = error;
           res.status(statusCode).json({
             message: error.message,
           });
