@@ -7,6 +7,7 @@ import sinon from 'sinon';
 describe('ChangePassword', () => {
   const accountRepository = {
     save: sinon.stub(),
+    updateActive: sinon.mock(),
     updatePassword: sinon.stub(),
     getById: sinon.stub(),
     getByUsername: sinon.stub(),

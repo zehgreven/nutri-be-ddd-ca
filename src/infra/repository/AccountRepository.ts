@@ -3,6 +3,7 @@ import DatabaseConnection from '@src/infra/database/DatabaseConnection';
 
 export interface AccountRepository {
   save(account: Account): Promise<void>;
+  updateActive(account: Account): Promise<void>;
   updatePassword(account: Account): Promise<void>;
   getById(id: string): Promise<Account | undefined>;
   getByUsername(id: string): Promise<Account | undefined>;
@@ -23,6 +24,15 @@ export class AccountRepositoryPostgres implements AccountRepository {
     this.connection.commit();
   }
 
+  async updateActive(account: Account): Promise<void> {
+    const query = `UPDATE iam.account SET active = $(active) WHERE id = $(id)`;
+    await this.connection.query(query, {
+      id: account.id,
+      active: account.isActive(),
+    });
+    this.connection.commit();
+  }
+
   async updatePassword(account: Account): Promise<void> {
     const query = `UPDATE iam.account SET password = $(password) WHERE id = $(id)`;
     await this.connection.query(query, {
@@ -38,7 +48,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
     if (!account) {
       return;
     }
-    return Account.restore(account.id, account.username, account.password);
+    return Account.restore(account.id, account.username, account.password, account.active);
   }
 
   async getByUsername(username: string): Promise<Account | undefined> {
@@ -47,7 +57,7 @@ export class AccountRepositoryPostgres implements AccountRepository {
     if (!account) {
       return;
     }
-    return Account.restore(account.id, account.username, account.password);
+    return Account.restore(account.id, account.username, account.password, account.active);
   }
 
   async existsById(id: string): Promise<boolean> {

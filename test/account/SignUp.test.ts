@@ -4,6 +4,7 @@ import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
 
 const accountRepository = {
   save: () => Promise.resolve(),
+  updateActive: () => Promise.resolve(),
   updatePassword: () => Promise.resolve(),
   getById: () => Promise.resolve(undefined),
   getByUsername: () => Promise.resolve(undefined),

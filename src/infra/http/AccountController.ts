@@ -1,8 +1,10 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { ListAccountPermissionQuery } from '@src/application/query/account/ListAccountPermissionQuery';
+import { ActivateAccount } from '@src/application/usecase/account/ActivateAccount';
 import { AssignAccountPermission } from '@src/application/usecase/account/AssignAccountPermission';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { DeactivateAccount } from '@src/application/usecase/account/DeactivateAccount';
 import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
 import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
 import { SignUp } from '@src/application/usecase/account/SignUp';
@@ -25,12 +27,16 @@ export class AccountController {
     readonly grantAndRevokePermission: GrantAndRevokeAccountPermission,
     readonly listPermission: ListAccountPermissionQuery,
     readonly deleteAccount: DeleteAccount,
+    readonly activateAccount: ActivateAccount,
+    readonly deactivateAccount: DeactivateAccount,
   ) {
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
     httpServer.get('/accounts/v1/permissions', [AuthorizationMiddleware], this.executeListPermission);
     httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
     httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
+    httpServer.patch('/accounts/v1/:accountId/activate', [AuthorizationMiddleware], this.executeAcitivateAccount);
+    httpServer.patch('/accounts/v1/:accountId/deactivate', [AuthorizationMiddleware], this.executeDeactivateAccount);
     httpServer.post('/accounts/v1/:accountId/profile/:profileId', [AuthorizationMiddleware], this.executeAssignProfile);
     httpServer.delete(
       '/accounts/v1/:accountId/profile/:profileId',
@@ -108,5 +114,13 @@ export class AccountController {
 
   private executeDeleteAccount: CallbackFunction = (params: any) => {
     return this.deleteAccount.execute(params.accountId);
+  };
+
+  private executeAcitivateAccount: CallbackFunction = (params: any) => {
+    return this.activateAccount.execute(params.accountId);
+  };
+
+  private executeDeactivateAccount: CallbackFunction = (params: any) => {
+    return this.deactivateAccount.execute(params.accountId);
   };
 }

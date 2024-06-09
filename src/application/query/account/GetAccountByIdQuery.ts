@@ -11,7 +11,8 @@ export class GetAccountByIdQuery {
       select
         id,
         username,
-        password
+        password,
+        active
       from
         iam.account
       where 1=1
@@ -50,6 +51,7 @@ type Output = {
   id: string;
   username: string;
   password: string;
+  active: boolean;
   profiles: Profile[];
 };
 

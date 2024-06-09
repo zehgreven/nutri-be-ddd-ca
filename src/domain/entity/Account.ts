@@ -8,15 +8,16 @@ export default class Account {
     readonly id: string,
     readonly username: Email,
     private password: Password,
+    private active: boolean,
   ) {}
 
   static create(username: string, password: string) {
     const id = crypto.randomUUID();
-    return new Account(id, new Email(username), Password.create(password));
+    return new Account(id, new Email(username), Password.create(password), false);
   }
 
-  static restore(id: string, username: string, password: string) {
-    return new Account(id, new Email(username), Password.restore(password));
+  static restore(id: string, username: string, password: string, active: boolean) {
+    return new Account(id, new Email(username), Password.restore(password), active);
   }
 
   getUsername() {
@@ -37,5 +38,17 @@ export default class Account {
     }
 
     this.password = Password.create(password);
+  }
+
+  activate() {
+    this.active = true;
+  }
+
+  deactivate() {
+    this.active = false;
+  }
+
+  isActive() {
+    return this.active;
   }
 }

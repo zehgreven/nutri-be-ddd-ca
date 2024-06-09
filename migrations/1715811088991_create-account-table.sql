@@ -1,7 +1,7 @@
 -- Up Migration
 CREATE TABLE IF NOT EXISTS iam.account (
     id UUID NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT true,
+    active BOOLEAN NOT NULL DEFAULT false,
     created TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP(3),
     deleted TIMESTAMP(3),

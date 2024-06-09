@@ -7,9 +7,11 @@ import { ListFunctionalityQuery } from '@src/application/query/functionality/Lis
 import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
 import { ListProfilePermissionQuery } from '@src/application/query/profile/ListProfilePermissionQuery';
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
+import { ActivateAccount } from '@src/application/usecase/account/ActivateAccount';
 import { AssignAccountPermission } from '@src/application/usecase/account/AssignAccountPermission';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { DeactivateAccount } from '@src/application/usecase/account/DeactivateAccount';
 import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
 import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
 import { SignUp } from '@src/application/usecase/account/SignUp';
@@ -163,6 +165,8 @@ export class Server {
     const unassignAccountPermission = new UnassignAccountPermission(accountPermissionRepository);
     const grantAndRevokeAccountPermission = new GrantAndRevokeAccountPermission(accountPermissionRepository);
     const deleteAccount = new DeleteAccount(accountRepository);
+    const activateAccount = new ActivateAccount(accountRepository);
+    const deactivateAccount = new DeactivateAccount(accountRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(
@@ -177,6 +181,8 @@ export class Server {
       grantAndRevokeAccountPermission,
       listAccountPermission,
       deleteAccount,
+      activateAccount,
+      deactivateAccount,
     );
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(
