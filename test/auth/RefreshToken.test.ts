@@ -1,12 +1,28 @@
 import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
+import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
 import config from 'config';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import sinon from 'sinon';
 
-const refreshTokenUseCase = new RefreshToken();
+const accountRepository = {
+  save: sinon.stub(),
+  updatePassword: sinon.stub(),
+  getById: sinon.stub(),
+  getByUsername: sinon.stub(),
+  existsById: sinon.stub(),
+  deleteById: sinon.stub(),
+};
+
+const refreshTokenUseCase = new RefreshToken(accountRepository);
 
 describe('SignIn', () => {
+  beforeEach(() => {
+    accountRepository.existsById.resetBehavior();
+  });
+
   it('should be able to refresh token', async () => {
+    accountRepository.existsById.resolves(true);
     const tokenKey = config.get<string>('auth.key');
     const token = jwt.sign({ id: 'valid_id' }, tokenKey, { expiresIn: '5m' });
     const output = await refreshTokenUseCase.execute({ token });
@@ -35,5 +51,12 @@ describe('SignIn', () => {
   it('should throw an error when token has wrong key', async () => {
     const token = jwt.sign({ id: 'id' }, 'invalid_key', { expiresIn: '5m' });
     await expect(refreshTokenUseCase.execute({ token })).rejects.toThrow(JsonWebTokenError);
+  });
+
+  it('should throw an error when user not found', async () => {
+    accountRepository.existsById.resolves(false);
+    const tokenKey = config.get<string>('auth.key');
+    const token = jwt.sign({ id: 'invalid_id' }, tokenKey, { expiresIn: '5m' });
+    await expect(refreshTokenUseCase.execute({ token })).rejects.toThrow(IncorrectCredentialsError);
   });
 });

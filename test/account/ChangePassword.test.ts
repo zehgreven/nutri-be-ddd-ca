@@ -11,6 +11,7 @@ describe('ChangePassword', () => {
     getById: sinon.stub(),
     getByUsername: sinon.stub(),
     existsById: sinon.stub(),
+    deleteById: sinon.stub(),
   };
 
   const changePassword = new ChangePassword(accountRepository);

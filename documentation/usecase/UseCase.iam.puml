@@ -6,6 +6,7 @@ actor Admin
 usecase CreateAccount #LightGreen
 usecase Login #LightGreen
 usecase GetAccount #LightGreen
+usecase DeleteAccount #LightGreen
 usecase ChangePassword #LightGreen
 usecase ManageProfile #LightGreen
 usecase ManageFunctionalityType #LightGreen
@@ -17,6 +18,7 @@ usecase ManageAccount #LightYellow
 User <|-r- Admin
 
 User -l-> (CreateAccount) 
+User -d-> (DeleteAccount)
 User -r-> (GetAccount)
 (GetAccount) <.d. (ChangePassword) : extends
 User -d-> (Login)

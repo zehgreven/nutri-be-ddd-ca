@@ -8,6 +8,7 @@ const accountRepository = {
   getById: () => Promise.resolve(undefined),
   getByUsername: () => Promise.resolve(undefined),
   existsById: () => Promise.resolve(false),
+  deleteById: () => Promise.resolve(),
 };
 
 const accountProfileRepository = {

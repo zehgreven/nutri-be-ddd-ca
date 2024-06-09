@@ -7,6 +7,7 @@ export interface AccountRepository {
   getById(id: string): Promise<Account | undefined>;
   getByUsername(id: string): Promise<Account | undefined>;
   existsById(id: string): Promise<boolean>;
+  deleteById(id: string): Promise<void>;
 }
 
 export class AccountRepositoryPostgres implements AccountRepository {
@@ -53,5 +54,11 @@ export class AccountRepositoryPostgres implements AccountRepository {
     const query = 'SELECT 1 FROM iam.account WHERE deleted is null and id = $(id)';
     const [account] = await this.connection.query(query, { id: id });
     return !!account;
+  }
+
+  async deleteById(id: string): Promise<void> {
+    const query = 'UPDATE iam.account SET deleted = now() WHERE id = $(id)';
+    await this.connection.query(query, { id });
+    this.connection.commit();
   }
 }

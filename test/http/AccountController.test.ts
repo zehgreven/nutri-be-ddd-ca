@@ -281,6 +281,53 @@ describe('Account Controller', () => {
         expect(notAllowedPermission.active).toBe(true);
       });
     });
+
+    describe('DeleteAccount', () => {
+      it('DeleteById: should be able to delete account', async () => {
+        const { body: createdAccount } = await global.testRequest
+          .post('/accounts/v1')
+          .set({ 'Content-Type': 'application/json' })
+          .send({
+            username: `john.doe+${Math.random()}@test.com`,
+            password: 'secret',
+          });
+
+        const { status: getCreatedAccountStatus } = await global.testRequest
+          .get(`/accounts/v1/${createdAccount.id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        expect(getCreatedAccountStatus).not.toBe(StatusCodes.NOT_FOUND);
+
+        const { status } = await global.testRequest
+          .delete(`/accounts/v1/${createdAccount.id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NO_CONTENT);
+
+        const { status: getDeletedAccountStatus } = await global.testRequest
+          .get(`/accounts/v1/${createdAccount.id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        expect(getDeletedAccountStatus).toBe(StatusCodes.NOT_FOUND);
+      });
+
+      it('DeleteByAuthorizedUser: should be able to delete account from logged user', async () => {
+        const { status } = await global.testRequest
+          .delete(`/accounts/v1/me`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(status).toBe(StatusCodes.NO_CONTENT);
+
+        const { status: getDeletedAccountStatus } = await global.testRequest
+          .get(`/accounts/v1/${accountId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+
+        expect(getDeletedAccountStatus).toBe(StatusCodes.NOT_FOUND);
+      });
+    });
   });
 
   describe('Not Authorized', () => {

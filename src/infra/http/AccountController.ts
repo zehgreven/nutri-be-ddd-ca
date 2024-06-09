@@ -3,6 +3,7 @@ import { ListAccountPermissionQuery } from '@src/application/query/account/ListA
 import { AssignAccountPermission } from '@src/application/usecase/account/AssignAccountPermission';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
 import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
@@ -23,6 +24,7 @@ export class AccountController {
     readonly unassignPermission: UnassignAccountPermission,
     readonly grantAndRevokePermission: GrantAndRevokeAccountPermission,
     readonly listPermission: ListAccountPermissionQuery,
+    readonly deleteAccount: DeleteAccount,
   ) {
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
@@ -50,6 +52,8 @@ export class AccountController {
       [AuthorizationMiddleware],
       this.executeGrantAndRevokePermission,
     );
+    httpServer.delete('/accounts/v1/me', [AuthorizationMiddleware], this.executeDeleteAuthenticatedAccount);
+    httpServer.delete('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeDeleteAccount);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
@@ -93,5 +97,16 @@ export class AccountController {
 
   private executeListPermission: CallbackFunction = (params: any) => {
     return this.listPermission.execute(params);
+  };
+
+  private executeDeleteAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {
+    if (!accountId) {
+      throw new UnauthorizedError('Invalid account id');
+    }
+    return this.deleteAccount.execute(accountId);
+  };
+
+  private executeDeleteAccount: CallbackFunction = (params: any) => {
+    return this.deleteAccount.execute(params.accountId);
   };
 }

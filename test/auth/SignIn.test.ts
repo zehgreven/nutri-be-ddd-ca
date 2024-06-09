@@ -9,7 +9,7 @@ const accountRepository = {
   getById: sinon.stub(),
   getByUsername: sinon.stub(),
   existsById: sinon.stub(),
-  clear: sinon.stub(),
+  deleteById: sinon.stub(),
 };
 
 const signIn = new SignIn(accountRepository);

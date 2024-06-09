@@ -1,4 +1,5 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
+import { ListAccountPermissionQuery } from '@src/application/query/account/ListAccountPermissionQuery';
 import { GetFunctionalityTypeByIdQuery } from '@src/application/query/functionality-type/GetFunctionalityTypeByIdQuery';
 import { ListFunctionalityTypeQuery } from '@src/application/query/functionality-type/ListFunctionalityTypeQuery';
 import { GetFunctionalityByIdQuery } from '@src/application/query/functionality/GetFunctionalityByIdQuery';
@@ -6,9 +7,13 @@ import { ListFunctionalityQuery } from '@src/application/query/functionality/Lis
 import { GetProfileByIdQuery } from '@src/application/query/profile/GetProfileByIdQuery';
 import { ListProfilePermissionQuery } from '@src/application/query/profile/ListProfilePermissionQuery';
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
+import { AssignAccountPermission } from '@src/application/usecase/account/AssignAccountPermission';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import { ChangePassword } from '@src/application/usecase/account/ChangePassword';
+import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
+import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
 import { SignUp } from '@src/application/usecase/account/SignUp';
+import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
 import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
 import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
 import { SignIn } from '@src/application/usecase/auth/SignIn';
@@ -23,6 +28,7 @@ import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profile/GrantAndRevokeProfilePermission';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
+import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
 import { AuthController } from '@src/infra/http/AuthController';
@@ -31,6 +37,7 @@ import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeCo
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
 import logger from '@src/infra/logging/logger';
+import { AccountPermissionRepositoryPostgres } from '@src/infra/repository/AccountPermissionRepository';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { FunctionalityRepositoryPostgres } from '@src/infra/repository/FunctionalityRepository';
@@ -38,12 +45,6 @@ import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/Funct
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
-import { ListAccountPermissionQuery } from './application/query/account/ListAccountPermissionQuery';
-import { AssignAccountPermission } from './application/usecase/account/AssignAccountPermission';
-import { GrantAndRevokeAccountPermission } from './application/usecase/account/GrantAndRevokeAccountPermission';
-import { UnassignAccountPermission } from './application/usecase/account/UnassignAccountPermission';
-import { UnassignProfilePermission } from './application/usecase/profile/UnassignProfilePermission';
-import { AccountPermissionRepositoryPostgres } from './infra/repository/AccountPermissionRepository';
 
 export class Server {
   private httpServer?: HttpServer;
@@ -134,7 +135,7 @@ export class Server {
     logger.info('Setup: Use Cases');
     const signUp = new SignUp(accountRepository, accountProfileRepository);
     const signIn = new SignIn(accountRepository);
-    const refreshToken = new RefreshToken();
+    const refreshToken = new RefreshToken(accountRepository);
     const changePassword = new ChangePassword(accountRepository);
     const createProfile = new CreateProfile(profileRepository);
     const patchProfile = new PatchProfile(profileRepository);
@@ -161,6 +162,7 @@ export class Server {
     );
     const unassignAccountPermission = new UnassignAccountPermission(accountPermissionRepository);
     const grantAndRevokeAccountPermission = new GrantAndRevokeAccountPermission(accountPermissionRepository);
+    const deleteAccount = new DeleteAccount(accountRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(
@@ -174,6 +176,7 @@ export class Server {
       unassignAccountPermission,
       grantAndRevokeAccountPermission,
       listAccountPermission,
+      deleteAccount,
     );
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(

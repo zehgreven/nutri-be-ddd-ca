@@ -42,6 +42,8 @@ next-steps:
       - Implement API security based on Account Profile (admin routes)
       - API Cache
       - Create README.md
+      - Send email confirmation when account is created
+      - Send email when password is changed
   - dependecies:
       - development:
       - production:
