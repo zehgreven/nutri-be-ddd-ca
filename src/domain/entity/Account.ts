@@ -51,4 +51,8 @@ export default class Account {
   isActive() {
     return this.active;
   }
+
+  resetPassword() {
+    this.password = Password.reset();
+  }
 }

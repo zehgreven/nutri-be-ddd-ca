@@ -2,14 +2,14 @@
 
 actor Admin
 
-usecase ManageAccount #LightYellow
+usecase ManageAccount #LightGreen
 usecase EnableAccount #LightGreen
 usecase DisableAccount #LightGreen
 usecase DeleteAccount #LightGreen
 usecase AssignProfile #LightGreen
 usecase UnassignProfile #LightGreen
 usecase GetAccount #LightGreen
-usecase ResetPassword #LightGray
+usecase ResetPassword #LightGreen
 
 Admin --> (ManageAccount) 
 (ManageAccount) <.d. (AssignProfile) 

@@ -1,6 +1,8 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
+import { AccountRepository, AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { Server } from '@src/Server';
 import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
+import bcrypt from 'bcrypt';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
@@ -8,12 +10,16 @@ import supertest from 'supertest';
 describe('Account Controller', () => {
   let server: Server;
 
+  let accountRepository: AccountRepository;
+
   beforeAll(async () => {
     const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
 
     server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
     server.init();
+
+    accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
 
     global.testRequest = supertest(server.getApp());
   });
@@ -354,6 +360,21 @@ describe('Account Controller', () => {
           .set({ Authorization: `Bearer ${token}` })
           .send();
         expect(deactivatedAccount.active).toBe(false);
+      });
+    });
+
+    describe('ResetPassword', () => {
+      it('should be able to reset password', async () => {
+        const { status: resetPasswordStatus } = await global.testRequest
+          .patch(`/accounts/v1/${accountId}/reset-password`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send();
+        expect(resetPasswordStatus).toBe(StatusCodes.OK);
+
+        const account = await accountRepository.getById(accountId);
+        expect(account).toBeDefined();
+        const passwordComparison = bcrypt.compareSync('secret', account!.getPassword());
+        expect(passwordComparison).toBeFalsy();
       });
     });
   });

@@ -38,7 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Finish Manage Account
       - Implement API security based on Account Profile (admin routes)
       - API Cache
       - Create README.md

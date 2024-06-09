@@ -25,13 +25,13 @@ describe('Deactivate Account', () => {
     account.activate();
     const accountDeactivateMethod = sinon.spy(account, 'deactivate');
     accountRepository.getById.resolves(account);
+    accountRepository.updateActive.once().callsFake(data => {
+      expect(data.isActive()).toBe(false);
+    });
 
     await activateAccount.execute(account.id);
 
     expect(accountDeactivateMethod.calledOnce).toBeTruthy();
-    accountRepository.updateActive.once().callsFake(data => {
-      expect(data.isActive()).toBe(false);
-    });
   });
 
   it('should throw an error when account does not exists', async () => {

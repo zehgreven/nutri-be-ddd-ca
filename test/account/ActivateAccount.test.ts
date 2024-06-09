@@ -24,13 +24,13 @@ describe('Activate Account', () => {
     const account = Account.create('johndoe@test.com', 'secret');
     const accountActivateMethod = sinon.spy(account, 'activate');
     accountRepository.getById.resolves(account);
+    accountRepository.updateActive.once().callsFake(data => {
+      expect(data.isActive()).toBe(true);
+    });
 
     await activateAccount.execute(account.id);
 
     expect(accountActivateMethod.calledOnce).toBeTruthy();
-    accountRepository.updateActive.once().callsFake(data => {
-      expect(data.isActive()).toBe(true);
-    });
   });
 
   it('should throw an error when account does not exists', async () => {

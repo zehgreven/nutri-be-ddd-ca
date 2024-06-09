@@ -7,6 +7,7 @@ import { ChangePassword } from '@src/application/usecase/account/ChangePassword'
 import { DeactivateAccount } from '@src/application/usecase/account/DeactivateAccount';
 import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
 import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
+import { ResetPassword } from '@src/application/usecase/account/ResetPassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
 import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
@@ -29,6 +30,7 @@ export class AccountController {
     readonly deleteAccount: DeleteAccount,
     readonly activateAccount: ActivateAccount,
     readonly deactivateAccount: DeactivateAccount,
+    readonly resetPassword: ResetPassword,
   ) {
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
@@ -37,6 +39,7 @@ export class AccountController {
     httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
     httpServer.patch('/accounts/v1/:accountId/activate', [AuthorizationMiddleware], this.executeAcitivateAccount);
     httpServer.patch('/accounts/v1/:accountId/deactivate', [AuthorizationMiddleware], this.executeDeactivateAccount);
+    httpServer.patch('/accounts/v1/:accountId/reset-password', [AuthorizationMiddleware], this.executeResetPassword);
     httpServer.post('/accounts/v1/:accountId/profile/:profileId', [AuthorizationMiddleware], this.executeAssignProfile);
     httpServer.delete(
       '/accounts/v1/:accountId/profile/:profileId',
@@ -122,5 +125,9 @@ export class AccountController {
 
   private executeDeactivateAccount: CallbackFunction = (params: any) => {
     return this.deactivateAccount.execute(params.accountId);
+  };
+
+  private executeResetPassword: CallbackFunction = (params: any) => {
+    return this.resetPassword.execute(params.accountId);
   };
 }

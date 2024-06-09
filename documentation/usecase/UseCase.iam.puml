@@ -13,7 +13,7 @@ usecase ManageFunctionalityType #LightGreen
 usecase ManageFunctionality #LightGreen
 usecase ManageProfilePermission #LightGreen
 usecase ManageAccountPermission #LightGreen
-usecase ManageAccount #LightYellow
+usecase ManageAccount #LightGreen
 
 User <|-r- Admin
 

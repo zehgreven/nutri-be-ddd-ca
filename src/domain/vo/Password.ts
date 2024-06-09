@@ -20,6 +20,12 @@ export default class Password {
     return new Password(passwordHash);
   }
 
+  static reset() {
+    const password = Math.random().toString(36).slice(-8);
+    const passwordHash = bcrypt.hashSync(password, 10);
+    return new Password(passwordHash);
+  }
+
   private static isPasswordValid(password: string) {
     return password.length < this.PASSWORD_MIN_LENGTH || password.length > this.PASSWORD_MAX_LENGTH;
   }

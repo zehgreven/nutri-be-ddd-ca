@@ -14,6 +14,7 @@ import { ChangePassword } from '@src/application/usecase/account/ChangePassword'
 import { DeactivateAccount } from '@src/application/usecase/account/DeactivateAccount';
 import { DeleteAccount } from '@src/application/usecase/account/DeleteAccount';
 import { GrantAndRevokeAccountPermission } from '@src/application/usecase/account/GrantAndRevokeAccountPermission';
+import { ResetPassword } from '@src/application/usecase/account/ResetPassword';
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
 import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
@@ -167,6 +168,7 @@ export class Server {
     const deleteAccount = new DeleteAccount(accountRepository);
     const activateAccount = new ActivateAccount(accountRepository);
     const deactivateAccount = new DeactivateAccount(accountRepository);
+    const resetPassword = new ResetPassword(accountRepository);
 
     logger.info('Setup: Controllers');
     new AccountController(
@@ -183,6 +185,7 @@ export class Server {
       deleteAccount,
       activateAccount,
       deactivateAccount,
+      resetPassword,
     );
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(
