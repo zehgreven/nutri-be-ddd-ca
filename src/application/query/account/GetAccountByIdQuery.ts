@@ -11,7 +11,6 @@ export class GetAccountByIdQuery {
       select
         id,
         username,
-        password,
         active
       from
         iam.account
