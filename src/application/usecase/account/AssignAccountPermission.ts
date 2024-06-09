@@ -1,6 +1,7 @@
 import AccountPermission from '@src/domain/entity/AccountPermission';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
+import logger from '@src/infra/logging/logger';
 import { AccountPermissionRepository } from '@src/infra/repository/AccountPermissionRepository';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import { FunctionalityRepository } from '@src/infra/repository/FunctionalityRepository';
@@ -13,6 +14,7 @@ export class AssignAccountPermission {
   ) {}
 
   async execute(accountId: string, functionalityId: string): Promise<void> {
+    logger.info(`AssignAccountPermission: assigning functionalityId=${functionalityId} to accountId=${accountId}`);
     const account = await this.accountRepository.existsById(accountId);
     if (!account) {
       throw new AccountNotFoundError(`Unable to find account with id=${accountId}`);

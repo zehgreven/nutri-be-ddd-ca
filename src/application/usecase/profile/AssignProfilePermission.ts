@@ -1,6 +1,7 @@
 import ProfilePermission from '@src/domain/entity/ProfilePermission';
 import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
+import logger from '@src/infra/logging/logger';
 import { FunctionalityRepository } from '@src/infra/repository/FunctionalityRepository';
 import { ProfilePermissionRepository } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
@@ -13,6 +14,7 @@ export class AssignProfilePermission {
   ) {}
 
   async execute(profileId: string, functionalityId: string): Promise<void> {
+    logger.info(`AssignProfilePermission: assigning functionalityId=${functionalityId} to profileId=${profileId}`);
     const profile = await this.profileRepository.existsById(profileId);
     if (!profile) {
       throw new ProfileNotFoundError(`Unable to find profile with id=${profileId}`);
