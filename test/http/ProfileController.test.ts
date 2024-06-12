@@ -240,7 +240,7 @@ describe('Profile Controller', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send();
 
-      const { status, body } = await global.testRequest
+      const { status } = await global.testRequest
         .patch(`/profiles/v1/${profileId}/functionality/${functionalityId}`)
         .set({ Authorization: `Bearer ${token}` })
         .send();
