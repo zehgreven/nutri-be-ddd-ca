@@ -19,3 +19,17 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  messaging:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672 # BROKER
+      - 15672:15672 # MONITORING
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=123456
+    healthcheck:
+      test: rabbitmq-diagnostics -q
+      interval: 10s
+      timeout: 5s
+      retries: 5

@@ -40,6 +40,7 @@ import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeCo
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
 import logger from '@src/infra/logging/logger';
+import { RabbitMQStarter } from '@src/infra/messaging/MessagingStarter';
 import { AccountPermissionRepositoryPostgres } from '@src/infra/repository/AccountPermissionRepository';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
@@ -58,9 +59,10 @@ export class Server {
     readonly dbConnectionUri: string,
   ) {}
 
-  public init(): void {
+  public async init(): Promise<void> {
     logger.info('Setup: starting setup');
     this.setupDatabase();
+    await this.setupMessaging();
     this.setupHttpServer();
     this.setupControllers();
   }
@@ -90,7 +92,7 @@ export class Server {
 
   private setupDatabase(): void {
     logger.info('Setup: Database');
-    this.databaseConnection = new PgPromiseAdapter(this.dbConnectionUri as string);
+    this.databaseConnection = new PgPromiseAdapter(this.dbConnectionUri);
   }
 
   public getDatabaseConnection(): DatabaseConnection {
@@ -99,6 +101,14 @@ export class Server {
     }
 
     return this.databaseConnection;
+  }
+
+  private async setupMessaging(): Promise<void> {
+    logger.info('Setup: Messaging');
+    const messagingStarter = new RabbitMQStarter();
+    await messagingStarter.connect();
+    await messagingStarter.setup();
+    await messagingStarter.close();
   }
 
   private setupHttpServer(): void {

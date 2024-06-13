@@ -24,7 +24,7 @@ process.on('uncaughtException', (reason, promise) => {
     const dbConnectionUri = `postgresql://${config.get('db.user')}:${config.get('db.password')}@${config.get('db.host')}:${config.get('db.port')}/${config.get('db.database')}`;
 
     const server = new Server(port, dbConnectionUri);
-    server.init();
+    await server.init();
     server.start();
 
     const exitSignals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGQUIT'];

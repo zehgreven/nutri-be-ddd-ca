@@ -10,6 +10,24 @@
     "database": "app",
     "migration-file-language": "sql"
   },
+  "messaging": {
+    "user": "admin",
+    "password": "123456",
+    "host": "localhost",
+    "port": 5672,
+    "exchanges": {
+      "iam.account.created": {
+        "type": "fanout",
+        "durable": true
+      }
+    },
+    "queues": {
+      "mailer.account.created": {
+        "durable": true,
+        "exchange": "iam.account.created"
+      }
+    }
+  },
   "auth": {
     "key": "secret",
     "expiration": "1h",
