@@ -17,7 +17,7 @@ describe('Account Controller', () => {
     await dbContainer.start();
 
     server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
-    server.init();
+    await server.init();
 
     accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
 

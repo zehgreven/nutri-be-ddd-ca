@@ -13,7 +13,7 @@ describe('FunctionalityType Controller', () => {
     await dbContainer.start();
 
     server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
-    server.init();
+    await server.init();
 
     global.testRequest = supertest(server.getApp());
 
