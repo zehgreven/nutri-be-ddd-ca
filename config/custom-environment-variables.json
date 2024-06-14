@@ -9,6 +9,12 @@
     "port": "DATABASE_PORT",
     "database": "DATABASE_NAME"
   },
+  "messaging": {
+    "user": "MESSAGING_USERNAME",
+    "password": "MESSAGING_PASSWORD",
+    "host": "MESSAGING_HOST",
+    "port": "MESSAGING_PORT"
+  },
   "auth": {
     "key": "AUTH_ENCRYPT_KEY"
   }
