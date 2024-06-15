@@ -22,7 +22,7 @@ process.on('uncaughtException', (reason, promise) => {
   try {
     const port = config.get<number>('server.port');
     const dbConnectionUri = `postgresql://${config.get('db.user')}:${config.get('db.password')}@${config.get('db.host')}:${config.get('db.port')}/${config.get('db.database')}`;
-    const messagingConnectionUri = `amqp://${config.get('messaging.user')}:${config.get('messaging.password')}@${config.get('messaging.host')}:${config.get('messaging.port')}`;
+    const messagingConnectionUri = `${config.get('messaging.user')}:${config.get('messaging.password')}@${config.get('messaging.host')}:${config.get('messaging.port')}`;
 
     const server = new Server(port, dbConnectionUri, messagingConnectionUri);
     await server.init();

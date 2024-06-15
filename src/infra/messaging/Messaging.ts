@@ -21,7 +21,7 @@ export class RabbitMQMessagingAdapter implements Messaging {
     if (!this.config) {
       throw new Error('Missing config');
     }
-    this.connection = await amqplib.connect(connectionString);
+    this.connection = await amqplib.connect(`amqp://${connectionString}`);
     if (!this.connection) {
       throw new Error('Failed to connect to RabbitMQ');
     }
