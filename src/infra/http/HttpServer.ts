@@ -1,4 +1,5 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { ForbiddenError } from '@src/domain/error/ForbiddenError';
 import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
@@ -10,10 +11,10 @@ import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import loggerHttp from '@src/infra/logging/loggerHttp';
+import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import LoggerCorrelationIdMiddleware from './LoggerCorrelationIdMiddleware';
-import { ForbiddenError } from '@src/domain/error/ForbiddenError';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
@@ -35,6 +36,11 @@ export class ExpressHttpServerAdapter implements HttpServer {
     this.app = express();
     this.app.use(express.json());
     this.app.use(loggerHttp);
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+    );
   }
 
   public getApp(): Application {

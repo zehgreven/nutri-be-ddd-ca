@@ -38,9 +38,9 @@ dependency-analysis:
 
 next-steps:
   - code:
+      - Unit and Integ tests should be independent
       - Add error handling (midleware?)
       - Dependency Injection
-      - Add CORS
       - API Cache
       - Create README.md
       - Add Swagger Docs
