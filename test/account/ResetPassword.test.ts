@@ -16,7 +16,16 @@ describe('ResetPassword', () => {
     existsById: sinon.stub(),
     deleteById: sinon.stub(),
   };
-  const resetPassword = new ResetPassword(accountRepository);
+
+  const messaging = {
+    connect: sinon.stub(),
+    setup: sinon.stub(),
+    publish: sinon.mock(),
+    subscribe: sinon.stub(),
+    close: sinon.stub(),
+  };
+
+  const resetPassword = new ResetPassword(accountRepository, messaging);
 
   beforeEach(() => {
     accountRepository.getById.reset();
@@ -30,6 +39,12 @@ describe('ResetPassword', () => {
     accountRepository.updatePassword.once().callsFake(data => {
       const passwordComparison = bcrypt.compareSync('secret', data.getPassword());
       expect(passwordComparison).toBeFalsy();
+    });
+
+    messaging.publish.once().callsFake((exchange, data) => {
+      expect(exchange).toBe('iam.account.updated');
+      expect(data.event).toBe('PASSWORD_RESETED');
+      expect(data.id).toBe(account.id);
     });
 
     await resetPassword.execute(account.id);

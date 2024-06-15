@@ -157,7 +157,7 @@ export class Server {
     const signUp = new SignUp(accountRepository, accountProfileRepository, this.getMessaging());
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken(accountRepository);
-    const changePassword = new ChangePassword(accountRepository);
+    const changePassword = new ChangePassword(accountRepository, this.getMessaging());
     const createProfile = new CreateProfile(profileRepository);
     const patchProfile = new PatchProfile(profileRepository);
     const deleteProfile = new DeleteProfile(profileRepository);
@@ -186,7 +186,7 @@ export class Server {
     const deleteAccount = new DeleteAccount(accountRepository);
     const activateAccount = new ActivateAccount(accountRepository);
     const deactivateAccount = new DeactivateAccount(accountRepository);
-    const resetPassword = new ResetPassword(accountRepository);
+    const resetPassword = new ResetPassword(accountRepository, this.getMessaging());
 
     logger.info('Setup: Controllers');
     new AccountController(

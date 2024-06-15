@@ -1,10 +1,14 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
 import logger from '@src/infra/logging/logger';
+import { Messaging } from '@src/infra/messaging/Messaging';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class ChangePassword {
-  constructor(readonly accountRepository: AccountRepository) {}
+  constructor(
+    readonly accountRepository: AccountRepository,
+    readonly messaging: Messaging,
+  ) {}
 
   async execute(input: Input, accountId?: string) {
     logger.info(`ChangePassword: changing password for accountId=${accountId}`);
@@ -20,6 +24,12 @@ export class ChangePassword {
     }
     account.changePassword(input.newPassword);
     await this.accountRepository.updatePassword(account);
+
+    this.messaging.publish('iam.account.updated', {
+      event: 'PASSWORD_CHANGED',
+      id: account.id,
+    });
+
     return {
       id: account.id,
       username: account.getUsername(),

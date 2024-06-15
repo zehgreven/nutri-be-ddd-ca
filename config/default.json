@@ -19,12 +19,20 @@
       "iam.account.created": {
         "type": "fanout",
         "durable": true
+      },
+      "iam.account.updated": {
+        "type": "fanout",
+        "durable": true
       }
     },
     "queues": {
       "mailer.account.created": {
         "durable": true,
         "exchange": "iam.account.created"
+      },
+      "mailer.account.updated": {
+        "durable": true,
+        "exchange": "iam.account.updated"
       }
     }
   },
