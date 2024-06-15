@@ -40,7 +40,7 @@ import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeCo
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
 import logger from '@src/infra/logging/logger';
-import { RabbitMQStarter } from '@src/infra/messaging/MessagingStarter';
+import { RabbitMQMessagingAdapter } from '@src/infra/messaging/Messaging';
 import { AccountPermissionRepositoryPostgres } from '@src/infra/repository/AccountPermissionRepository';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
@@ -57,6 +57,7 @@ export class Server {
   constructor(
     readonly port: number,
     readonly dbConnectionUri: string,
+    readonly messagingConnectionUri: string,
   ) {}
 
   public async init(): Promise<void> {
@@ -105,10 +106,10 @@ export class Server {
 
   private async setupMessaging(): Promise<void> {
     logger.info('Setup: Messaging');
-    const messagingStarter = new RabbitMQStarter();
-    await messagingStarter.connect();
-    await messagingStarter.setup();
-    await messagingStarter.close();
+    const messaging = new RabbitMQMessagingAdapter();
+    await messaging.connect(this.messagingConnectionUri);
+    await messaging.setup();
+    await messaging.close();
   }
 
   private setupHttpServer(): void {

@@ -10,7 +10,7 @@
     "database": "DATABASE_NAME"
   },
   "messaging": {
-    "user": "MESSAGING_USERNAME",
+    "user": "MESSAGING_USER",
     "password": "MESSAGING_PASSWORD",
     "host": "MESSAGING_HOST",
     "port": "MESSAGING_PORT"
