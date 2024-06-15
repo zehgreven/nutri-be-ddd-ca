@@ -34,10 +34,7 @@ export class AccountController {
     readonly deactivateAccount: DeactivateAccount,
     readonly resetPassword: ResetPassword,
   ) {
-    const adminAccess = [
-      AuthorizationMiddleware,
-      (req: any, res: any) => adminAuthorizationMiddleware.execute(req, res),
-    ];
+    const adminAccess = [AuthorizationMiddleware, (req: any, _: any) => adminAuthorizationMiddleware.execute(req)];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);

@@ -4,12 +4,12 @@ import { ForbiddenError } from '@src/domain/error/ForbiddenError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
 import config from 'config';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 export class AdminAuthorizationMiddleware {
   constructor(readonly profileRepository: ProfileRepository) {}
 
-  async execute(request: Request & { accountId?: string }, _: Response): Promise<void> {
+  async execute(request: Request & { accountId?: string }): Promise<void> {
     const accountId = request.accountId;
     if (!accountId) {
       throw new UnauthorizedError('Unauthorized');

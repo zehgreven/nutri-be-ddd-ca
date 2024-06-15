@@ -17,10 +17,7 @@ export class FunctionalityController {
     readonly listFunctionality: ListFunctionalityQuery,
     readonly deleteFunctionality: DeleteFunctionality,
   ) {
-    const adminAccess = [
-      AuthorizationMiddleware,
-      (req: any, res: any) => adminAuthorizationMiddleware.execute(req, res),
-    ];
+    const adminAccess = [AuthorizationMiddleware, (req: any, _: any) => adminAuthorizationMiddleware.execute(req)];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/functionalities/v1', adminAccess, this.executeCreateFunctionality);
     httpServer.get('/functionalities/v1', authorizedAccess, this.executeListFunctionality);
