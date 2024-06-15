@@ -106,10 +106,12 @@ export class Server {
 
   private async setupMessaging(): Promise<void> {
     logger.info('Setup: Messaging');
-    const messaging = new RabbitMQMessagingAdapter();
-    await messaging.connect(this.messagingConnectionUri);
-    await messaging.setup();
-    await messaging.close();
+    if (this.messagingConnectionUri) {
+      const messaging = new RabbitMQMessagingAdapter();
+      await messaging.connect(this.messagingConnectionUri);
+      await messaging.setup();
+      await messaging.close();
+    }
   }
 
   private setupHttpServer(): void {

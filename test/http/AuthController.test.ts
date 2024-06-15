@@ -14,7 +14,7 @@ describe('Auth Controller', () => {
     const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
 
-    const server = new Server(config.get('server.port'), dbContainer.getConnectionUri());
+    const server = new Server(config.get('server.port'), dbContainer.getConnectionUri(), '');
     await server.init();
 
     const accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
