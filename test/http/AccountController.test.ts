@@ -6,6 +6,7 @@ import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
+import jwt from 'jsonwebtoken';
 import supertest from 'supertest';
 
 describe('Account Controller', () => {
@@ -66,22 +67,14 @@ describe('Account Controller', () => {
   });
 
   describe('Authorized', () => {
-    const account = { username: `john.doe+${Math.random()}@test.com`, password: 'secret' };
     let accountId: string;
     let token: string;
 
     beforeAll(async () => {
-      const { body: createdAccount } = await global.testRequest
-        .post('/accounts/v1')
-        .set({ 'Content-Type': 'application/json' })
-        .send(account);
-      accountId = createdAccount.id;
-
-      const { body: auth } = await global.testRequest
-        .post('/auth/v1/authenticate')
-        .set({ 'Content-Type': 'application/json' })
-        .send(account);
-      token = auth.token;
+      accountId = config.get<string>('default.adminId');
+      const tokenKey = config.get<string>('auth.key');
+      const tokenExpiration = config.get<string>('auth.expiration');
+      token = jwt.sign({ id: accountId }, tokenKey, { expiresIn: tokenExpiration });
     });
 
     it('GetById: should be able to get user by id', async () => {
@@ -91,7 +84,7 @@ describe('Account Controller', () => {
         .send();
 
       expect(status).toBe(StatusCodes.OK);
-      expect(body.username).toBe(account.username);
+      expect(body.id).toBe(accountId);
     });
 
     it("GetById: should return error when user doesn't exists", async () => {
@@ -111,7 +104,7 @@ describe('Account Controller', () => {
         .send();
 
       expect(status).toBe(StatusCodes.OK);
-      expect(body.username).toBe(account.username);
+      expect(body.id).toBe(accountId);
     });
 
     it('ChangePassword: should be able to change password', async () => {
@@ -119,12 +112,12 @@ describe('Account Controller', () => {
         .patch('/accounts/v1/password')
         .set({ Authorization: `Bearer ${token}` })
         .send({
-          oldPassword: 'secret',
+          oldPassword: '1234',
           newPassword: 'new-secret',
         });
 
       expect(status).toBe(StatusCodes.OK);
-      expect(body.username).toBe(account.username);
+      expect(body.id).toBe(accountId);
     });
 
     it('AssignProfile + UnassignProfile: should be able to assign and unassign profile', async () => {

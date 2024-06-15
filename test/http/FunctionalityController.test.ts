@@ -3,6 +3,7 @@ import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
 import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
+import jwt from 'jsonwebtoken';
 import supertest from 'supertest';
 
 describe('Functionality Controller', () => {
@@ -26,16 +27,10 @@ describe('Functionality Controller', () => {
 
     global.testRequest = supertest(server.getApp());
 
-    const account: any = { username: `john.doe+${Math.random()}@test.com`, password: 'secret' };
-
-    await global.testRequest.post('/accounts/v1').set({ 'Content-Type': 'application/json' }).send(account);
-
-    const { body: auth } = await global.testRequest
-      .post('/auth/v1/authenticate')
-      .set({ 'Content-Type': 'application/json' })
-      .send(account);
-
-    token = auth.token;
+    const adminId = config.get<string>('default.adminId');
+    const tokenKey = config.get<string>('auth.key');
+    const tokenExpiration = config.get<string>('auth.expiration');
+    token = jwt.sign({ id: adminId }, tokenKey, { expiresIn: tokenExpiration });
   });
 
   afterAll(async () => {
@@ -53,7 +48,6 @@ describe('Functionality Controller', () => {
         .post('/functionalities/v1')
         .set({ Authorization: `Bearer ${token}` })
         .send(functionalityType);
-
       expect(status).toBe(StatusCodes.CREATED);
       expect(body.id).toBeDefined();
     });

@@ -5,21 +5,28 @@ import { DeleteFunctionalityType } from '@src/application/usecase/functionality-
 import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
+import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
 
 export class FunctionalityTypeController {
   constructor(
     readonly httpServer: HttpServer,
+    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
     readonly createFunctionalityType: CreateFunctionalityType,
     readonly patchFunctionalityType: PatchFunctionalityType,
     readonly getFunctionalityTypeById: GetFunctionalityTypeByIdQuery,
     readonly listFunctionalityType: ListFunctionalityTypeQuery,
     readonly deleteFunctionalityType: DeleteFunctionalityType,
   ) {
-    httpServer.post('/functionality-types/v1', [AuthorizationMiddleware], this.executeCreateFunctionalityType);
-    httpServer.get('/functionality-types/v1', [AuthorizationMiddleware], this.executeListFunctionalityType);
-    httpServer.get('/functionality-types/v1/:id', [AuthorizationMiddleware], this.executeGetFunctionalityTypeById);
-    httpServer.patch('/functionality-types/v1/:id', [AuthorizationMiddleware], this.executePatchFunctionalityType);
-    httpServer.delete('/functionality-types/v1/:id', [AuthorizationMiddleware], this.executeDeleteFunctionalityType);
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, res: any) => adminAuthorizationMiddleware.execute(req, res),
+    ];
+    const authorizedAccess = [AuthorizationMiddleware];
+    httpServer.post('/functionality-types/v1', adminAccess, this.executeCreateFunctionalityType);
+    httpServer.get('/functionality-types/v1', authorizedAccess, this.executeListFunctionalityType);
+    httpServer.get('/functionality-types/v1/:id', authorizedAccess, this.executeGetFunctionalityTypeById);
+    httpServer.patch('/functionality-types/v1/:id', adminAccess, this.executePatchFunctionalityType);
+    httpServer.delete('/functionality-types/v1/:id', adminAccess, this.executeDeleteFunctionalityType);
   }
 
   private executeCreateFunctionalityType: CallbackFunction = (_: any, body: any) => {

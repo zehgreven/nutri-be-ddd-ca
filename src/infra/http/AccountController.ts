@@ -14,10 +14,12 @@ import { UnassignProfile } from '@src/application/usecase/account/UnassignProfil
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
+import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
 
 export class AccountController {
   constructor(
     readonly httpServer: HttpServer,
+    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
     readonly getAccountById: GetAccountByIdQuery,
     readonly signUp: SignUp,
     readonly changePassword: ChangePassword,
@@ -32,37 +34,38 @@ export class AccountController {
     readonly deactivateAccount: DeactivateAccount,
     readonly resetPassword: ResetPassword,
   ) {
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, res: any) => adminAuthorizationMiddleware.execute(req, res),
+    ];
+    const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/accounts/v1', [], this.executeSignUp);
-    httpServer.get('/accounts/v1/me', [AuthorizationMiddleware], this.executeGetAuthenticatedAccount);
-    httpServer.get('/accounts/v1/permissions', [AuthorizationMiddleware], this.executeListPermission);
-    httpServer.get('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeGetAccountById);
-    httpServer.patch('/accounts/v1/password', [AuthorizationMiddleware], this.executeChangePassword);
-    httpServer.patch('/accounts/v1/:accountId/activate', [AuthorizationMiddleware], this.executeAcitivateAccount);
-    httpServer.patch('/accounts/v1/:accountId/deactivate', [AuthorizationMiddleware], this.executeDeactivateAccount);
-    httpServer.patch('/accounts/v1/:accountId/reset-password', [AuthorizationMiddleware], this.executeResetPassword);
-    httpServer.post('/accounts/v1/:accountId/profile/:profileId', [AuthorizationMiddleware], this.executeAssignProfile);
-    httpServer.delete(
-      '/accounts/v1/:accountId/profile/:profileId',
-      [AuthorizationMiddleware],
-      this.executeUnassignProfile,
-    );
+    httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
+    httpServer.get('/accounts/v1/permissions', authorizedAccess, this.executeListPermission);
+    httpServer.get('/accounts/v1/:accountId', adminAccess, this.executeGetAccountById);
+    httpServer.patch('/accounts/v1/password', authorizedAccess, this.executeChangePassword);
+    httpServer.patch('/accounts/v1/:accountId/activate', adminAccess, this.executeAcitivateAccount);
+    httpServer.patch('/accounts/v1/:accountId/deactivate', adminAccess, this.executeDeactivateAccount);
+    httpServer.patch('/accounts/v1/:accountId/reset-password', adminAccess, this.executeResetPassword);
+    httpServer.post('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeAssignProfile);
+    httpServer.delete('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeUnassignProfile);
     httpServer.post(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      [AuthorizationMiddleware],
+      adminAccess,
       this.executeAssignPermission,
     );
     httpServer.delete(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      [AuthorizationMiddleware],
+      adminAccess,
       this.executeUnassignPermission,
     );
     httpServer.patch(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      [AuthorizationMiddleware],
+      adminAccess,
       this.executeGrantAndRevokePermission,
     );
-    httpServer.delete('/accounts/v1/me', [AuthorizationMiddleware], this.executeDeleteAuthenticatedAccount);
-    httpServer.delete('/accounts/v1/:accountId', [AuthorizationMiddleware], this.executeDeleteAccount);
+    httpServer.delete('/accounts/v1/me', authorizedAccess, this.executeDeleteAuthenticatedAccount);
+    httpServer.delete('/accounts/v1/:accountId', adminAccess, this.executeDeleteAccount);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {

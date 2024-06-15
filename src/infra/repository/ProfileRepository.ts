@@ -7,6 +7,7 @@ export interface ProfileRepository {
   getById(id: string): Promise<Profile | undefined>;
   deleteById(id: string): Promise<void>;
   existsById(id: string): Promise<boolean>;
+  listByAccountId(accountId: string): Promise<Profile[]>;
 }
 
 export class ProfileRepositoryPostgres implements ProfileRepository {
@@ -55,5 +56,32 @@ export class ProfileRepositoryPostgres implements ProfileRepository {
     const query = 'select 1 from iam.profile where deleted is null and id = $(id)';
     const [profile] = await this.connection.query(query, { id });
     return !!profile;
+  }
+
+  async listByAccountId(accountId: string): Promise<Profile[]> {
+    const query = `
+      select
+        p.id,
+        p.name,
+        p.description,
+        p.active
+      from
+        iam.profile p
+      inner join
+        iam.account_profile ap
+          on ap.profile_id = p.id
+      inner join
+        iam.account a
+          on a.id = ap.account_id
+      where 1=1
+        and p.deleted is null
+        and ap.deleted is null
+        and a.deleted is null
+        and a.id = $(accountId)
+    `;
+    const profiles = await this.connection.query(query, { accountId });
+    return profiles.map((profile: any) =>
+      Profile.restore(profile.id, profile.name, profile.description, profile.active),
+    );
   }
 }

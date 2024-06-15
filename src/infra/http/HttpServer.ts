@@ -13,6 +13,7 @@ import loggerHttp from '@src/infra/logging/loggerHttp';
 import express, { Application, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import LoggerCorrelationIdMiddleware from './LoggerCorrelationIdMiddleware';
+import { ForbiddenError } from '@src/domain/error/ForbiddenError';
 
 export type MiddlewareFunction = (req: any, res: any) => void;
 export type CallbackFunction = (params: any, body: any, accountId?: string) => any;
@@ -138,6 +139,7 @@ export class ExpressHttpServerAdapter implements HttpServer {
       [ProfileNotFoundError.name]: StatusCodes.NOT_FOUND,
       [TextLengthError.name]: StatusCodes.BAD_REQUEST,
       [UnauthorizedError.name]: StatusCodes.UNAUTHORIZED,
+      [ForbiddenError.name]: StatusCodes.FORBIDDEN,
     };
 
     return statusCodeMap[error.name] || StatusCodes.INTERNAL_SERVER_ERROR;

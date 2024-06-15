@@ -21,6 +21,7 @@ describe('AssignProfile', () => {
     getById: sinon.stub(),
     deleteById: sinon.stub(),
     existsById: sinon.stub(),
+    listByAccountId: sinon.stub(),
   };
 
   const accountProfileRepository = {

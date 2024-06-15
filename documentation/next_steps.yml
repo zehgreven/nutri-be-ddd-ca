@@ -38,11 +38,10 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Implement API security based on Account Profile (admin routes)
+      - Add error handling (midleware?)
       - Dependency Injection
       - Add CORS
       - API Cache
-      - Add error handling (midleware?)
       - Create README.md
       - Add Swagger Docs
       - Add Swagger UI

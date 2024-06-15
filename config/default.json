@@ -46,6 +46,8 @@
     "level": "info"
   },
   "default": {
-    "profileId": "dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131"
+    "profileId": "dc10c0f0-d45a-45ae-9b75-d1ebfe8b4131",
+    "adminProfileId": "a81b2f88-fe8f-492c-aca5-7b09983c007d",
+    "adminId": "13782202-684d-4ba9-9cad-487b9e4a6a8a"
   }
 }

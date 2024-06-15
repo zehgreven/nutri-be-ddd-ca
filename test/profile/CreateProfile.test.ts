@@ -8,6 +8,7 @@ describe('Create Profile', () => {
     getById: () => Promise.resolve(undefined),
     deleteById: () => Promise.resolve(),
     existsById: () => Promise.resolve(true),
+    listByAccountId: () => Promise.resolve([]),
   };
   const createProfile = new CreateProfile(profileRepository);
 

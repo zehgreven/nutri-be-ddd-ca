@@ -12,6 +12,7 @@ describe('PatchProfile', () => {
     getById: sinon.stub(),
     deleteById: sinon.stub(),
     existsById: sinon.stub(),
+    listByAccountId: sinon.stub(),
   };
   const patchProfile = new PatchProfile(profileRepository);
   const profile = Profile.create('My profile', 'My profile description');

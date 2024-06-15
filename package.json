@@ -29,7 +29,9 @@
     "migrate:up": "dotenv -e env/default.env -- node-pg-migrate up",
     "migrate:down": "dotenv -e env/default.env -- node-pg-migrate down 0",
     "docker": "docker-compose up -d",
-    "test": "clear & dotenv -e env/default.env -- jest --coverage"
+    "test": "clear & dotenv -e env/default.env -- jest --coverage",
+    "test:unit": "clear & dotenv -e env/default.env -- jest --config jest.config.js --coverage test/{account,auth,functionality,functionality-type,profile,vo}/**/*.ts",
+    "test:integ": "clear & dotenv -e env/default.env -- jest --config jest.config.js --coverage test/http"
   },
   "pre-push": [
     "style:fix",

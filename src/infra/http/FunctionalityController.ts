@@ -5,21 +5,28 @@ import { DeleteFunctionality } from '@src/application/usecase/functionality/Dele
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
 import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
+import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
 
 export class FunctionalityController {
   constructor(
     readonly httpServer: HttpServer,
+    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
     readonly createFunctionality: CreateFunctionality,
     readonly patchFunctionality: PatchFunctionality,
     readonly getFunctionalityById: GetFunctionalityByIdQuery,
     readonly listFunctionality: ListFunctionalityQuery,
     readonly deleteFunctionality: DeleteFunctionality,
   ) {
-    httpServer.post('/functionalities/v1', [AuthorizationMiddleware], this.executeCreateFunctionality);
-    httpServer.get('/functionalities/v1', [AuthorizationMiddleware], this.executeListFunctionality);
-    httpServer.get('/functionalities/v1/:id', [AuthorizationMiddleware], this.executeGetFunctionalityById);
-    httpServer.patch('/functionalities/v1/:id', [AuthorizationMiddleware], this.executePatchFunctionality);
-    httpServer.delete('/functionalities/v1/:id', [AuthorizationMiddleware], this.executeDeleteFunctionality);
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, res: any) => adminAuthorizationMiddleware.execute(req, res),
+    ];
+    const authorizedAccess = [AuthorizationMiddleware];
+    httpServer.post('/functionalities/v1', adminAccess, this.executeCreateFunctionality);
+    httpServer.get('/functionalities/v1', authorizedAccess, this.executeListFunctionality);
+    httpServer.get('/functionalities/v1/:id', authorizedAccess, this.executeGetFunctionalityById);
+    httpServer.patch('/functionalities/v1/:id', adminAccess, this.executePatchFunctionality);
+    httpServer.delete('/functionalities/v1/:id', adminAccess, this.executeDeleteFunctionality);
   }
 
   private executeCreateFunctionality: CallbackFunction = (_: any, body: any) => {

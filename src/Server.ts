@@ -34,6 +34,7 @@ import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import { AccountController } from '@src/infra/http/AccountController';
+import { AdminAuthorizationMiddleware } from '@src/infra/http/AdminAuthorizationMiddleware';
 import { AuthController } from '@src/infra/http/AuthController';
 import { FunctionalityController } from '@src/infra/http/FunctionalityController';
 import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeController';
@@ -142,7 +143,10 @@ export class Server {
     const profilePermissionRepository = new ProfilePermissionRepositoryPostgres(this.databaseConnection);
     const accountPermissionRepository = new AccountPermissionRepositoryPostgres(this.databaseConnection);
 
-    logger.info('Setup: QuerassignPermissionies');
+    logger.info('Setup: Middlewares');
+    const adminAuthorizationMiddleware = new AdminAuthorizationMiddleware(profileRepository);
+
+    logger.info('Setup: Queries');
     const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
     const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
     const listProfile = new ListProfileQuery(this.databaseConnection);
@@ -191,6 +195,7 @@ export class Server {
     logger.info('Setup: Controllers');
     new AccountController(
       this.httpServer,
+      adminAuthorizationMiddleware,
       getAccountById,
       signUp,
       changePassword,
@@ -208,6 +213,7 @@ export class Server {
     new AuthController(this.httpServer, signIn, refreshToken);
     new ProfileController(
       this.httpServer,
+      adminAuthorizationMiddleware,
       createProfile,
       patchProfile,
       getProfileById,
@@ -220,6 +226,7 @@ export class Server {
     );
     new FunctionalityTypeController(
       this.httpServer,
+      adminAuthorizationMiddleware,
       createFunctionalityType,
       patchFunctionalityType,
       getFunctionalityTypeById,
@@ -228,6 +235,7 @@ export class Server {
     );
     new FunctionalityController(
       this.httpServer,
+      adminAuthorizationMiddleware,
       createFunctionality,
       patchFunctionality,
       getFunctionalityById,
