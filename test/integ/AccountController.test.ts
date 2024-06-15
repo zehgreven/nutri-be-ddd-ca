@@ -1,38 +1,15 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { AccountRepository, AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
-import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
-import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
-import supertest from 'supertest';
 
 describe('Account Controller', () => {
-  let server: Server;
-
   let accountRepository: AccountRepository;
 
   beforeAll(async () => {
-    const dbContainer = DatabaseTestContainer.getInstance();
-    await dbContainer.start();
-
-    const messagingContainer = MessagingTestContainer.getInstance();
-    await messagingContainer.start();
-
-    server = new Server(
-      config.get('server.port'),
-      dbContainer.getConnectionUri(),
-      messagingContainer.getConnectionUri(),
-    );
-    await server.init();
-    global.testRequest = supertest(server.getApp());
     accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
-  });
-
-  afterAll(async () => {
-    await server.close();
   });
 
   describe('Sign Up', () => {

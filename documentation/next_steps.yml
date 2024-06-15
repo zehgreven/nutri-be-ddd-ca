@@ -38,7 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Unit and Integ tests should be independent
       - Add error handling (midleware?)
       - Dependency Injection
       - API Cache

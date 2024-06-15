@@ -1,41 +1,16 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
-import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
-import { MessagingTestContainer } from '@test/MessagingTestContainer';
-import config from 'config';
 import { StatusCodes } from 'http-status-codes';
-import supertest from 'supertest';
 
 describe('Auth Controller', () => {
-  let server: Server;
   const account = { username: 'johndoe@test.com', password: 'secret' };
 
   beforeAll(async () => {
-    const dbContainer = DatabaseTestContainer.getInstance();
-    await dbContainer.start();
-
-    const messagingContainer = MessagingTestContainer.getInstance();
-    await messagingContainer.start();
-
-    server = new Server(
-      config.get('server.port'),
-      dbContainer.getConnectionUri(),
-      messagingContainer.getConnectionUri(),
-    );
-    await server.init();
-
     const accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
     const accountProfileRepository = new AccountProfileRepositoryPostgres(server.getDatabaseConnection());
     const signUp = new SignUp(accountRepository, accountProfileRepository, server.getMessaging());
     await signUp.execute(account);
-
-    global.testRequest = supertest(server.getApp());
-  });
-
-  afterAll(async () => {
-    await server.close();
   });
 
   it('should be able to sign in', async () => {

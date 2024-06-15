@@ -1,43 +1,15 @@
-import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
-import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
-import supertest from 'supertest';
 
 describe('Profile Controller', () => {
-  let server: Server;
   let token: string;
 
   beforeAll(async () => {
-    const dbContainer = DatabaseTestContainer.getInstance();
-    await dbContainer.start();
-
-    const messagingContainer = MessagingTestContainer.getInstance();
-    await messagingContainer.start();
-
-    server = new Server(
-      config.get('server.port'),
-      dbContainer.getConnectionUri(),
-      messagingContainer.getConnectionUri(),
-    );
-    await server.init();
-
-    global.testRequest = supertest(server.getApp());
-
-    const account: any = { username: `john.doe+${Math.random()}@test.com`, password: 'secret' };
-
-    await global.testRequest.post('/accounts/v1').set({ 'Content-Type': 'application/json' }).send(account);
-
     const adminId = config.get<string>('default.adminId');
     const tokenKey = config.get<string>('auth.key');
     const tokenExpiration = config.get<string>('auth.expiration');
     token = jwt.sign({ id: adminId }, tokenKey, { expiresIn: tokenExpiration });
-  });
-
-  afterAll(async () => {
-    await server.close();
   });
 
   describe('CreateProfile', () => {

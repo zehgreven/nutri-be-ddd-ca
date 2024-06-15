@@ -1,40 +1,16 @@
-import { Server } from '@src/Server';
-import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
-import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
-import supertest from 'supertest';
 
 describe('Functionality Controller', () => {
   const defaultFunctionalityTypeId = '60d398d2-7f37-4728-8ebe-8d23871bbe31';
-  let server: Server;
   let token: string;
 
   beforeAll(async () => {
-    const dbContainer = DatabaseTestContainer.getInstance();
-    await dbContainer.start();
-
-    const messagingContainer = MessagingTestContainer.getInstance();
-    await messagingContainer.start();
-
-    server = new Server(
-      config.get('server.port'),
-      dbContainer.getConnectionUri(),
-      messagingContainer.getConnectionUri(),
-    );
-    await server.init();
-
-    global.testRequest = supertest(server.getApp());
-
     const adminId = config.get<string>('default.adminId');
     const tokenKey = config.get<string>('auth.key');
     const tokenExpiration = config.get<string>('auth.expiration');
     token = jwt.sign({ id: adminId }, tokenKey, { expiresIn: tokenExpiration });
-  });
-
-  afterAll(async () => {
-    await server.close();
   });
 
   describe('CreateFunctionality', () => {

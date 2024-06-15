@@ -1,8 +1,12 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+import type { Config } from '@jest/types';
+import { resolve } from 'path';
+
+const rootDir = resolve(__dirname);
+
+const config: Config.InitialOptions = {
+  rootDir,
   preset: 'ts-jest',
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.ts'],
   testTimeout: 120000,
   collectCoverage: true,
   coveragePathIgnorePatterns: ['/node_modules/', 'main_api.ts', 'Server.ts', '/test'],
@@ -18,3 +22,5 @@ module.exports = {
     },
   },
 };
+
+export default config;
