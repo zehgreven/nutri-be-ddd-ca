@@ -17,7 +17,7 @@ export class FunctionalityTypeController {
     readonly listFunctionalityType: ListFunctionalityTypeQuery,
     readonly deleteFunctionalityType: DeleteFunctionalityType,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any, _: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/functionality-types/v1', adminAccess, this.executeCreateFunctionalityType);
     httpServer.get('/functionality-types/v1', authorizedAccess, this.executeListFunctionalityType);

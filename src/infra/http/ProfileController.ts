@@ -25,7 +25,7 @@ export class ProfileController {
     readonly grantAndRevokePermission: GrantAndRevokeProfilePermission,
     readonly listProfilePermission: ListProfilePermissionQuery,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any, _: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/profiles/v1', adminAccess, this.executeCreateProfile);
     httpServer.get('/profiles/v1', adminAccess, this.executeListProfile);
