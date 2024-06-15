@@ -1,5 +1,6 @@
 import { Server } from '@src/Server';
 import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
+import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
@@ -12,7 +13,14 @@ describe('Profile Controller', () => {
     const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
 
-    server = new Server(config.get('server.port'), dbContainer.getConnectionUri(), '');
+    const messagingContainer = MessagingTestContainer.getInstance();
+    await messagingContainer.start();
+
+    server = new Server(
+      config.get('server.port'),
+      dbContainer.getConnectionUri(),
+      messagingContainer.getConnectionUri(),
+    );
     await server.init();
 
     global.testRequest = supertest(server.getApp());
@@ -27,6 +35,10 @@ describe('Profile Controller', () => {
       .send(account);
 
     token = auth.token;
+  });
+
+  afterAll(async () => {
+    await server.close();
   });
 
   describe('CreateProfile', () => {

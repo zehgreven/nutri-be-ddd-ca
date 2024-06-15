@@ -17,7 +17,15 @@ const accountProfileRepository = {
   deleteByAccountIdAndProfileId: () => Promise.resolve(),
 };
 
-const signUp = new SignUp(accountRepository, accountProfileRepository);
+const messaging = {
+  connect: () => Promise.resolve(),
+  setup: () => Promise.resolve(),
+  publish: () => Promise.resolve(),
+  subscribe: () => Promise.resolve(),
+  close: () => Promise.resolve(),
+};
+
+const signUp = new SignUp(accountRepository, accountProfileRepository, messaging);
 
 describe('SignUp', () => {
   test('username should be an email', async () => {

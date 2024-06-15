@@ -2,6 +2,7 @@ import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountBy
 import { AccountRepository, AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { Server } from '@src/Server';
 import { DatabaseTestContainer } from '@test/DatabaseTestContainer';
+import { MessagingTestContainer } from '@test/MessagingTestContainer';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import { StatusCodes } from 'http-status-codes';
@@ -16,12 +17,21 @@ describe('Account Controller', () => {
     const dbContainer = DatabaseTestContainer.getInstance();
     await dbContainer.start();
 
-    server = new Server(config.get('server.port'), dbContainer.getConnectionUri(), '');
+    const messagingContainer = MessagingTestContainer.getInstance();
+    await messagingContainer.start();
+
+    server = new Server(
+      config.get('server.port'),
+      dbContainer.getConnectionUri(),
+      messagingContainer.getConnectionUri(),
+    );
     await server.init();
-
-    accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
-
     global.testRequest = supertest(server.getApp());
+    accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
+  });
+
+  afterAll(async () => {
+    await server.close();
   });
 
   describe('Sign Up', () => {
@@ -43,6 +53,15 @@ describe('Account Controller', () => {
       expect(accountById.password).not.toBe(account.password);
       expect(accountById.profiles.length).toBe(1);
       expect(accountById.profiles[0].name).toBe('Cliente');
+
+      const result = await new Promise<boolean>(resolve => {
+        server.getMessaging().subscribe('mailer.account.created', message => {
+          if (message) {
+            resolve(message.id === body.id);
+          }
+        });
+      });
+      expect(result).toBeTruthy();
     });
   });
 

@@ -38,7 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Add events with RabbitMQ
       - Send email confirmation when account is created
       - Send email when password is changed
       - Implement API security based on Account Profile (admin routes)

@@ -40,7 +40,7 @@ import { FunctionalityTypeController } from '@src/infra/http/FunctionalityTypeCo
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { ProfileController } from '@src/infra/http/ProfileController';
 import logger from '@src/infra/logging/logger';
-import { RabbitMQMessagingAdapter } from '@src/infra/messaging/Messaging';
+import { Messaging, RabbitMQMessagingAdapter } from '@src/infra/messaging/Messaging';
 import { AccountPermissionRepositoryPostgres } from '@src/infra/repository/AccountPermissionRepository';
 import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
@@ -53,6 +53,7 @@ import { Application } from 'express';
 export class Server {
   private httpServer?: HttpServer;
   private databaseConnection?: DatabaseConnection;
+  private messaging?: Messaging;
 
   constructor(
     readonly port: number,
@@ -89,8 +90,6 @@ export class Server {
     this.httpServer.listen(this.port as number, () => logger.info(`Server started on port ${this.port}`));
   }
 
-  public stop(): void {}
-
   private setupDatabase(): void {
     logger.info('Setup: Database');
     this.databaseConnection = new PgPromiseAdapter(this.dbConnectionUri);
@@ -106,12 +105,18 @@ export class Server {
 
   private async setupMessaging(): Promise<void> {
     logger.info('Setup: Messaging');
+    this.messaging = new RabbitMQMessagingAdapter();
     if (this.messagingConnectionUri) {
-      const messaging = new RabbitMQMessagingAdapter();
-      await messaging.connect(this.messagingConnectionUri);
-      await messaging.setup();
-      await messaging.close();
+      await this.messaging.connect(this.messagingConnectionUri);
+      await this.messaging.setup();
     }
+  }
+
+  public getMessaging(): Messaging {
+    if (!this.messaging) {
+      throw new Error('Missing messaging');
+    }
+    return this.messaging;
   }
 
   private setupHttpServer(): void {
@@ -149,7 +154,7 @@ export class Server {
     const listAccountPermission = new ListAccountPermissionQuery(this.databaseConnection);
 
     logger.info('Setup: Use Cases');
-    const signUp = new SignUp(accountRepository, accountProfileRepository);
+    const signUp = new SignUp(accountRepository, accountProfileRepository, this.getMessaging());
     const signIn = new SignIn(accountRepository);
     const refreshToken = new RefreshToken(accountRepository);
     const changePassword = new ChangePassword(accountRepository);
@@ -231,9 +236,12 @@ export class Server {
     );
   }
 
-  public close(): Promise<void> {
+  public async close(): Promise<void> {
     if (this.databaseConnection) {
-      return this.databaseConnection.close();
+      await this.databaseConnection.close();
+    }
+    if (this.messaging) {
+      await this.messaging.close();
     }
     return Promise.resolve();
   }
