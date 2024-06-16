@@ -1,5 +1,6 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { ListAccountPermissionQuery } from '@src/application/query/account/ListAccountPermissionQuery';
+import { ListAccountQuery } from '@src/application/query/account/ListAccountQuery';
 import { ActivateAccount } from '@src/application/usecase/account/ActivateAccount';
 import { AssignAccountPermission } from '@src/application/usecase/account/AssignAccountPermission';
 import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
@@ -26,6 +27,9 @@ export class AccountController {
 
   @inject('GetAccountByIdQuery')
   private getAccountById!: GetAccountByIdQuery;
+
+  @inject('ListAccountQuery')
+  private listAccount!: ListAccountQuery;
 
   @inject('SignUp')
   private signUp!: SignUp;
@@ -69,6 +73,7 @@ export class AccountController {
     ];
     const authorizedAccess = [AuthorizationMiddleware];
     this.httpServer.post('/accounts/v1', [], this.executeSignUp);
+    this.httpServer.get('/accounts/v1', adminAccess, this.executeListAccount);
     this.httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
     this.httpServer.get('/accounts/v1/permissions', authorizedAccess, this.executeListPermission);
     this.httpServer.get('/accounts/v1/:accountId', adminAccess, this.executeGetAccountById);
@@ -161,5 +166,15 @@ export class AccountController {
 
   private executeResetPassword: CallbackFunction = (params: any) => {
     return this.resetPassword.execute(params.accountId);
+  };
+
+  private executeListAccount: CallbackFunction = (params: any) => {
+    if (!params.limit || params.limit < 1) {
+      params.limit = 10;
+    }
+    if (!params.page || params.page < 1) {
+      params.page = 1;
+    }
+    return this.listAccount.execute(params);
   };
 }

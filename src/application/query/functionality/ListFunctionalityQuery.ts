@@ -16,7 +16,7 @@ export class ListFunctionalityQuery {
         iam.functionality
       where 1=1
         and deleted is null
-      ${input.name ? 'and name like $(name)' : ''}
+      ${input.name ? "and name like '%$(name)%'" : ''}
       ${input.description ? "and description like '%$(description:value)%'" : ''}
       ${input.path ? "and path like '%$(path:value)%'" : ''}
       ${input.active ? 'and active = $(active)' : ''}
@@ -42,7 +42,7 @@ export class ListFunctionalityQuery {
       where 1=1
         and f.deleted is null
         and ft.deleted is null
-      ${input.name ? 'and f.name like $(name)' : ''}
+      ${input.name ? "and f.name like '%$(name)%'" : ''}
       ${input.description ? "and f.description like '%$(description:value)%'" : ''}
       ${input.path ? "and f.path like '%$(path:value)%'" : ''}
       ${input.active ? 'and f.active = $(active)' : ''}

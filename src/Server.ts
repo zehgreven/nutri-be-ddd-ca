@@ -1,5 +1,6 @@
 import { GetAccountByIdQuery } from '@src/application/query/account/GetAccountByIdQuery';
 import { ListAccountPermissionQuery } from '@src/application/query/account/ListAccountPermissionQuery';
+import { ListAccountQuery } from '@src/application/query/account/ListAccountQuery';
 import { GetFunctionalityTypeByIdQuery } from '@src/application/query/functionality-type/GetFunctionalityTypeByIdQuery';
 import { ListFunctionalityTypeQuery } from '@src/application/query/functionality-type/ListFunctionalityTypeQuery';
 import { GetFunctionalityByIdQuery } from '@src/application/query/functionality/GetFunctionalityByIdQuery';
@@ -34,6 +35,11 @@ import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
 import Registry from '@src/infra/dependency-injection/Registry';
+import { AccountController } from '@src/infra/http/controller/AccountController';
+import { AuthController } from '@src/infra/http/controller/AuthController';
+import { FunctionalityController } from '@src/infra/http/controller/FunctionalityController';
+import { FunctionalityTypeController } from '@src/infra/http/controller/FunctionalityTypeController';
+import { ProfileController } from '@src/infra/http/controller/ProfileController';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 import logger from '@src/infra/logging/logger';
@@ -46,11 +52,6 @@ import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/Funct
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
-import { AccountController } from './infra/http/controller/AccountController';
-import { AuthController } from './infra/http/controller/AuthController';
-import { FunctionalityController } from './infra/http/controller/FunctionalityController';
-import { FunctionalityTypeController } from './infra/http/controller/FunctionalityTypeController';
-import { ProfileController } from './infra/http/controller/ProfileController';
 export class Server {
   private registry: Registry;
   private httpServer?: HttpServer;
@@ -162,6 +163,7 @@ export class Server {
     this.registry.register('ListFunctionalityQuery', new ListFunctionalityQuery());
     this.registry.register('ListProfilePermissionQuery', new ListProfilePermissionQuery());
     this.registry.register('ListAccountPermissionQuery', new ListAccountPermissionQuery());
+    this.registry.register('ListAccountQuery', new ListAccountQuery());
 
     logger.info('Setup: Use Cases');
     this.registry.register('SignUp', new SignUp());

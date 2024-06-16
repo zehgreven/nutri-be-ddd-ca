@@ -74,6 +74,19 @@ describe('Account Controller', () => {
       expect(body.message).toBeDefined();
     });
 
+    it('ListAccount: should be able to list accounts', async () => {
+      const { status, body } = await global.testRequest
+        .get('/accounts/v1')
+        .set({ Authorization: `Bearer ${token}` })
+        .send();
+
+      expect(status).toBe(StatusCodes.OK);
+      expect(body.page).toBe(1);
+      expect(body.limit).toBe(10);
+      expect(body.count).toBeGreaterThan(0);
+      expect(body.rows.length).toBeGreaterThan(0);
+    });
+
     it('GetAuthorized: should be able to get current user', async () => {
       const { status, body } = await global.testRequest
         .get('/accounts/v1/me')
