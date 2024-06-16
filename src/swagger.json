@@ -366,7 +366,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Delete functionality successful"
           },
           "401": {
@@ -642,7 +642,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Delete functionality-type successful"
           },
           "401": {
@@ -1431,7 +1431,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Profile unassigned successfully"
           },
           "404": {
@@ -1522,7 +1522,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Permission unassigned successfully"
           },
           "404": {
