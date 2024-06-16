@@ -51,7 +51,10 @@ import { FunctionalityRepositoryPostgres } from '@src/infra/repository/Functiona
 import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/FunctionalityTypeRepository';
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
+import swaggerDocument from '@src/swagger.json';
 import { Application } from 'express';
+import swaggerUi from 'swagger-ui-express';
+
 export class Server {
   private registry: Registry;
   private httpServer?: HttpServer;
@@ -72,6 +75,7 @@ export class Server {
     await this.setupMessaging();
     this.setupHttpServer();
     this.setupControllers();
+    this.setupDocumentation();
   }
 
   public getApp(): Application {
@@ -208,5 +212,9 @@ export class Server {
       await this.messaging.close();
     }
     return Promise.resolve();
+  }
+
+  public setupDocumentation(): void {
+    this.getApp().use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
 }
