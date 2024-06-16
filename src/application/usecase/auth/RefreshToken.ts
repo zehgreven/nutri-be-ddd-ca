@@ -1,6 +1,6 @@
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
-import { JwtToken } from '@src/infra/http/AuthorizationMiddleware';
+import { JwtToken } from '@src/infra/http/middleware/AuthorizationMiddleware';
 import logger from '@src/infra/logging/logger';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import config from 'config';

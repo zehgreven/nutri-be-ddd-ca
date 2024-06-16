@@ -3,9 +3,9 @@ import { ListFunctionalityQuery } from '@src/application/query/functionality/Lis
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { DeleteFunctionality } from '@src/application/usecase/functionality/DeleteFunctionality';
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
-import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
+import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 
 export class FunctionalityController {
   constructor(
@@ -17,7 +17,10 @@ export class FunctionalityController {
     readonly listFunctionality: ListFunctionalityQuery,
     readonly deleteFunctionality: DeleteFunctionality,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+    ];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/functionalities/v1', adminAccess, this.executeCreateFunctionality);
     httpServer.get('/functionalities/v1', authorizedAccess, this.executeListFunctionality);

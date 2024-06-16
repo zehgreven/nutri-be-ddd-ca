@@ -7,9 +7,9 @@ import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profile/GrantAndRevokeProfilePermission';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
-import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
+import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 
 export class ProfileController {
   constructor(
@@ -25,9 +25,12 @@ export class ProfileController {
     readonly grantAndRevokePermission: GrantAndRevokeProfilePermission,
     readonly listProfilePermission: ListProfilePermissionQuery,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+    ];
     const authorizedAccess = [AuthorizationMiddleware];
-    httpServer.post('/profiles/v1', adminAccess, this.executeCreateProfile);
+    httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
     httpServer.get('/profiles/v1', adminAccess, this.executeListProfile);
     httpServer.get('/profiles/v1/permissions', authorizedAccess, this.executeListProfilePermission);
     httpServer.get('/profiles/v1/:profileId', authorizedAccess, this.executeGetProfileById);

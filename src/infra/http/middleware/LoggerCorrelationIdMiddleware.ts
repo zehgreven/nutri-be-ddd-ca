@@ -1,4 +1,4 @@
-import logger from '../logging/logger';
+import logger from '../../logging/logger';
 
 const LoggerCorrelationIdMiddleware = async (req: any, _: any, next: Function): Promise<void> => {
   logger.setBindings({
@@ -9,6 +9,7 @@ const LoggerCorrelationIdMiddleware = async (req: any, _: any, next: Function): 
     },
     accountId: req.accountId,
   });
+
   next();
 };
 

@@ -3,9 +3,9 @@ import { ListFunctionalityTypeQuery } from '@src/application/query/functionality
 import { CreateFunctionalityType } from '@src/application/usecase/functionality-type/CreateFunctionalityType';
 import { DeleteFunctionalityType } from '@src/application/usecase/functionality-type/DeleteFunctionalityType';
 import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
-import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
+import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 
 export class FunctionalityTypeController {
   constructor(
@@ -17,7 +17,10 @@ export class FunctionalityTypeController {
     readonly listFunctionalityType: ListFunctionalityTypeQuery,
     readonly deleteFunctionalityType: DeleteFunctionalityType,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+    ];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/functionality-types/v1', adminAccess, this.executeCreateFunctionalityType);
     httpServer.get('/functionality-types/v1', authorizedAccess, this.executeListFunctionalityType);

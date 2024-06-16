@@ -38,7 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Add error handling (midleware?)
       - Dependency Injection
       - API Cache
       - Create README.md

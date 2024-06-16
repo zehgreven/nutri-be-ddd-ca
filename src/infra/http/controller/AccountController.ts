@@ -12,9 +12,9 @@ import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
 import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
-import AuthorizationMiddleware from '@src/infra/http/AuthorizationMiddleware';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import { AdminAuthorizationMiddleware } from './AdminAuthorizationMiddleware';
+import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 
 export class AccountController {
   constructor(
@@ -34,7 +34,10 @@ export class AccountController {
     readonly deactivateAccount: DeactivateAccount,
     readonly resetPassword: ResetPassword,
   ) {
-    const adminAccess = [AuthorizationMiddleware, (req: any) => adminAuthorizationMiddleware.execute(req)];
+    const adminAccess = [
+      AuthorizationMiddleware,
+      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+    ];
     const authorizedAccess = [AuthorizationMiddleware];
     httpServer.post('/accounts/v1', [], this.executeSignUp);
     httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
