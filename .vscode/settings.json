@@ -1,0 +1,6 @@
+{
+  "jest.virtualFolders": [
+    { "name": "unit-tests", "jestCommandLine": "yarn test:unit", "runMode": "watch" },
+    { "name": "integration-tests", "jestCommandLine": "yarn test:integ", "runMode": "on-demand" }
+  ]
+}
