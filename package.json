@@ -20,7 +20,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "dotenv -e env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts",
-    "style:check": "prettier --check src/**/*.ts test/**/*.ts",
+    "style:check": "prettier --check src/**/*.ts test/**/*.ts --log-level silent",
     "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
     "lint:check": "eslint src/**/*.ts test/**/*.ts",
     "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
