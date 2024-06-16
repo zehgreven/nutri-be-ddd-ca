@@ -2,6 +2,7 @@ import { AssignProfile } from '@src/application/usecase/account/AssignProfile';
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('AssignProfile', () => {
@@ -28,8 +29,11 @@ describe('AssignProfile', () => {
     save: sinon.stub(),
     deleteByAccountIdAndProfileId: sinon.stub(),
   };
+  Registry.getInstance().register('AccountRepository', accountRepository);
+  Registry.getInstance().register('ProfileRepository', profileRepository);
+  Registry.getInstance().register('AccountProfileRepository', accountProfileRepository);
 
-  const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
+  const assignProfile = new AssignProfile();
 
   afterEach(() => {
     accountRepository.getById.resolves();

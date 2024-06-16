@@ -1,9 +1,11 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 
 export class GetAccountByIdQuery {
-  constructor(readonly connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async execute(id: string): Promise<Output> {
     logger.info(`GetAccountByIdQuery: getting account by id=${id}`);

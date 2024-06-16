@@ -1,13 +1,15 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { Messaging } from '@src/infra/messaging/Messaging';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class ResetPassword {
-  constructor(
-    readonly accountRepository: AccountRepository,
-    readonly messaging: Messaging,
-  ) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
+
+  @inject('Messaging')
+  private messaging!: Messaging;
 
   async execute(id: string): Promise<void> {
     logger.info(`ResetPassword: resetting password for accountId=${id}`);

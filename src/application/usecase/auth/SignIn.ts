@@ -1,11 +1,13 @@
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
 export class SignIn {
-  constructor(readonly accountRepository: AccountRepository) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
 
   async execute(input: Input): Promise<Output> {
     logger.info('SignIn: signing in');

@@ -3,6 +3,7 @@ import FunctionalityType from '@src/domain/entity/FunctionalityType';
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
 import { InvalidInputError } from '@src/domain/error/InvalidInputError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('PatchFunctionalityType', () => {
@@ -12,8 +13,9 @@ describe('PatchFunctionalityType', () => {
     getById: sinon.stub(),
     deleteById: sinon.stub(),
   };
+  Registry.getInstance().register('FunctionalityTypeRepository', functionalityTypeRepository);
 
-  const patchFunctionalityType = new PatchFunctionalityType(functionalityTypeRepository);
+  const patchFunctionalityType = new PatchFunctionalityType();
 
   const functionalityType = FunctionalityType.create('My functionality type', 'My functionality type description');
 

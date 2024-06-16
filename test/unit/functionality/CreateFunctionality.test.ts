@@ -1,5 +1,6 @@
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
+import Registry from '@src/infra/dependency-injection/Registry';
 
 describe('Create Functionality', () => {
   const functionalityRepository = {
@@ -9,7 +10,8 @@ describe('Create Functionality', () => {
     deleteById: () => Promise.resolve(),
     existsById: () => Promise.resolve(true),
   };
-  const createFunctionality = new CreateFunctionality(functionalityRepository);
+  Registry.getInstance().register('FunctionalityRepository', functionalityRepository);
+  const createFunctionality = new CreateFunctionality();
 
   it('should throw error when name is empty', async () => {
     await expect(

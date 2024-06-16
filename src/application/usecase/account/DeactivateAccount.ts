@@ -1,9 +1,11 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class DeactivateAccount {
-  constructor(readonly accountRepository: AccountRepository) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
 
   async execute(accountId: string): Promise<void> {
     logger.info(`DeactivateAccount: deactivating account with id=${accountId}`);

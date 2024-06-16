@@ -1,9 +1,11 @@
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 
 export class GetProfileByIdQuery {
-  constructor(readonly connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async execute(id: string): Promise<Output> {
     logger.info(`GetProfileByIdQuery: getting profile by id=${id}`);

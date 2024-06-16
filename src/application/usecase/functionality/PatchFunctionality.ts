@@ -1,9 +1,12 @@
 import { FunctionalityNotFoundError } from '@src/domain/error/FunctionalityNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { FunctionalityRepository } from '@src/infra/repository/FunctionalityRepository';
 
 export class PatchFunctionality {
-  constructor(readonly functionalityRepository: FunctionalityRepository) {}
+  @inject('FunctionalityRepository')
+  private functionalityRepository!: FunctionalityRepository;
+
   async execute(id: string, input: Input): Promise<void> {
     logger.info(`PatchFunctionality: patching functionality with id=${id} with input=${JSON.stringify(input)}`);
     const functionality = await this.functionalityRepository.getById(id);

@@ -1,6 +1,7 @@
 import { SignIn } from '@src/application/usecase/auth/SignIn';
 import Account from '@src/domain/entity/Account';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 const accountRepository = {
@@ -12,8 +13,9 @@ const accountRepository = {
   existsById: sinon.stub(),
   deleteById: sinon.stub(),
 };
+Registry.getInstance().register('AccountRepository', accountRepository);
 
-const signIn = new SignIn(accountRepository);
+const signIn = new SignIn();
 const signUpInput = {
   username: 'johndoe@test.com',
   password: 'secret',

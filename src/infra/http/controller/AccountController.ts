@@ -12,60 +12,89 @@ import { SignUp } from '@src/application/usecase/account/SignUp';
 import { UnassignAccountPermission } from '@src/application/usecase/account/UnassignAccountPermission';
 import { UnassignProfile } from '@src/application/usecase/account/UnassignProfile';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 
 export class AccountController {
-  constructor(
-    readonly httpServer: HttpServer,
-    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
-    readonly getAccountById: GetAccountByIdQuery,
-    readonly signUp: SignUp,
-    readonly changePassword: ChangePassword,
-    readonly assignProfile: AssignProfile,
-    readonly unassignProfile: UnassignProfile,
-    readonly assignPermission: AssignAccountPermission,
-    readonly unassignPermission: UnassignAccountPermission,
-    readonly grantAndRevokePermission: GrantAndRevokeAccountPermission,
-    readonly listPermission: ListAccountPermissionQuery,
-    readonly deleteAccount: DeleteAccount,
-    readonly activateAccount: ActivateAccount,
-    readonly deactivateAccount: DeactivateAccount,
-    readonly resetPassword: ResetPassword,
-  ) {
+  @inject('HttpServer')
+  private httpServer!: HttpServer;
+
+  @inject('AdminAuthorizationMiddleware')
+  private adminAuthorizationMiddleware!: AdminAuthorizationMiddleware;
+
+  @inject('GetAccountByIdQuery')
+  private getAccountById!: GetAccountByIdQuery;
+
+  @inject('SignUp')
+  private signUp!: SignUp;
+
+  @inject('ChangePassword')
+  private changePassword!: ChangePassword;
+
+  @inject('AssignProfile')
+  private assignProfile!: AssignProfile;
+
+  @inject('UnassignProfile')
+  private unassignProfile!: UnassignProfile;
+
+  @inject('AssignAccountPermission')
+  private assignPermission!: AssignAccountPermission;
+
+  @inject('UnassignAccountPermission')
+  private unassignPermission!: UnassignAccountPermission;
+
+  @inject('GrantAndRevokeAccountPermission')
+  private grantAndRevokePermission!: GrantAndRevokeAccountPermission;
+
+  @inject('ListAccountPermissionQuery')
+  private listPermission!: ListAccountPermissionQuery;
+
+  @inject('DeleteAccount')
+  private deleteAccount!: DeleteAccount;
+
+  @inject('ActivateAccount')
+  private activateAccount!: ActivateAccount;
+
+  @inject('DeactivateAccount')
+  private deactivateAccount!: DeactivateAccount;
+
+  @inject('ResetPassword')
+  private resetPassword!: ResetPassword;
+  constructor() {
     const adminAccess = [
       AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
     ];
     const authorizedAccess = [AuthorizationMiddleware];
-    httpServer.post('/accounts/v1', [], this.executeSignUp);
-    httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
-    httpServer.get('/accounts/v1/permissions', authorizedAccess, this.executeListPermission);
-    httpServer.get('/accounts/v1/:accountId', adminAccess, this.executeGetAccountById);
-    httpServer.patch('/accounts/v1/password', authorizedAccess, this.executeChangePassword);
-    httpServer.patch('/accounts/v1/:accountId/activate', adminAccess, this.executeAcitivateAccount);
-    httpServer.patch('/accounts/v1/:accountId/deactivate', adminAccess, this.executeDeactivateAccount);
-    httpServer.patch('/accounts/v1/:accountId/reset-password', adminAccess, this.executeResetPassword);
-    httpServer.post('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeAssignProfile);
-    httpServer.delete('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeUnassignProfile);
-    httpServer.post(
+    this.httpServer.post('/accounts/v1', [], this.executeSignUp);
+    this.httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
+    this.httpServer.get('/accounts/v1/permissions', authorizedAccess, this.executeListPermission);
+    this.httpServer.get('/accounts/v1/:accountId', adminAccess, this.executeGetAccountById);
+    this.httpServer.patch('/accounts/v1/password', authorizedAccess, this.executeChangePassword);
+    this.httpServer.patch('/accounts/v1/:accountId/activate', adminAccess, this.executeAcitivateAccount);
+    this.httpServer.patch('/accounts/v1/:accountId/deactivate', adminAccess, this.executeDeactivateAccount);
+    this.httpServer.patch('/accounts/v1/:accountId/reset-password', adminAccess, this.executeResetPassword);
+    this.httpServer.post('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeAssignProfile);
+    this.httpServer.delete('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeUnassignProfile);
+    this.httpServer.post(
       '/accounts/v1/:accountId/functionality/:functionalityId',
       adminAccess,
       this.executeAssignPermission,
     );
-    httpServer.delete(
+    this.httpServer.delete(
       '/accounts/v1/:accountId/functionality/:functionalityId',
       adminAccess,
       this.executeUnassignPermission,
     );
-    httpServer.patch(
+    this.httpServer.patch(
       '/accounts/v1/:accountId/functionality/:functionalityId',
       adminAccess,
       this.executeGrantAndRevokePermission,
     );
-    httpServer.delete('/accounts/v1/me', authorizedAccess, this.executeDeleteAuthenticatedAccount);
-    httpServer.delete('/accounts/v1/:accountId', adminAccess, this.executeDeleteAccount);
+    this.httpServer.delete('/accounts/v1/me', authorizedAccess, this.executeDeleteAuthenticatedAccount);
+    this.httpServer.delete('/accounts/v1/:accountId', adminAccess, this.executeDeleteAccount);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {

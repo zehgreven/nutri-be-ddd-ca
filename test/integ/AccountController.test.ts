@@ -9,7 +9,7 @@ describe('Account Controller', () => {
   let accountRepository: AccountRepository;
 
   beforeAll(async () => {
-    accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
+    accountRepository = new AccountRepositoryPostgres();
   });
 
   describe('Sign Up', () => {
@@ -24,7 +24,7 @@ describe('Account Controller', () => {
       expect(status).toBe(StatusCodes.CREATED);
       expect(body.id).toBeDefined();
 
-      const getAccountByIdQuery = new GetAccountByIdQuery(server.getDatabaseConnection());
+      const getAccountByIdQuery = new GetAccountByIdQuery();
       const accountById = await getAccountByIdQuery.execute(body.id);
 
       expect(accountById.username).toBe(account.username);

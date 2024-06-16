@@ -1,6 +1,7 @@
 import { ActivateAccount } from '@src/application/usecase/account/ActivateAccount';
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('Activate Account', () => {
@@ -13,7 +14,8 @@ describe('Activate Account', () => {
     existsById: sinon.stub(),
     deleteById: sinon.stub(),
   };
-  const activateAccount = new ActivateAccount(accountRepository);
+  Registry.getInstance().register('AccountRepository', accountRepository);
+  const activateAccount = new ActivateAccount();
 
   beforeEach(() => {
     accountRepository.getById.reset();

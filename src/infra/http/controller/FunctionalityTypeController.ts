@@ -3,30 +3,44 @@ import { ListFunctionalityTypeQuery } from '@src/application/query/functionality
 import { CreateFunctionalityType } from '@src/application/usecase/functionality-type/CreateFunctionalityType';
 import { DeleteFunctionalityType } from '@src/application/usecase/functionality-type/DeleteFunctionalityType';
 import { PatchFunctionalityType } from '@src/application/usecase/functionality-type/PatchFunctionalityType';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 
 export class FunctionalityTypeController {
-  constructor(
-    readonly httpServer: HttpServer,
-    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
-    readonly createFunctionalityType: CreateFunctionalityType,
-    readonly patchFunctionalityType: PatchFunctionalityType,
-    readonly getFunctionalityTypeById: GetFunctionalityTypeByIdQuery,
-    readonly listFunctionalityType: ListFunctionalityTypeQuery,
-    readonly deleteFunctionalityType: DeleteFunctionalityType,
-  ) {
+  @inject('HttpServer')
+  private httpServer!: HttpServer;
+
+  @inject('AdminAuthorizationMiddleware')
+  private adminAuthorizationMiddleware!: AdminAuthorizationMiddleware;
+
+  @inject('CreateFunctionalityType')
+  private createFunctionalityType!: CreateFunctionalityType;
+
+  @inject('PatchFunctionalityType')
+  private patchFunctionalityType!: PatchFunctionalityType;
+
+  @inject('GetFunctionalityTypeByIdQuery')
+  private getFunctionalityTypeById!: GetFunctionalityTypeByIdQuery;
+
+  @inject('ListFunctionalityTypeQuery')
+  private listFunctionalityType!: ListFunctionalityTypeQuery;
+
+  @inject('DeleteFunctionalityType')
+  private deleteFunctionalityType!: DeleteFunctionalityType;
+
+  constructor() {
     const adminAccess = [
       AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
     ];
     const authorizedAccess = [AuthorizationMiddleware];
-    httpServer.post('/functionality-types/v1', adminAccess, this.executeCreateFunctionalityType);
-    httpServer.get('/functionality-types/v1', authorizedAccess, this.executeListFunctionalityType);
-    httpServer.get('/functionality-types/v1/:id', authorizedAccess, this.executeGetFunctionalityTypeById);
-    httpServer.patch('/functionality-types/v1/:id', adminAccess, this.executePatchFunctionalityType);
-    httpServer.delete('/functionality-types/v1/:id', adminAccess, this.executeDeleteFunctionalityType);
+    this.httpServer.post('/functionality-types/v1', adminAccess, this.executeCreateFunctionalityType);
+    this.httpServer.get('/functionality-types/v1', authorizedAccess, this.executeListFunctionalityType);
+    this.httpServer.get('/functionality-types/v1/:id', authorizedAccess, this.executeGetFunctionalityTypeById);
+    this.httpServer.patch('/functionality-types/v1/:id', adminAccess, this.executePatchFunctionalityType);
+    this.httpServer.delete('/functionality-types/v1/:id', adminAccess, this.executeDeleteFunctionalityType);
   }
 
   private executeCreateFunctionalityType: CallbackFunction = (_: any, body: any) => {

@@ -1,6 +1,7 @@
 import { RefreshToken } from '@src/application/usecase/auth/RefreshToken';
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import config from 'config';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import sinon from 'sinon';
@@ -14,8 +15,9 @@ const accountRepository = {
   existsById: sinon.stub(),
   deleteById: sinon.stub(),
 };
+Registry.getInstance().register('AccountRepository', accountRepository);
 
-const refreshTokenUseCase = new RefreshToken(accountRepository);
+const refreshTokenUseCase = new RefreshToken();
 
 describe('SignIn', () => {
   beforeEach(() => {

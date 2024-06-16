@@ -1,15 +1,11 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
-import { AccountProfileRepositoryPostgres } from '@src/infra/repository/AccountProfileRepository';
-import { AccountRepositoryPostgres } from '@src/infra/repository/AccountRepository';
 import { StatusCodes } from 'http-status-codes';
 
 describe('Auth Controller', () => {
   const account = { username: 'johndoe@test.com', password: 'secret' };
 
   beforeAll(async () => {
-    const accountRepository = new AccountRepositoryPostgres(server.getDatabaseConnection());
-    const accountProfileRepository = new AccountProfileRepositoryPostgres(server.getDatabaseConnection());
-    const signUp = new SignUp(accountRepository, accountProfileRepository, server.getMessaging());
+    const signUp = new SignUp();
     await signUp.execute(account);
   });
 

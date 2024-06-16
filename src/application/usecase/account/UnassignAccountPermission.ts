@@ -1,8 +1,10 @@
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { AccountPermissionRepository } from '@src/infra/repository/AccountPermissionRepository';
 
 export class UnassignAccountPermission {
-  constructor(readonly accountPermissionRepository: AccountPermissionRepository) {}
+  @inject('AccountPermissionRepository')
+  private accountPermissionRepository!: AccountPermissionRepository;
 
   async execute(accountId: string, functionalityId: string): Promise<void> {
     logger.info(

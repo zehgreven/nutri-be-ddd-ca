@@ -3,6 +3,7 @@ import Profile from '@src/domain/entity/Profile';
 import { InvalidInputError } from '@src/domain/error/InvalidInputError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('PatchProfile', () => {
@@ -14,7 +15,8 @@ describe('PatchProfile', () => {
     existsById: sinon.stub(),
     listByAccountId: sinon.stub(),
   };
-  const patchProfile = new PatchProfile(profileRepository);
+  Registry.getInstance().register('ProfileRepository', profileRepository);
+  const patchProfile = new PatchProfile();
   const profile = Profile.create('My profile', 'My profile description');
 
   beforeEach(async () => {

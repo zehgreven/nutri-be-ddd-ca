@@ -1,5 +1,6 @@
 import AccountPermission from '@src/domain/entity/AccountPermission';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface AccountPermissionRepository {
   save(permission: AccountPermission): Promise<void>;
@@ -9,7 +10,8 @@ export interface AccountPermissionRepository {
 }
 
 export class AccountPermissionRepositoryPostgres implements AccountPermissionRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(permission: AccountPermission): Promise<void> {
     const query = `

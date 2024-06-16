@@ -1,5 +1,6 @@
 import { ListProfileQuery } from '@src/application/query/profile/ListProfileQuery';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('ListProfileQuery', () => {
@@ -17,7 +18,8 @@ describe('ListProfileQuery', () => {
     commit: () => Promise.resolve(),
   };
 
-  const listProfileQuery = new ListProfileQuery(connection);
+  Registry.getInstance().register('DatabaseConnection', connection);
+  const listProfileQuery = new ListProfileQuery();
 
   it('ListProfileQuery: should be able to list profiles and filter by name', async () => {
     const expectedArgs = {

@@ -1,9 +1,12 @@
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { FunctionalityTypeRepository } from '@src/infra/repository/FunctionalityTypeRepository';
 
 export class PatchFunctionalityType {
-  constructor(readonly functionalityTypeRepository: FunctionalityTypeRepository) {}
+  @inject('FunctionalityTypeRepository')
+  private functionalityTypeRepository!: FunctionalityTypeRepository;
+
   async execute(id: string, input: Input): Promise<void> {
     logger.info(
       `PatchFunctionalityType: patching functionality type with id=${id} with input=${JSON.stringify(input)}`,

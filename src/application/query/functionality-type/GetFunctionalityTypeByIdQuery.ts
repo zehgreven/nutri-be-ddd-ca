@@ -1,9 +1,11 @@
 import { FunctionalityTypeNotFoundError } from '@src/domain/error/FunctionalityTypeNotFoundError';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 
 export class GetFunctionalityTypeByIdQuery {
-  constructor(readonly connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async execute(id: string): Promise<Output> {
     logger.info(`GetFunctionalityTypeByIdQuery: getting functionality type by id=${id}`);

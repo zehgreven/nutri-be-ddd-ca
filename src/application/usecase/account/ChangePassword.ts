@@ -1,14 +1,16 @@
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { Messaging } from '@src/infra/messaging/Messaging';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 
 export class ChangePassword {
-  constructor(
-    readonly accountRepository: AccountRepository,
-    readonly messaging: Messaging,
-  ) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
+
+  @inject('Messaging')
+  private messaging!: Messaging;
 
   async execute(input: Input, accountId?: string) {
     logger.info(`ChangePassword: changing password for accountId=${accountId}`);

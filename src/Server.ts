@@ -33,11 +33,7 @@ import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profil
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
 import DatabaseConnection, { PgPromiseAdapter } from '@src/infra/database/DatabaseConnection';
-import { AccountController } from '@src/infra/http/controller/AccountController';
-import { AuthController } from '@src/infra/http/controller/AuthController';
-import { FunctionalityController } from '@src/infra/http/controller/FunctionalityController';
-import { FunctionalityTypeController } from '@src/infra/http/controller/FunctionalityTypeController';
-import { ProfileController } from '@src/infra/http/controller/ProfileController';
+import Registry from '@src/infra/dependency-injection/Registry';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 import logger from '@src/infra/logging/logger';
@@ -50,8 +46,13 @@ import { FunctionalityTypeRepositoryPostgres } from '@src/infra/repository/Funct
 import { ProfilePermissionRepositoryPostgres } from '@src/infra/repository/ProfilePermissionRepository';
 import { ProfileRepositoryPostgres } from '@src/infra/repository/ProfileRepository';
 import { Application } from 'express';
-
+import { AccountController } from './infra/http/controller/AccountController';
+import { AuthController } from './infra/http/controller/AuthController';
+import { FunctionalityController } from './infra/http/controller/FunctionalityController';
+import { FunctionalityTypeController } from './infra/http/controller/FunctionalityTypeController';
+import { ProfileController } from './infra/http/controller/ProfileController';
 export class Server {
+  private registry: Registry;
   private httpServer?: HttpServer;
   private databaseConnection?: DatabaseConnection;
   private messaging?: Messaging;
@@ -60,7 +61,9 @@ export class Server {
     readonly port: number,
     readonly dbConnectionUri: string,
     readonly messagingConnectionUri: string,
-  ) {}
+  ) {
+    this.registry = Registry.getInstance();
+  }
 
   public async init(): Promise<void> {
     logger.info('Setup: starting setup');
@@ -94,6 +97,7 @@ export class Server {
   private setupDatabase(): void {
     logger.info('Setup: Database');
     this.databaseConnection = new PgPromiseAdapter(this.dbConnectionUri);
+    this.registry.register('DatabaseConnection', this.databaseConnection);
   }
 
   public getDatabaseConnection(): DatabaseConnection {
@@ -111,6 +115,7 @@ export class Server {
       await this.messaging.connect(this.messagingConnectionUri);
       await this.messaging.setup();
     }
+    this.registry.register('Messaging', this.messaging);
   }
 
   public getMessaging(): Messaging {
@@ -123,6 +128,7 @@ export class Server {
   private setupHttpServer(): void {
     logger.info('Setup: Http Server');
     this.httpServer = new ExpressHttpServerAdapter();
+    this.registry.register('HttpServer', this.httpServer);
   }
 
   private setupControllers(): void {
@@ -135,113 +141,61 @@ export class Server {
     }
 
     logger.info('Setup: Repositories');
-    const accountRepository = new AccountRepositoryPostgres(this.databaseConnection);
-    const profileRepository = new ProfileRepositoryPostgres(this.databaseConnection);
-    const accountProfileRepository = new AccountProfileRepositoryPostgres(this.databaseConnection);
-    const functionalityTypeRepository = new FunctionalityTypeRepositoryPostgres(this.databaseConnection);
-    const functionalityRepository = new FunctionalityRepositoryPostgres(this.databaseConnection);
-    const profilePermissionRepository = new ProfilePermissionRepositoryPostgres(this.databaseConnection);
-    const accountPermissionRepository = new AccountPermissionRepositoryPostgres(this.databaseConnection);
+    this.registry.register('AccountRepository', new AccountRepositoryPostgres());
+    this.registry.register('ProfileRepository', new ProfileRepositoryPostgres());
+    this.registry.register('AccountProfileRepository', new AccountProfileRepositoryPostgres());
+    this.registry.register('FunctionalityTypeRepository', new FunctionalityTypeRepositoryPostgres());
+    this.registry.register('FunctionalityRepository', new FunctionalityRepositoryPostgres());
+    this.registry.register('ProfilePermissionRepository', new ProfilePermissionRepositoryPostgres());
+    this.registry.register('AccountPermissionRepository', new AccountPermissionRepositoryPostgres());
 
     logger.info('Setup: Middlewares');
-    const adminAuthorizationMiddleware = new AdminAuthorizationMiddleware(profileRepository);
+    this.registry.register('AdminAuthorizationMiddleware', new AdminAuthorizationMiddleware());
 
     logger.info('Setup: Queries');
-    const getAccountById = new GetAccountByIdQuery(this.databaseConnection);
-    const getProfileById = new GetProfileByIdQuery(this.databaseConnection);
-    const listProfile = new ListProfileQuery(this.databaseConnection);
-    const getFunctionalityTypeById = new GetFunctionalityTypeByIdQuery(this.databaseConnection);
-    const listFunctionalityType = new ListFunctionalityTypeQuery(this.databaseConnection);
-    const getFunctionalityById = new GetFunctionalityByIdQuery(this.databaseConnection);
-    const listFunctionality = new ListFunctionalityQuery(this.databaseConnection);
-    const listProfilePermission = new ListProfilePermissionQuery(this.databaseConnection);
-    const listAccountPermission = new ListAccountPermissionQuery(this.databaseConnection);
+    this.registry.register('GetAccountByIdQuery', new GetAccountByIdQuery());
+    this.registry.register('GetProfileByIdQuery', new GetProfileByIdQuery());
+    this.registry.register('ListProfileQuery', new ListProfileQuery());
+    this.registry.register('GetFunctionalityTypeByIdQuery', new GetFunctionalityTypeByIdQuery());
+    this.registry.register('ListFunctionalityTypeQuery', new ListFunctionalityTypeQuery());
+    this.registry.register('GetFunctionalityByIdQuery', new GetFunctionalityByIdQuery());
+    this.registry.register('ListFunctionalityQuery', new ListFunctionalityQuery());
+    this.registry.register('ListProfilePermissionQuery', new ListProfilePermissionQuery());
+    this.registry.register('ListAccountPermissionQuery', new ListAccountPermissionQuery());
 
     logger.info('Setup: Use Cases');
-    const signUp = new SignUp(accountRepository, accountProfileRepository, this.getMessaging());
-    const signIn = new SignIn(accountRepository);
-    const refreshToken = new RefreshToken(accountRepository);
-    const changePassword = new ChangePassword(accountRepository, this.getMessaging());
-    const createProfile = new CreateProfile(profileRepository);
-    const patchProfile = new PatchProfile(profileRepository);
-    const deleteProfile = new DeleteProfile(profileRepository);
-    const assignProfile = new AssignProfile(accountRepository, profileRepository, accountProfileRepository);
-    const unassignProfile = new UnassignProfile(accountProfileRepository);
-    const createFunctionalityType = new CreateFunctionalityType(functionalityTypeRepository);
-    const patchFunctionalityType = new PatchFunctionalityType(functionalityTypeRepository);
-    const deleteFunctionalityType = new DeleteFunctionalityType(functionalityTypeRepository);
-    const createFunctionality = new CreateFunctionality(functionalityRepository);
-    const patchFunctionality = new PatchFunctionality(functionalityRepository);
-    const deleteFunctionality = new DeleteFunctionality(functionalityRepository);
-    const assignProfilePermission = new AssignProfilePermission(
-      profileRepository,
-      functionalityRepository,
-      profilePermissionRepository,
-    );
-    const unassignProfilePermission = new UnassignProfilePermission(profilePermissionRepository);
-    const grantAndRevokeProfilePermission = new GrantAndRevokeProfilePermission(profilePermissionRepository);
-    const assignAccountPermission = new AssignAccountPermission(
-      accountRepository,
-      functionalityRepository,
-      accountPermissionRepository,
-    );
-    const unassignAccountPermission = new UnassignAccountPermission(accountPermissionRepository);
-    const grantAndRevokeAccountPermission = new GrantAndRevokeAccountPermission(accountPermissionRepository);
-    const deleteAccount = new DeleteAccount(accountRepository);
-    const activateAccount = new ActivateAccount(accountRepository);
-    const deactivateAccount = new DeactivateAccount(accountRepository);
-    const resetPassword = new ResetPassword(accountRepository, this.getMessaging());
+    this.registry.register('SignUp', new SignUp());
+    this.registry.register('SignIn', new SignIn());
+    this.registry.register('RefreshToken', new RefreshToken());
+    this.registry.register('ChangePassword', new ChangePassword());
+    this.registry.register('CreateProfile', new CreateProfile());
+    this.registry.register('PatchProfile', new PatchProfile());
+    this.registry.register('DeleteProfile', new DeleteProfile());
+    this.registry.register('AssignProfile', new AssignProfile());
+    this.registry.register('UnassignProfile', new UnassignProfile());
+    this.registry.register('CreateFunctionalityType', new CreateFunctionalityType());
+    this.registry.register('PatchFunctionalityType', new PatchFunctionalityType());
+    this.registry.register('DeleteFunctionalityType', new DeleteFunctionalityType());
+    this.registry.register('CreateFunctionality', new CreateFunctionality());
+    this.registry.register('PatchFunctionality', new PatchFunctionality());
+    this.registry.register('DeleteFunctionality', new DeleteFunctionality());
+    this.registry.register('AssignProfilePermission', new AssignProfilePermission());
+    this.registry.register('UnassignProfilePermission', new UnassignProfilePermission());
+    this.registry.register('GrantAndRevokeProfilePermission', new GrantAndRevokeProfilePermission());
+    this.registry.register('AssignAccountPermission', new AssignAccountPermission());
+    this.registry.register('UnassignAccountPermission', new UnassignAccountPermission());
+    this.registry.register('GrantAndRevokeAccountPermission', new GrantAndRevokeAccountPermission());
+    this.registry.register('DeleteAccount', new DeleteAccount());
+    this.registry.register('ActivateAccount', new ActivateAccount());
+    this.registry.register('DeactivateAccount', new DeactivateAccount());
+    this.registry.register('ResetPassword', new ResetPassword());
 
     logger.info('Setup: Controllers');
-    new AccountController(
-      this.httpServer,
-      adminAuthorizationMiddleware,
-      getAccountById,
-      signUp,
-      changePassword,
-      assignProfile,
-      unassignProfile,
-      assignAccountPermission,
-      unassignAccountPermission,
-      grantAndRevokeAccountPermission,
-      listAccountPermission,
-      deleteAccount,
-      activateAccount,
-      deactivateAccount,
-      resetPassword,
-    );
-    new AuthController(this.httpServer, signIn, refreshToken);
-    new ProfileController(
-      this.httpServer,
-      adminAuthorizationMiddleware,
-      createProfile,
-      patchProfile,
-      getProfileById,
-      listProfile,
-      deleteProfile,
-      assignProfilePermission,
-      unassignProfilePermission,
-      grantAndRevokeProfilePermission,
-      listProfilePermission,
-    );
-    new FunctionalityTypeController(
-      this.httpServer,
-      adminAuthorizationMiddleware,
-      createFunctionalityType,
-      patchFunctionalityType,
-      getFunctionalityTypeById,
-      listFunctionalityType,
-      deleteFunctionalityType,
-    );
-    new FunctionalityController(
-      this.httpServer,
-      adminAuthorizationMiddleware,
-      createFunctionality,
-      patchFunctionality,
-      getFunctionalityById,
-      listFunctionality,
-      deleteFunctionality,
-    );
+    new AccountController();
+    new AuthController();
+    new ProfileController();
+    new FunctionalityTypeController();
+    new FunctionalityController();
   }
 
   public async close(): Promise<void> {

@@ -1,5 +1,6 @@
 import ProfilePermission from '@src/domain/entity/ProfilePermission';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface ProfilePermissionRepository {
   save(permission: ProfilePermission): Promise<void>;
@@ -9,7 +10,8 @@ export interface ProfilePermissionRepository {
 }
 
 export class ProfilePermissionRepositoryPostgres implements ProfilePermissionRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(permission: ProfilePermission): Promise<void> {
     const query = `

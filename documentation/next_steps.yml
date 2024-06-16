@@ -38,7 +38,7 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - Dependency Injection
+      - Create List Accounts
       - API Cache
       - Create README.md
       - Add Swagger Docs

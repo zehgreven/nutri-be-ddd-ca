@@ -1,5 +1,6 @@
 import Functionality from '@src/domain/entity/Functionality';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface FunctionalityRepository {
   save(functionality: Functionality): Promise<void>;
@@ -10,7 +11,8 @@ export interface FunctionalityRepository {
 }
 
 export class FunctionalityRepositoryPostgres implements FunctionalityRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(functionality: Functionality): Promise<void> {
     const query = `

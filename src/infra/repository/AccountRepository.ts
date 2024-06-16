@@ -1,5 +1,6 @@
 import Account from '@src/domain/entity/Account';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface AccountRepository {
   save(account: Account): Promise<void>;
@@ -12,7 +13,8 @@ export interface AccountRepository {
 }
 
 export class AccountRepositoryPostgres implements AccountRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(account: Account): Promise<void> {
     const query = `INSERT INTO iam.account (id, username, password) VALUES ($(id), $(username), $(password))`;

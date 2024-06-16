@@ -1,9 +1,11 @@
 import { PermissionNotFoundError } from '@src/domain/error/PermissionNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { ProfilePermissionRepository } from '@src/infra/repository/ProfilePermissionRepository';
 
 export class GrantAndRevokeProfilePermission {
-  constructor(readonly profilePermissionRepository: ProfilePermissionRepository) {}
+  @inject('ProfilePermissionRepository')
+  private profilePermissionRepository!: ProfilePermissionRepository;
 
   async execute(profileId: string, functionalityId: string): Promise<void> {
     logger.info(

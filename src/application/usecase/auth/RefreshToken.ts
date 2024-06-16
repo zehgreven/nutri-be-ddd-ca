@@ -1,5 +1,6 @@
 import { IncorrectCredentialsError } from '@src/domain/error/IncorrectCredentialsError';
 import { InvalidTokenError } from '@src/domain/error/InvalidTokenError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import { JwtToken } from '@src/infra/http/middleware/AuthorizationMiddleware';
 import logger from '@src/infra/logging/logger';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
@@ -7,7 +8,8 @@ import config from 'config';
 import jwt from 'jsonwebtoken';
 
 export class RefreshToken {
-  constructor(readonly accountRepository: AccountRepository) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
 
   async execute(input?: Input): Promise<Output> {
     if (!input?.token) {

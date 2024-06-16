@@ -1,5 +1,6 @@
 import { CreateProfile } from '@src/application/usecase/profile/CreateProfile';
 import { TextLengthError } from '@src/domain/error/TextLengthError';
+import Registry from '@src/infra/dependency-injection/Registry';
 
 describe('Create Profile', () => {
   const profileRepository = {
@@ -10,7 +11,8 @@ describe('Create Profile', () => {
     existsById: () => Promise.resolve(true),
     listByAccountId: () => Promise.resolve([]),
   };
-  const createProfile = new CreateProfile(profileRepository);
+  Registry.getInstance().register('ProfileRepository', profileRepository);
+  const createProfile = new CreateProfile();
 
   it('should throw error when name is empty', async () => {
     await expect(

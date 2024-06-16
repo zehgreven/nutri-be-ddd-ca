@@ -1,17 +1,19 @@
 import AccountProfile from '@src/domain/entity/AccountProfile';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { ProfileNotFoundError } from '@src/domain/error/ProfileNotFoundError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { AccountProfileRepository } from '@src/infra/repository/AccountProfileRepository';
 import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
 
 export class AssignProfile {
-  constructor(
-    readonly accountRepository: AccountRepository,
-    readonly profileRepository: ProfileRepository,
-    readonly accountProfileRepository: AccountProfileRepository,
-  ) {}
+  @inject('ProfileRepository')
+  private profileRepository!: ProfileRepository;
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
+  @inject('AccountProfileRepository')
+  private accountProfileRepository!: AccountProfileRepository;
 
   async execute(accountId: string, profileId: string): Promise<void> {
     logger.info(`AssignProfile: assigning profileId=${profileId} to accountId=${accountId}`);

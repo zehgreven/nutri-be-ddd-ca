@@ -1,9 +1,11 @@
 import { Paginated } from '@src/application/model/Page';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 
 export class ListAccountPermissionQuery {
-  constructor(readonly connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async execute(input: Partial<AccountPermissionInput>): Promise<Partial<Paginated<AccountPermission>>> {
     logger.info(`ListAccountPermissionQuery: listing account permission with input=${JSON.stringify(input)}`);

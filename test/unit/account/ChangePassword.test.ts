@@ -2,6 +2,7 @@ import { ChangePassword } from '@src/application/usecase/account/ChangePassword'
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('ChangePassword', () => {
@@ -23,7 +24,9 @@ describe('ChangePassword', () => {
     close: sinon.stub(),
   };
 
-  const changePassword = new ChangePassword(accountRepository, messaging);
+  Registry.getInstance().register('AccountRepository', accountRepository);
+  Registry.getInstance().register('Messaging', messaging);
+  const changePassword = new ChangePassword();
 
   let account: Account;
 

@@ -1,5 +1,6 @@
 import Account from '@src/domain/entity/Account';
 import AccountProfile from '@src/domain/entity/AccountProfile';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { Messaging } from '@src/infra/messaging/Messaging';
 import { AccountProfileRepository } from '@src/infra/repository/AccountProfileRepository';
@@ -7,11 +8,14 @@ import { AccountRepository } from '@src/infra/repository/AccountRepository';
 import config from 'config';
 
 export class SignUp {
-  constructor(
-    readonly accountRepository: AccountRepository,
-    readonly accountProfileRepository: AccountProfileRepository,
-    readonly messaging: Messaging,
-  ) {}
+  @inject('AccountRepository')
+  private accountRepository!: AccountRepository;
+
+  @inject('AccountProfileRepository')
+  private accountProfileRepository!: AccountProfileRepository;
+
+  @inject('Messaging')
+  private messaging!: Messaging;
 
   async execute(input: Input): Promise<Output> {
     logger.info(`SignUp: creating account for username=${input.username}`);

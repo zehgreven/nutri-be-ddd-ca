@@ -1,5 +1,6 @@
 import AccountProfile from '@src/domain/entity/AccountProfile';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface AccountProfileRepository {
   save(accountProfile: AccountProfile): Promise<void>;
@@ -7,7 +8,8 @@ export interface AccountProfileRepository {
 }
 
 export class AccountProfileRepositoryPostgres implements AccountProfileRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(accountProfile: AccountProfile): Promise<void> {
     const query =

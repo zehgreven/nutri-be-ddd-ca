@@ -1,9 +1,11 @@
 import { Paginated, Paging } from '@src/application/model/Page';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 
 export class ListProfileQuery {
-  constructor(readonly connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async execute(input: Partial<Profile> & Paging<Profile>): Promise<Paginated<Profile>> {
     logger.info(`ListProfileQuery: listing profile with input=${JSON.stringify(input)}`);

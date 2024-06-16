@@ -1,5 +1,6 @@
 import { ListFunctionalityQuery } from '@src/application/query/functionality/ListFunctionalityQuery';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import Registry from '@src/infra/dependency-injection/Registry';
 import sinon from 'sinon';
 
 describe('ListFunctionalityQuery', () => {
@@ -17,8 +18,9 @@ describe('ListFunctionalityQuery', () => {
     close: () => Promise.resolve(),
     commit: () => Promise.resolve(),
   };
+  Registry.getInstance().register('DatabaseConnection', connection);
 
-  const listFunctionalityQuery = new ListFunctionalityQuery(connection);
+  const listFunctionalityQuery = new ListFunctionalityQuery();
 
   it('ListFunctionalityQuery: should be able to list functionalities and filter by name', async () => {
     const expectedArgs = {

@@ -7,46 +7,67 @@ import { DeleteProfile } from '@src/application/usecase/profile/DeleteProfile';
 import { GrantAndRevokeProfilePermission } from '@src/application/usecase/profile/GrantAndRevokeProfilePermission';
 import { PatchProfile } from '@src/application/usecase/profile/PatchProfile';
 import { UnassignProfilePermission } from '@src/application/usecase/profile/UnassignProfilePermission';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 
 export class ProfileController {
-  constructor(
-    readonly httpServer: HttpServer,
-    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
-    readonly createProfile: CreateProfile,
-    readonly patchProfile: PatchProfile,
-    readonly getProfileById: GetProfileByIdQuery,
-    readonly listProfile: ListProfileQuery,
-    readonly deleteProfile: DeleteProfile,
-    readonly assignPermission: AssignProfilePermission,
-    readonly unassignPermission: UnassignProfilePermission,
-    readonly grantAndRevokePermission: GrantAndRevokeProfilePermission,
-    readonly listProfilePermission: ListProfilePermissionQuery,
-  ) {
+  @inject('HttpServer')
+  private httpServer!: HttpServer;
+
+  @inject('AdminAuthorizationMiddleware')
+  private adminAuthorizationMiddleware!: AdminAuthorizationMiddleware;
+
+  @inject('CreateProfile')
+  private createProfile!: CreateProfile;
+
+  @inject('PatchProfile')
+  private patchProfile!: PatchProfile;
+
+  @inject('GetProfileByIdQuery')
+  private getProfileById!: GetProfileByIdQuery;
+
+  @inject('ListProfileQuery')
+  private listProfile!: ListProfileQuery;
+
+  @inject('DeleteProfile')
+  private deleteProfile!: DeleteProfile;
+
+  @inject('AssignProfilePermission')
+  private assignPermission!: AssignProfilePermission;
+
+  @inject('UnassignProfilePermission')
+  private unassignPermission!: UnassignProfilePermission;
+
+  @inject('GrantAndRevokeProfilePermission')
+  private grantAndRevokePermission!: GrantAndRevokeProfilePermission;
+
+  @inject('ListProfilePermissionQuery')
+  private listProfilePermission!: ListProfilePermissionQuery;
+  constructor() {
     const adminAccess = [
       AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
     ];
     const authorizedAccess = [AuthorizationMiddleware];
-    httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
-    httpServer.get('/profiles/v1', adminAccess, this.executeListProfile);
-    httpServer.get('/profiles/v1/permissions', authorizedAccess, this.executeListProfilePermission);
-    httpServer.get('/profiles/v1/:profileId', authorizedAccess, this.executeGetProfileById);
-    httpServer.patch('/profiles/v1/:profileId', adminAccess, this.executePatchProfile);
-    httpServer.delete('/profiles/v1/:profileId', adminAccess, this.executeDeleteProfile);
-    httpServer.post(
+    this.httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
+    this.httpServer.get('/profiles/v1', adminAccess, this.executeListProfile);
+    this.httpServer.get('/profiles/v1/permissions', authorizedAccess, this.executeListProfilePermission);
+    this.httpServer.get('/profiles/v1/:profileId', authorizedAccess, this.executeGetProfileById);
+    this.httpServer.patch('/profiles/v1/:profileId', adminAccess, this.executePatchProfile);
+    this.httpServer.delete('/profiles/v1/:profileId', adminAccess, this.executeDeleteProfile);
+    this.httpServer.post(
       '/profiles/v1/:profileId/functionality/:functionalityId',
       adminAccess,
       this.executeAssignPermission,
     );
-    httpServer.delete(
+    this.httpServer.delete(
       '/profiles/v1/:profileId/functionality/:functionalityId',
       adminAccess,
       this.executeUnassignPermission,
     );
-    httpServer.patch(
+    this.httpServer.patch(
       '/profiles/v1/:profileId/functionality/:functionalityId',
       adminAccess,
       this.executeGrantAndRevokePermission,

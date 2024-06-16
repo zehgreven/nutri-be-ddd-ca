@@ -1,5 +1,6 @@
 import Profile from '@src/domain/entity/Profile';
 import DatabaseConnection from '@src/infra/database/DatabaseConnection';
+import { inject } from '../dependency-injection/Registry';
 
 export interface ProfileRepository {
   save(profile: Profile): Promise<void>;
@@ -11,7 +12,8 @@ export interface ProfileRepository {
 }
 
 export class ProfileRepositoryPostgres implements ProfileRepository {
-  constructor(private connection: DatabaseConnection) {}
+  @inject('DatabaseConnection')
+  private connection!: DatabaseConnection;
 
   async save(profile: Profile): Promise<void> {
     const query =

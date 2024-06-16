@@ -3,30 +3,44 @@ import { ListFunctionalityQuery } from '@src/application/query/functionality/Lis
 import { CreateFunctionality } from '@src/application/usecase/functionality/CreateFunctionality';
 import { DeleteFunctionality } from '@src/application/usecase/functionality/DeleteFunctionality';
 import { PatchFunctionality } from '@src/application/usecase/functionality/PatchFunctionality';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
-import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
+import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
 
 export class FunctionalityController {
-  constructor(
-    readonly httpServer: HttpServer,
-    readonly adminAuthorizationMiddleware: AdminAuthorizationMiddleware,
-    readonly createFunctionality: CreateFunctionality,
-    readonly patchFunctionality: PatchFunctionality,
-    readonly getFunctionalityById: GetFunctionalityByIdQuery,
-    readonly listFunctionality: ListFunctionalityQuery,
-    readonly deleteFunctionality: DeleteFunctionality,
-  ) {
+  @inject('HttpServer')
+  private httpServer!: HttpServer;
+
+  @inject('AdminAuthorizationMiddleware')
+  private adminAuthorizationMiddleware!: AdminAuthorizationMiddleware;
+
+  @inject('CreateFunctionality')
+  private createFunctionality!: CreateFunctionality;
+
+  @inject('PatchFunctionality')
+  private patchFunctionality!: PatchFunctionality;
+
+  @inject('GetFunctionalityByIdQuery')
+  private getFunctionalityById!: GetFunctionalityByIdQuery;
+
+  @inject('ListFunctionalityQuery')
+  private listFunctionality!: ListFunctionalityQuery;
+
+  @inject('DeleteFunctionality')
+  private deleteFunctionality!: DeleteFunctionality;
+
+  constructor() {
     const adminAccess = [
       AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => adminAuthorizationMiddleware.execute(req, _, next),
+      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
     ];
     const authorizedAccess = [AuthorizationMiddleware];
-    httpServer.post('/functionalities/v1', adminAccess, this.executeCreateFunctionality);
-    httpServer.get('/functionalities/v1', authorizedAccess, this.executeListFunctionality);
-    httpServer.get('/functionalities/v1/:id', authorizedAccess, this.executeGetFunctionalityById);
-    httpServer.patch('/functionalities/v1/:id', adminAccess, this.executePatchFunctionality);
-    httpServer.delete('/functionalities/v1/:id', adminAccess, this.executeDeleteFunctionality);
+    this.httpServer.post('/functionalities/v1', adminAccess, this.executeCreateFunctionality);
+    this.httpServer.get('/functionalities/v1', authorizedAccess, this.executeListFunctionality);
+    this.httpServer.get('/functionalities/v1/:id', authorizedAccess, this.executeGetFunctionalityById);
+    this.httpServer.patch('/functionalities/v1/:id', adminAccess, this.executePatchFunctionality);
+    this.httpServer.delete('/functionalities/v1/:id', adminAccess, this.executeDeleteFunctionality);
   }
 
   private executeCreateFunctionality: CallbackFunction = (_: any, body: any) => {

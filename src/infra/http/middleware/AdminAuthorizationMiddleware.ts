@@ -2,12 +2,14 @@
 
 import { ForbiddenError } from '@src/domain/error/ForbiddenError';
 import { UnauthorizedError } from '@src/domain/error/UnauthorizedError';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import { ProfileRepository } from '@src/infra/repository/ProfileRepository';
 import config from 'config';
 import { Request } from 'express';
 
 export class AdminAuthorizationMiddleware {
-  constructor(readonly profileRepository: ProfileRepository) {}
+  @inject('ProfileRepository')
+  private profileRepository!: ProfileRepository;
 
   async execute(request: Request & { accountId?: string }, _: any, next: Function): Promise<void> {
     const accountId = request.accountId;

@@ -1,6 +1,7 @@
 import { ResetPassword } from '@src/application/usecase/account/ResetPassword';
 import Account from '@src/domain/entity/Account';
 import { AccountNotFoundError } from '@src/domain/error/AccountNotFoundError';
+import Registry from '@src/infra/dependency-injection/Registry';
 import bcrypt from 'bcrypt';
 import sinon from 'sinon';
 
@@ -24,8 +25,10 @@ describe('ResetPassword', () => {
     subscribe: sinon.stub(),
     close: sinon.stub(),
   };
+  Registry.getInstance().register('AccountRepository', accountRepository);
+  Registry.getInstance().register('Messaging', messaging);
 
-  const resetPassword = new ResetPassword(accountRepository, messaging);
+  const resetPassword = new ResetPassword();
 
   beforeEach(() => {
     accountRepository.getById.reset();

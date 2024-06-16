@@ -1,9 +1,12 @@
 import FunctionalityType from '@src/domain/entity/FunctionalityType';
+import { inject } from '@src/infra/dependency-injection/Registry';
 import logger from '@src/infra/logging/logger';
 import { FunctionalityTypeRepository } from '@src/infra/repository/FunctionalityTypeRepository';
 
 export class CreateFunctionalityType {
-  constructor(readonly functionalityTypeRepository: FunctionalityTypeRepository) {}
+  @inject('FunctionalityTypeRepository')
+  private functionalityTypeRepository!: FunctionalityTypeRepository;
+
   async execute(input: Input): Promise<Output> {
     logger.info(`CreateFunctionalityType: creating functionality type with input=${JSON.stringify(input)}`);
     const functionalityType = FunctionalityType.create(input.name, input.description);

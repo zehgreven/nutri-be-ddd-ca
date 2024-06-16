@@ -1,6 +1,7 @@
 import { SignUp } from '@src/application/usecase/account/SignUp';
 import { InvalidEmailError } from '@src/domain/error/InvalidEmailError';
 import { PasswordCreationError } from '@src/domain/error/PasswordCreationError';
+import Registry from '@src/infra/dependency-injection/Registry';
 
 const accountRepository = {
   save: () => Promise.resolve(),
@@ -24,8 +25,11 @@ const messaging = {
   subscribe: () => Promise.resolve(),
   close: () => Promise.resolve(),
 };
+Registry.getInstance().register('AccountRepository', accountRepository);
+Registry.getInstance().register('AccountProfileRepository', accountProfileRepository);
+Registry.getInstance().register('Messaging', messaging);
 
-const signUp = new SignUp(accountRepository, accountProfileRepository, messaging);
+const signUp = new SignUp();
 
 describe('SignUp', () => {
   test('username should be an email', async () => {
