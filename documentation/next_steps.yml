@@ -38,8 +38,6 @@ dependency-analysis:
 
 next-steps:
   - code:
-      - API Cache
-      - Create README.md
       - Move our project in a subdirectory
       - Send confirmation email when account is created
       - Send email when password is changed
