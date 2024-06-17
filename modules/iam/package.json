@@ -2,7 +2,7 @@
   "name": "nutri-be-ddd-ca",
   "version": "1.0.0",
   "description": "",
-  "license": "All Rights Reserved",
+  "license": "UNLICENSED",
   "keywords": [
     "node",
     "typescript",
@@ -20,17 +20,18 @@
   },
   "main": "index.js",
   "scripts": {
-    "start:dev": "dotenv -e env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts",
+    "build": "tsc",
+    "start:prod": "yarn build && dotenv -e ../../env/production.env -- node dist/src/main_api.js",
+    "start:dev": "dotenv -e ../../env/default.env -- ts-node-dev --transpile-only ./src/main_api.ts",
     "style:check": "prettier --check src/**/*.ts test/**/*.ts --log-level silent",
     "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
     "lint:check": "eslint src/**/*.ts test/**/*.ts",
     "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
     "migrate:create": "node-pg-migrate create",
-    "migrate:up": "dotenv -e env/default.env -- node-pg-migrate up",
-    "migrate:down": "dotenv -e env/default.env -- node-pg-migrate down 0",
-    "docker": "docker-compose up -d",
-    "test:unit": "clear & dotenv -e env/default.env -- jest --config ./test/unit/config/jest.config.ts --coverage",
-    "test:integ": "clear & dotenv -e env/default.env -- jest --config ./test/integ/config/jest.config.ts --coverage"
+    "migrate:up": "dotenv -e ../../env/default.env -- node-pg-migrate up",
+    "migrate:down": "dotenv -e ../../env/default.env -- node-pg-migrate down 0",
+    "test:unit": "clear & dotenv -e ../../env/default.env -- jest --config ./test/unit/config/jest.config.ts --coverage",
+    "test:integ": "clear & dotenv -e ../../env/default.env -- jest --config ./test/integ/config/jest.config.ts --coverage"
   },
   "pre-push": [
     "style:fix",

@@ -1,14 +1,6 @@
 {
   "server": {
-    "port": 3000
-  },
-  "db": {
-    "user": "postgres",
-    "password": "123456",
-    "host": "localhost",
-    "port": 5432,
-    "database": "app",
-    "migration-file-language": "sql"
+    "port": 3333
   },
   "auth": {
     "key": "secret",
