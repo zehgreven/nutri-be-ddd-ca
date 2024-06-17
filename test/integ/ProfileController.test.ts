@@ -249,7 +249,10 @@ describe('Profile Controller', () => {
 
       const { body: notAllowedPermissions } = await global.testRequest
         .get(`/profiles/v1/permissions?profileId=${profileId}&functionalityId=${functionalityId}`)
-        .set({ Authorization: `Bearer ${token}` })
+        .set({
+          Authorization: `Bearer ${token}`,
+          'cache-control': 'no-cache',
+        })
         .send();
 
       const [notAllowedPermission] = notAllowedPermissions.rows;

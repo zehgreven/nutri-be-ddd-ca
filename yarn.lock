@@ -745,6 +745,14 @@
   dependencies:
     "@types/node" "*"
 
+"@types/apicache@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@types/apicache/-/apicache-1.6.6.tgz#ec6792d51568cb98c306161b2bd534bea6adad24"
+  integrity sha512-RLeWpWG8QmXS2DshAMIm3HAtmUivFTSzdppppQgvNvbPYfi4871Ec4cXGySAlC9qqmciAZSVCWZPKAwNKwGATA==
+  dependencies:
+    "@types/express" "*"
+    "@types/redis" "^2.8.0"
+
 "@types/babel__core@^7.1.14":
   version "7.20.5"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"
@@ -988,6 +996,13 @@
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.7.tgz#50ae4353eaaddc04044279812f52c8c65857dbcb"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
+
+"@types/redis@^2.8.0":
+  version "2.8.32"
+  resolved "https://registry.yarnpkg.com/@types/redis/-/redis-2.8.32.tgz#1d3430219afbee10f8cfa389dad2571a05ecfb11"
+  integrity sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==
+  dependencies:
+    "@types/node" "*"
 
 "@types/semver@^7.5.8":
   version "7.5.8"
@@ -1283,6 +1298,11 @@ anymatch@^3.0.3, anymatch@~3.1.2:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
+
+apicache@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/apicache/-/apicache-1.6.3.tgz#4441aa40f2a48c9dd6f11c73be937d563405355b"
+  integrity sha512-jS3VfUFpQ9BesFQZcdd1vVYg3ZsO2kGPmTJHqycIYPAQs54r74CRiyj8DuzJpwzLwIfCBYzh4dy9Jt8xYbo27w==
 
 "aproba@^1.0.3 || ^2.0.0":
   version "2.0.0"

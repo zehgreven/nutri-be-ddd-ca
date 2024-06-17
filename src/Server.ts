@@ -42,6 +42,7 @@ import { FunctionalityTypeController } from '@src/infra/http/controller/Function
 import { ProfileController } from '@src/infra/http/controller/ProfileController';
 import HttpServer, { ExpressHttpServerAdapter } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
+import Cache from '@src/infra/http/middleware/Cache';
 import logger from '@src/infra/logging/logger';
 import { Messaging, RabbitMQMessagingAdapter } from '@src/infra/messaging/Messaging';
 import { AccountPermissionRepositoryPostgres } from '@src/infra/repository/AccountPermissionRepository';
@@ -134,6 +135,7 @@ export class Server {
     logger.info('Setup: Http Server');
     this.httpServer = new ExpressHttpServerAdapter();
     this.registry.register('HttpServer', this.httpServer);
+    this.registry.register('Cache', Cache.getInstance());
   }
 
   private setupControllers(): void {

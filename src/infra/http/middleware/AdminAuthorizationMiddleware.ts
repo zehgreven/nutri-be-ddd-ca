@@ -11,7 +11,7 @@ export class AdminAuthorizationMiddleware {
   @inject('ProfileRepository')
   private profileRepository!: ProfileRepository;
 
-  async execute(request: Request & { accountId?: string }, _: any, next: Function): Promise<void> {
+  public async execute(request: Request & { accountId?: string }, _: any, next: Function): Promise<void> {
     const accountId = request.accountId;
     if (!accountId) {
       return next(new UnauthorizedError('Unauthorized'));

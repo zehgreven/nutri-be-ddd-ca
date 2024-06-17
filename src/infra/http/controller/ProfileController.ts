@@ -11,6 +11,7 @@ import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
+import Cache from '@src/infra/http/middleware/Cache';
 
 export class ProfileController {
   @inject('HttpServer')
@@ -45,31 +46,34 @@ export class ProfileController {
 
   @inject('ListProfilePermissionQuery')
   private listProfilePermission!: ListProfilePermissionQuery;
+
+  @inject('Cache')
+  private cache!: Cache;
+
   constructor() {
-    const adminAccess = [
-      AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
-    ];
-    const authorizedAccess = [AuthorizationMiddleware];
-    this.httpServer.post('/profiles/v1', [AuthorizationMiddleware], this.executeCreateProfile);
-    this.httpServer.get('/profiles/v1', adminAccess, this.executeListProfile);
-    this.httpServer.get('/profiles/v1/permissions', authorizedAccess, this.executeListProfilePermission);
-    this.httpServer.get('/profiles/v1/:profileId', authorizedAccess, this.executeGetProfileById);
-    this.httpServer.patch('/profiles/v1/:profileId', adminAccess, this.executePatchProfile);
-    this.httpServer.delete('/profiles/v1/:profileId', adminAccess, this.executeDeleteProfile);
+    const adminAccess = (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next);
+    const authorizedAccess = AuthorizationMiddleware;
+    const cached = this.cache.middleware();
+
+    this.httpServer.post('/profiles/v1', [authorizedAccess, adminAccess], this.executeCreateProfile);
+    this.httpServer.get('/profiles/v1', [authorizedAccess, adminAccess, cached], this.executeListProfile);
+    this.httpServer.get('/profiles/v1/permissions', [authorizedAccess, cached], this.executeListProfilePermission);
+    this.httpServer.get('/profiles/v1/:profileId', [authorizedAccess, cached], this.executeGetProfileById);
+    this.httpServer.patch('/profiles/v1/:profileId', [authorizedAccess, adminAccess], this.executePatchProfile);
+    this.httpServer.delete('/profiles/v1/:profileId', [authorizedAccess, adminAccess], this.executeDeleteProfile);
     this.httpServer.post(
       '/profiles/v1/:profileId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeAssignPermission,
     );
     this.httpServer.delete(
       '/profiles/v1/:profileId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeUnassignPermission,
     );
     this.httpServer.patch(
       '/profiles/v1/:profileId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeGrantAndRevokePermission,
     );
   }

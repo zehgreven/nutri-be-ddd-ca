@@ -12,6 +12,7 @@ export class AuthController {
 
   @inject('RefreshToken')
   private refreshToken!: RefreshToken;
+
   constructor() {
     this.httpServer.post('/auth/v1/authenticate', [], this.executeSignIn);
     this.httpServer.post('/auth/v1/refresh', [], this.executeRefreshToken);

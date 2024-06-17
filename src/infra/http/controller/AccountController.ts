@@ -17,6 +17,7 @@ import { inject } from '@src/infra/dependency-injection/Registry';
 import HttpServer, { CallbackFunction } from '@src/infra/http/HttpServer';
 import { AdminAuthorizationMiddleware } from '@src/infra/http/middleware/AdminAuthorizationMiddleware';
 import AuthorizationMiddleware from '@src/infra/http/middleware/AuthorizationMiddleware';
+import Cache from '../middleware/Cache';
 
 export class AccountController {
   @inject('HttpServer')
@@ -66,40 +67,63 @@ export class AccountController {
 
   @inject('ResetPassword')
   private resetPassword!: ResetPassword;
+
+  @inject('Cache')
+  private cache!: Cache;
+
   constructor() {
-    const adminAccess = [
-      AuthorizationMiddleware,
-      (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next),
-    ];
-    const authorizedAccess = [AuthorizationMiddleware];
+    const adminAccess = (req: any, _: any, next: Function) => this.adminAuthorizationMiddleware.execute(req, _, next);
+    const authorizedAccess = AuthorizationMiddleware;
+    const cached = this.cache.middleware();
+
     this.httpServer.post('/accounts/v1', [], this.executeSignUp);
-    this.httpServer.get('/accounts/v1', adminAccess, this.executeListAccount);
-    this.httpServer.get('/accounts/v1/me', authorizedAccess, this.executeGetAuthenticatedAccount);
-    this.httpServer.get('/accounts/v1/permissions', authorizedAccess, this.executeListPermission);
-    this.httpServer.get('/accounts/v1/:accountId', adminAccess, this.executeGetAccountById);
-    this.httpServer.patch('/accounts/v1/password', authorizedAccess, this.executeChangePassword);
-    this.httpServer.patch('/accounts/v1/:accountId/activate', adminAccess, this.executeAcitivateAccount);
-    this.httpServer.patch('/accounts/v1/:accountId/deactivate', adminAccess, this.executeDeactivateAccount);
-    this.httpServer.patch('/accounts/v1/:accountId/reset-password', adminAccess, this.executeResetPassword);
-    this.httpServer.post('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeAssignProfile);
-    this.httpServer.delete('/accounts/v1/:accountId/profile/:profileId', adminAccess, this.executeUnassignProfile);
+    this.httpServer.get('/accounts/v1', [authorizedAccess, adminAccess, cached], this.executeListAccount);
+    this.httpServer.get('/accounts/v1/me', [authorizedAccess, cached], this.executeGetAuthenticatedAccount);
+    this.httpServer.get('/accounts/v1/permissions', [authorizedAccess, cached], this.executeListPermission);
+    this.httpServer.get('/accounts/v1/:accountId', [authorizedAccess, adminAccess, cached], this.executeGetAccountById);
+    this.httpServer.patch('/accounts/v1/password', [authorizedAccess], this.executeChangePassword);
+    this.httpServer.patch(
+      '/accounts/v1/:accountId/activate',
+      [authorizedAccess, adminAccess],
+      this.executeAcitivateAccount,
+    );
+    this.httpServer.patch(
+      '/accounts/v1/:accountId/deactivate',
+      [authorizedAccess, adminAccess],
+      this.executeDeactivateAccount,
+    );
+    this.httpServer.patch(
+      '/accounts/v1/:accountId/reset-password',
+      [authorizedAccess, adminAccess],
+      this.executeResetPassword,
+    );
+    this.httpServer.post(
+      '/accounts/v1/:accountId/profile/:profileId',
+      [authorizedAccess, adminAccess],
+      this.executeAssignProfile,
+    );
+    this.httpServer.delete(
+      '/accounts/v1/:accountId/profile/:profileId',
+      [authorizedAccess, adminAccess],
+      this.executeUnassignProfile,
+    );
     this.httpServer.post(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeAssignPermission,
     );
     this.httpServer.delete(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeUnassignPermission,
     );
     this.httpServer.patch(
       '/accounts/v1/:accountId/functionality/:functionalityId',
-      adminAccess,
+      [authorizedAccess, adminAccess],
       this.executeGrantAndRevokePermission,
     );
-    this.httpServer.delete('/accounts/v1/me', authorizedAccess, this.executeDeleteAuthenticatedAccount);
-    this.httpServer.delete('/accounts/v1/:accountId', adminAccess, this.executeDeleteAccount);
+    this.httpServer.delete('/accounts/v1/me', [authorizedAccess], this.executeDeleteAuthenticatedAccount);
+    this.httpServer.delete('/accounts/v1/:accountId', [authorizedAccess, adminAccess], this.executeDeleteAccount);
   }
 
   private executeGetAuthenticatedAccount: CallbackFunction = (_: any, __: any, accountId?: string) => {

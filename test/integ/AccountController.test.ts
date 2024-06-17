@@ -157,7 +157,10 @@ describe('Account Controller', () => {
 
       const { body: accountWithoutAssignedProfile } = await global.testRequest
         .get(`/accounts/v1/${account.id}`)
-        .set({ Authorization: `Bearer ${token}` })
+        .set({
+          Authorization: `Bearer ${token}`,
+          'cache-control': 'no-cache',
+        })
         .send();
       expect(accountWithoutAssignedProfile.profiles.length).toBe(1);
     });
@@ -279,7 +282,10 @@ describe('Account Controller', () => {
 
         const { body: notAllowedPermissions } = await global.testRequest
           .get(`/accounts/v1/permissions?accountId=${accountId}&functionalityId=${functionalityId}`)
-          .set({ Authorization: `Bearer ${token}` })
+          .set({
+            Authorization: `Bearer ${token}`,
+            'cache-control': 'no-cache',
+          })
           .send();
 
         const [notAllowedPermission] = notAllowedPermissions.rows;
@@ -315,7 +321,10 @@ describe('Account Controller', () => {
 
         const { status: getDeletedAccountStatus } = await global.testRequest
           .get(`/accounts/v1/${createdAccount.id}`)
-          .set({ Authorization: `Bearer ${token}` })
+          .set({
+            Authorization: `Bearer ${token}`,
+            'cache-control': 'no-cache',
+          })
           .send();
 
         expect(getDeletedAccountStatus).toBe(StatusCodes.NOT_FOUND);
@@ -359,7 +368,10 @@ describe('Account Controller', () => {
 
         const { body: deactivatedAccount } = await global.testRequest
           .get(`/accounts/v1/${accountId}`)
-          .set({ Authorization: `Bearer ${token}` })
+          .set({
+            Authorization: `Bearer ${token}`,
+            'cache-control': 'no-cache',
+          })
           .send();
         expect(deactivatedAccount.active).toBe(false);
       });
